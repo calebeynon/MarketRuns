@@ -1,0 +1,37 @@
+{{block title}} Market {{endblock}}
+{{block content}}
+
+<h3>Current Market Price: <span id="price">{{ current_price }}</span></h3>
+
+<p>Time remaining: <span id="timer">{{ timeout_seconds }}</span> seconds</p>
+
+<button id="sell-button" onclick="sendSell()" {% if sold %}disabled{% endif %}>
+    Sell
+</button>
+
+<script>
+    let timeLeft = {{ timeout_seconds }};
+    const timerElement = document.getElementById("timer");
+
+    const countdown = setInterval(function () {
+        timeLeft -= 1;
+        if (timeLeft >= 0) {
+            timerElement.textContent = timeLeft;
+        } else {
+            clearInterval(countdown);
+        }
+    }, 1000);
+
+    function sendSell() {
+        liveSend({ 'action': 'sell' });
+        document.getElementById('sell-button').disabled = true;
+    }
+
+    function liveRecv(data) {
+        document.getElementById('price').textContent = data.new_price;
+        if (data.sold_status[{{ player.id_in_group }}]) {
+            document.getElementById('sell-button').disabled = true;
+        }
+    };
+</script>
+{{endblock}}
