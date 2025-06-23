@@ -9,7 +9,7 @@ SESSION_CONFIGS = [
     dict(
         name='marketgame2',
         app_sequence=['marketgame2'],
-        num_demo_participants=8,
+        num_demo_participants=4,
     ),
 ]
 
