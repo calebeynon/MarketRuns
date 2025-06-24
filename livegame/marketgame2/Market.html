@@ -15,30 +15,25 @@
     <!-- Left: Price Info and Chart -->
     <div style="flex: 1; max-width: 48%;">
         <h3>Current Market Price: <span id="price">{{ initial_price }}</span></h3>
-        <img src="{{ price_img }}" alt="Price Graph" width="400" height="400"/>
+        <canvas id="priceChart" width="400" height="400"></canvas>
     </div>
     <!-- Center: Sell Button -->
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 0 0 180px;">
-        <button id="sell-button" style="font-size: 2rem; padding: 20px 40px; margin: 30px 0; background-color: #28a745; color: white; border: none; border-radius: 8px; transition: opacity 0.3s; opacity: 0.5; cursor: not-allowed;" disabled>
+        <button id="sell-button" onclick="sendSell()" style="font-size: 2rem; padding: 20px 40px; margin: 30px 0; background-color: #28a745; color: white; border: none; border-radius: 8px; transition: opacity 0.3s; opacity: 0.5; cursor: not-allowed;" disabled>
             Sell
         </button>
         <div id="countdown" style="font-size: 1.2rem; margin-top: 10px;">Button activates in: <span id="timer">10</span>s</div>
-        <form id="sell-form" method="post" style="display:none;">
-            <input type="hidden" name="sell" value="1"/>
-        </form>
         <script>
             // Initial countdown timer
             let timeLeft = 10;
             const timerElement = document.getElementById('timer');
             const countdownElement = document.getElementById('countdown');
             const sellBtn = document.getElementById('sell-button');
-            const sellForm = document.getElementById('sell-form');
-            sellBtn.onclick = function() {
-                sellForm.submit();
-            };
+            
             const countdownInterval = setInterval(() => {
                 timeLeft--;
                 timerElement.textContent = timeLeft;
+                
                 if (timeLeft <= 0) {
                     clearInterval(countdownInterval);
                     sellBtn.disabled = false;
@@ -47,22 +42,36 @@
                     countdownElement.style.display = 'none';
                 }
             }, 1000);
+
+            // Observe the button and dim when disabled
+            const observer = new MutationObserver(() => {
+                if (sellBtn.disabled) {
+                    sellBtn.style.opacity = '0.5';
+                    sellBtn.style.cursor = 'not-allowed';
+                } else {
+                    sellBtn.style.opacity = '1';
+                    sellBtn.style.cursor = 'pointer';
+                }
+            });
+            observer.observe(sellBtn, { attributes: true, attributeFilter: ['disabled'] });
         </script>
     </div>
     <!-- Right: Posterior Info and Chart -->
     <div style="flex: 1; max-width: 48%;">
         <h3>Belief of Good State: <span id="posterior">{{ initial_prior }}</span>%</h3>
-        <img src="{{ belief_img }}" alt="Belief Graph" width="400" height="400"/>
+        <canvas id="posteriorChart" width="400" height="400"></canvas>
     </div>
 </div>
 <br>
 
 <!-- sold status messages-->
 <h4>
-    Your Sold Status: <span id="self_sold">{{ 'Sold' if self_sold else 'Not Sold' }}</span><br>
+    Your Sold Status: <span id="self_sold">Not Sold</span><br>
+    <span id="sell-message" style="display:none;">You have sold your asset for </span>
+    <span id="sell-message2" style="display:none;"></span>
 </h4><br>
 
-<!-- Bottom Row, Player Sold Status Table -->
+<!-- Bottom Row, Player Sold Status Table and Chat -->
 <div style="display: flex; gap: 40px; align-items: flex-start;">
     <div>
         <h4>Player Sold Status</h4>
@@ -74,14 +83,159 @@
                 </tr>
             </thead>
             <tbody>
-                {% for pid, sold in sold_status.items() %}
+                {% for pid in range(1,5) %}
                 <tr id="player-{{ pid }}">
                     <td>Player {{ pid }}:&nbsp</td>
-                    <td>{{ 'Yes' if sold else 'No' }}</td>
+                    <td>No</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    <!-- Chat Box 
+    <div style="flex: 1;">
+        <h4>Use this box to chat with other market participants.</h4>
+        {{ chat }}
+    </div>
+    -->
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"> //chart.js library</script>
+
+<script>
+
+// polling function to send updates for posterior
+let interval = setInterval(()=>{
+    liveSend({'action':"poll"});
+},4000);
+
+// function to send sell updates to the server
+function sendSell() {
+    liveSend({ 'action': 'sell' });
+    document.getElementById('sell-button').disabled = true;
+    document.getElementById('self_sold').textContent = 'Sold';
+    document.getElementById('sell-message').style.display = 'inline';
+    document.getElementById('sell-message2').style.display = 'inline';
+}
+
+// data structures for posterior and price charts
+let posteriorData = {
+    labels: [0], // time or round markers
+    datasets: [{
+        label: 'Belief of Good State (%)',
+        data: [parseFloat(document.getElementById('posterior').textContent)],
+        fill: false,
+        borderColor: 'blue',
+        tension: 0,
+        pointRadius: 4,
+        pointHoverRadius: 6
+    }]
+};
+
+let priceData = {
+    labels: [0], // time or round markers
+    datasets: [{
+        label: 'Market Price',
+        data: [parseFloat(document.getElementById('price').textContent)],
+        fill: false,
+        borderColor: 'red',
+        stepped: true,
+        tension: 0,
+        pointRadius: 4,
+        pointHoverRadius: 6
+    }]
+};
+
+// chart codes
+let posteriorChart = new Chart(
+    document.getElementById('posteriorChart'),
+    {
+        type: 'line',
+        data: posteriorData,
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: 'Update Number' } },
+                y: { min: 0, max: 100, title: { display: true, text: 'Posterior (%)' } }
+            }
+        }
+    }
+);
+
+let priceChart = new Chart(
+    document.getElementById('priceChart'),
+    {
+        type: 'line',
+        data: priceData,
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: 'Update Number' } },
+                y: { min: 0, title: { display: true, text: 'Price' } }
+            }
+        }
+    }
+);
+
+let updateCount = 0;
+let priceUpdateCount = 0;
+let lastUpdateTime = Date.now();
+
+function liveRecv(data) {
+    // Always enforce 4-second interval
+    const currentTime = Date.now();
+    if (currentTime - lastUpdateTime < 4000) {
+        return;
+    }
+    lastUpdateTime = currentTime;
+
+    // initialization
+    let price = data.new_price;
+    let oldPrice = data.old_price;
+    let statuses = data.sold_status;
+    let posterior = data.posterior;
+    
+    // posterior stuff
+    document.getElementById('posterior').textContent = Math.round(posterior);
+    updateCount += 1;
+    posteriorData.labels.push(updateCount);
+    posteriorData.datasets[0].data.push(Math.round(posterior));
+    posteriorChart.update();
+
+    // price stuff
+    if (
+        document.getElementById('self_sold').textContent === 'Sold' &&
+        document.getElementById('sell-message2').textContent === ''
+    ) {
+        document.getElementById('sell-message2').textContent = oldPrice;
+    }
+    document.getElementById('price').textContent = price;
+    priceUpdateCount += 1;
+    priceData.labels.push(priceUpdateCount);
+    priceData.datasets[0].data.push(price);
+    priceChart.update();
+    priceCheck = price; // Update oldPrice to the new price
+    
+
+    // table stuff
+    for (let playerId in statuses) {
+        let sold = statuses[playerId];
+        let row = document.getElementById('player-' + playerId);
+        if (row) {
+            let currentText = row.cells[1].textContent;
+            let newText = sold ? 'Yes' : 'No';
+
+            if (currentText !== newText && newText === 'Yes') {
+                row.classList.add('highlight-green');
+                setTimeout(() => {
+                    row.classList.remove('highlight-green');
+                }, 4000); // highlight lasts 4 seconds
+            }
+
+            row.cells[1].textContent = newText;
+        }
+    }
+};
+</script>
+
 {{endblock}}
