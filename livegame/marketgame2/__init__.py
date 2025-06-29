@@ -56,13 +56,11 @@ class Market(Page):
     def live_method(player, data):
         group = player.group
 
-        price_history = json.loads(group.price_history)
 
         if data.get('action') == 'sell' and not player.sold:
             player.sold = True
             player.value = group.current_price
             group.current_price -= C.PRICE_DROP
-            price_history.append(group.current_price)
 
         if data.get('action') == 'poll':
             poll_players = json.loads(group.poll_players)
@@ -96,7 +94,6 @@ class Market(Page):
         group.poll_count = 0
         group.poll_players = json.dumps([])
         group.current_signal = -1
-        group.price_history = json.dumps(price_history)
         return {
             0: dict(
                 new_price=group.current_price,

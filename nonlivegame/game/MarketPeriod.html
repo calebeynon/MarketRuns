@@ -1,0 +1,14 @@
+{{block title}}Market Period{{endblock}}
+{{block content}}
+<p>The market period is now open. You will have 4 seconds to decide whether to sell your item. The price is {{price}}.</p>
+<p>The signal is {{ signal }}.</p>
+
+{% if sold_status %}
+    <p>You have already sold your item for {{ payoff }}.</p>
+    <button name="sold" value="True" disabled style="opacity:0.5; cursor:not-allowed;">SELL</button>
+{% else %}
+    <p>Click the button below to sell your item.</p>
+    <button name="sold" value="True">SELL</button>
+{% endif %}
+
+{{endblock}}

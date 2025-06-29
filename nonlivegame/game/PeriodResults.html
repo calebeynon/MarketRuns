@@ -1,0 +1,28 @@
+{{block title}}Period Results{{endblock}}
+{{block content}}
+<p>Your signal was {{ signal }}.</p>
+
+{% if sold_status %}
+    <p>You sold your item for {{ payoff }}.</p>
+{% else %}
+    <p>You did not sell your item.</p>
+{% endif %}
+<p> The following players sold their item, those highlighted in red sold their item in the last round.</p>
+<div style="display: inline-block; width: 200px;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Seller</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for seller in sellers %}
+                <tr {% if seller in last_round_sellers %}style="background-color: red;"{% endif %}>
+                    <td>{{ seller }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{{endblock}}
