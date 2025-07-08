@@ -28,6 +28,10 @@ def set_all_false(group: Group):
         p.participant.vars['payoff'] = 0
         p.participant.vars['price'] = C.INITIAL_PRICE
         p.participant.vars['signal'] = C.INITIAL_SIGNAL
+        p.participant.vars['signal_history'] = [C.INITIAL_SIGNAL]
+        p.participant.vars['price_history'] = [C.INITIAL_PRICE]
+        p.participant.vars['signal_history_length'] = 0
+        p.participant.vars['price_history_length'] = 0
 
 def set_payoffs(group: Group):
     players = group.get_players()
@@ -44,6 +48,11 @@ def set_payoffs(group: Group):
             p.participant.vars['price'] = a_price - 2*len(sellers)
         for i, p in enumerate(sellers):
             p.participant.vars['payoff'] = pays[i]
+    
+    # Update price history for all players regardless of whether there were sellers
+    for p in players:
+        p.participant.vars['price_history'].append(p.participant.vars['price'])
+        p.participant.vars['price_history_length'] += 1
 
 def final_sale(group: Group):
     players = group.get_players()
@@ -75,7 +84,8 @@ def set_signal(group: Group):
             new_signal = ((1 - C.PCORRECT) * a_signal) / (((1 - C.PCORRECT) * a_signal) + (C.PCORRECT * (1 - a_signal)))
     for p in players:
         p.participant.vars['signal'] = new_signal
-
+        p.participant.vars['signal_history'].append(new_signal)
+        p.participant.vars['signal_history_length'] += 1
 
 # PAGES
 class ChatWait(WaitPage):
@@ -93,7 +103,14 @@ class Chat(Page):
         return 45
 
 class MarketPeriodWait(WaitPage):
-    pass
+    @staticmethod
+    def after_all_players_arrive(group):
+        # Reset sold status for all players at the beginning of each round
+        for p in group.get_players():
+            p.sold = False
+        
+        if group.round_number > 1:
+            set_signal(group)
 
 class MarketPeriod(Page):
     def get_timeout_seconds(player):
@@ -104,12 +121,23 @@ class MarketPeriod(Page):
     def get_form_fields(player: Player):
         return ['sold']
 
+    @staticmethod
+    def js_vars(player):
+        return {
+            'signal_history': list(player.participant.vars['signal_history']),
+            'price_history': list(player.participant.vars['price_history']),
+            'signal_history_length': player.participant.vars['signal_history_length'],
+            'price_history_length': player.participant.vars['price_history_length']
+        }
+
     def vars_for_template(player):
         return {
             'sold_status': player.participant.vars['sold'],
             'price': player.participant.vars['price'],
             'payoff': player.participant.vars['payoff'],    
-            'signal': player.participant.vars['signal']
+            'signal': player.participant.vars['signal'],
+            'signal_history': list(player.participant.vars['signal_history']),
+            'price_history': list(player.participant.vars['price_history'])
         }
     
 
@@ -129,10 +157,6 @@ class PeriodResults(Page):
             'last_round_sellers': last_round_sellers,
             'signal': player.participant.vars['signal']
         }
-    
-    @staticmethod
-    def before_next_page(player, timeout_happened):
-        set_signal(player.group)
     
 class ResultsWait(WaitPage):
     after_all_players_arrive = final_sale
