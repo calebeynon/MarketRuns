@@ -3,6 +3,18 @@
 <p>The market period is now open. You will have 4 seconds to decide whether to sell your item. The price is {{price}}.</p>
 <p>The signal is {{ signal }}.</p>
 
+<!-- Graphs Side by Side -->
+<div style="display: flex; gap: 40px; justify-content: center;">
+    <div>
+        <h4>Price History</h4>
+        <canvas id="priceChart" width="400" height="200"></canvas>
+    </div>
+    <div>
+        <h4>Signal History</h4>
+        <canvas id="signalChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
 {% if sold_status %}
     <p>You have already sold your item for {{ payoff }}.</p>
     <button name="sold" value="True" disabled style="opacity:0.5; cursor:not-allowed;">SELL</button>
@@ -10,5 +22,63 @@
     <p>Click the button below to sell your item.</p>
     <button name="sold" value="True">SELL</button>
 {% endif %}
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // These variables are injected by oTree's js_vars
+    const signalHistory = js_vars.signal_history;
+    const priceHistory = js_vars.price_history;
+    
+    // Debug: Log the data to console
+    console.log('Signal History:', signalHistory);
+    console.log('Price History:', priceHistory);
+
+    // Generate x-axis labels (e.g., 0, 1, 2, ...)
+    const xLabels = Array.from({length: priceHistory.length}, (_, i) => i);
+
+    // Price Chart
+    new Chart(document.getElementById('priceChart'), {
+        type: 'line',
+        data: {
+            labels: xLabels,
+            datasets: [{
+                label: 'Price',
+                data: priceHistory,
+                borderColor: 'blue',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: { title: { display: true, text: 'Period' } },
+                y: { title: { display: true, text: 'Price' } }
+            }
+        }
+    });
+
+    // Signal Chart
+    new Chart(document.getElementById('signalChart'), {
+        type: 'line',
+        data: {
+            labels: xLabels,
+            datasets: [{
+                label: 'Signal',
+                data: signalHistory,
+                borderColor: 'green',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: { title: { display: true, text: 'Period' } },
+                y: { title: { display: true, text: 'Signal' } }
+            }
+        }
+    });
+
+</script>
 
 {{endblock}}
