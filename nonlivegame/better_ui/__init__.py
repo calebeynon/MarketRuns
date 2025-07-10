@@ -114,7 +114,7 @@ class MarketPeriodWait(WaitPage):
 
 class MarketPeriod(Page):
     def get_timeout_seconds(player):
-        return 4
+        return 10
     form_model = 'player'
 
     @staticmethod
@@ -135,7 +135,7 @@ class MarketPeriod(Page):
             'sold_status': player.participant.vars['sold'],
             'price': player.participant.vars['price'],
             'payoff': player.participant.vars['payoff'],    
-            'signal': player.participant.vars['signal'],
+            'signal': np.round(player.participant.vars['signal'], 2),
             'signal_history': list(player.participant.vars['signal_history']),
             'price_history': list(player.participant.vars['price_history'])
         }
@@ -146,7 +146,7 @@ class PeriodResultsWait(WaitPage):
 
 class PeriodResults(Page):
     def get_timeout_seconds(player):
-        return 5
+        return 10
     def vars_for_template(player):
         sellers = [p.id_in_group for p in player.group.get_players() if p.participant.vars['sold']]
         last_round_sellers = [p.id_in_group for p in player.group.get_players() if p.sold]
@@ -155,7 +155,7 @@ class PeriodResults(Page):
             'payoff': player.participant.vars['payoff'],
             'sellers': sellers,
             'last_round_sellers': last_round_sellers,
-            'signal': player.participant.vars['signal']
+            'signal': np.round(player.participant.vars['signal'], 2)
         }
     
 class ResultsWait(WaitPage):
