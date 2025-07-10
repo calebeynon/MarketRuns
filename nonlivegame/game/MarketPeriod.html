@@ -7,11 +7,11 @@
 <div style="display: flex; gap: 40px; justify-content: center;">
     <div>
         <h4>Price History</h4>
-        <canvas id="priceChart" width="400" height="200"></canvas>
+        <canvas id="priceChart" width="600" height="300"></canvas>
     </div>
     <div>
         <h4>Signal History</h4>
-        <canvas id="signalChart" width="400" height="200"></canvas>
+        <canvas id="signalChart" width="600" height="300"></canvas>
     </div>
 </div>
 
@@ -34,8 +34,8 @@
     console.log('Signal History:', signalHistory);
     console.log('Price History:', priceHistory);
 
-    // Generate x-axis labels (e.g., 0, 1, 2, ...)
-    const xLabels = Array.from({length: priceHistory.length}, (_, i) => i);
+    // Generate x-axis labels (e.g., 0, 1, 2, ... up to 16)
+    const xLabels = Array.from({length: 17}, (_, i) => i);
 
     // Price Chart
     new Chart(document.getElementById('priceChart'), {
@@ -47,13 +47,22 @@
                 data: priceHistory,
                 borderColor: 'blue',
                 fill: false,
-                tension: 0.1
+                tension: 0.1,
+                stepped: true // Make the line step-wise
             }]
         },
         options: {
             scales: {
-                x: { title: { display: true, text: 'Period' } },
-                y: { title: { display: true, text: 'Price' } }
+                x: {
+                    title: { display: true, text: 'Period' },
+                    min: 0,
+                    max: 16
+                },
+                y: {
+                    title: { display: true, text: 'Price' },
+                    min: 0,
+                    max: 10
+                }
             }
         }
     });
@@ -73,8 +82,16 @@
         },
         options: {
             scales: {
-                x: { title: { display: true, text: 'Period' } },
-                y: { title: { display: true, text: 'Signal' } }
+                x: {
+                    title: { display: true, text: 'Period' },
+                    min: 0,
+                    max: 16
+                },
+                y: {
+                    title: { display: true, text: 'Signal' },
+                    min: 0,
+                    max: 1
+                }
             }
         }
     });

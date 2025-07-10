@@ -1,0 +1,391 @@
+{{ block title }}Market Period{{ endblock }}
+{{ block content }}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .info-section {
+        padding: 30px;
+        background: #f8f9fa;
+        border-left: 5px solid #4CAF50;
+    }
+
+    .info-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .info-card {
+        background: white;
+        padding: 25px;
+        border-radius: 6px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e0e0e0;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .info-card h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 1.2em;
+        font-weight: 600;
+    }
+
+    .info-card .value {
+        font-size: 2em;
+        font-weight: bold;
+        color: #4CAF50;
+        margin: 10px 0;
+    }
+
+    .charts-section {
+        padding: 30px;
+        background: white;
+    }
+
+    .charts-title {
+        text-align: center;
+        font-size: 2em;
+        color: #333;
+        margin-bottom: 30px;
+        font-weight: 300;
+    }
+
+    .charts-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 40px;
+    }
+
+    .chart-wrapper {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 6px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e0e0e0;
+    }
+
+    .chart-title {
+        font-size: 1.4em;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .action-section {
+        padding: 30px;
+        background: #f8f9fa;
+        text-align: center;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .sell-button {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        color: white;
+        border: none;
+        padding: 20px 50px;
+        font-size: 1.4em;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .sell-button:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(255, 107, 107, 0.4);
+    }
+
+    .sell-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .status-message {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .status-sold {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .status-available {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    @media (max-width: 768px) {
+        .info-cards, .charts-container {
+            grid-template-columns: 1fr;
+        }
+        .container {
+            margin: 10px;
+            border-radius: 6px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1>Market Period</h1>
+        <p>Make your trading decision within the time limit</p>
+    </div>
+
+    <div class="info-section">
+        <div class="info-cards">
+            <div class="info-card">
+                <h3>Current Price</h3>
+                <div class="value">${{ price }}</div>
+                <p>Market price for your item</p>
+            </div>
+            <div class="info-card">
+                <h3>Signal Value</h3>
+                <div class="value">{{ signal }}</div>
+                <p>Your current market signal</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="charts-section">
+        <h2 class="charts-title">Market Analytics</h2>
+        <div class="charts-container">
+            <div class="chart-wrapper">
+                <h4 class="chart-title">Price History</h4>
+                <canvas id="priceChart" width="600" height="300"></canvas>
+            </div>
+            <div class="chart-wrapper">
+                <h4 class="chart-title">Signal History</h4>
+                <canvas id="signalChart" width="600" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-section">
+        {% if sold_status %}
+            <div class="status-message status-sold">
+You have already sold your item for ${{ payoff }}
+            </div>
+            <button class="sell-button" name="sold" value="True" disabled>
+                SOLD
+            </button>
+        {% else %}
+            <div class="status-message status-available">
+Click the button below to sell your item at the current market price
+            </div>
+            <button class="sell-button" name="sold" value="True">
+SELL NOW
+            </button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // These variables are injected by oTree's js_vars
+    const signalHistory = js_vars.signal_history;
+    const priceHistory = js_vars.price_history;
+    
+    // Debug: Log the data to console
+    console.log('Signal History:', signalHistory);
+    console.log('Price History:', priceHistory);
+
+    // Generate x-axis labels (e.g., 0, 1, 2, ... up to 16)
+    const xLabels = Array.from({length: 17}, (_, i) => i);
+
+    // Chart.js default configuration
+    Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    Chart.defaults.font.size = 12;
+
+    // Price Chart
+    new Chart(document.getElementById('priceChart'), {
+        type: 'line',
+        data: {
+            labels: xLabels,
+            datasets: [{
+                label: 'Price ($)',
+                data: priceHistory,
+                borderColor: '#4CAF50',
+                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                fill: true,
+                tension: 0.1,
+                stepped: true,
+                borderWidth: 3,
+                pointBackgroundColor: '#4CAF50',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: { 
+                        display: true, 
+                        text: 'Period',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    min: 0,
+                    max: 16,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                },
+                y: {
+                    title: { 
+                        display: true, 
+                        text: 'Price ($)',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    min: 0,
+                    max: 10,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Signal Chart
+    new Chart(document.getElementById('signalChart'), {
+        type: 'line',
+        data: {
+            labels: xLabels,
+            datasets: [{
+                label: 'Signal Value',
+                data: signalHistory,
+                borderColor: '#ff6b6b',
+                backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                fill: true,
+                tension: 0.1,
+                borderWidth: 3,
+                pointBackgroundColor: '#ff6b6b',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: { 
+                        display: true, 
+                        text: 'Period',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    min: 0,
+                    max: 16,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                },
+                y: {
+                    title: { 
+                        display: true, 
+                        text: 'Signal Value',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    min: 0,
+                    max: 1,
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{{ endblock }}

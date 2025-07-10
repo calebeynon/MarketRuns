@@ -6,6 +6,11 @@ SESSION_CONFIGS = [
         app_sequence=['game'],
         num_demo_participants=4,
     ),
+    dict(
+        name = 'nonlivegame_ui',
+        app_sequence = ['better_ui'],
+        num_demo_participants = 4,
+    ),
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs

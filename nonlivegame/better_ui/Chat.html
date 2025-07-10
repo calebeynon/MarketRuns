@@ -1,0 +1,130 @@
+{{ block title }}Chat{{ endblock }}
+{{ block content }}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeIn 0.8s ease-out;
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+
+    .chat-section {
+        flex: 1;
+        padding: 15px;
+        background: #f8f9fa;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+
+
+
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: #e8f5e8;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        width: fit-content;
+        flex-shrink: 0;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        background: #4CAF50;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    .status-text {
+        font-size: 0.8em;
+        color: #2e7d32;
+        font-weight: 500;
+    }
+
+    .participants-info {
+        background: #fff3e0;
+        border: 1px solid #ffb74d;
+        padding: 8px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .participants-info h4 {
+        color: #f57c00;
+        margin: 0 0 6px 0;
+        font-size: 0.95em;
+    }
+
+    .participants-info p {
+        color: #e65100;
+        margin: 0;
+        font-size: 0.8em;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 10px;
+            border-radius: 6px;
+            height: 85vh;
+        }
+        .chat-section {
+            padding: 12px;
+        }
+    }
+</style>
+
+<div class="container">
+
+    <div class="chat-section">
+
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <div class="status-text">Chat is active</div>
+        </div>
+
+        <div class="participants-info">
+            <h4>Participants</h4>
+            <p>All active players in this session can see and participate in this chat</p>
+        </div>
+
+
+        {{ chat }}
+    </div>
+</div>
+
+
+{{ endblock }}
