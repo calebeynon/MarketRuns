@@ -113,9 +113,10 @@ class Chat(Page):
 class MarketPeriodWait(WaitPage):
     @staticmethod
     def after_all_players_arrive(group):
-        # Reset sold status for all players at the beginning of each round
+        # Reset sold status and payoff for all players at the beginning of each round
         for p in group.get_players():
             p.sold = False
+            p.payoff = 0
         
         if group.round_number > 1:
             set_signal(group)
@@ -166,7 +167,11 @@ class PeriodResults(Page):
             'signal': np.round(player.participant.vars['signal'], 2)
         }
     def before_next_page(player, timeout_happened):
-        player.payoff = player.participant.vars['payoff']
+        # Only set player.payoff if the player has sold
+        if player.participant.vars['sold']:
+            player.payoff = player.participant.vars['payoff']
+        else:
+            player.payoff = 0
         player.signal = player.participant.vars['signal']
         player.price = player.participant.vars['price']
         player.state = C.STATE
