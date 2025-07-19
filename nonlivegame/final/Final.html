@@ -1,0 +1,210 @@
+{{ block title }}Final Results{{ endblock }}
+{{ block content }}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #c07683 0%, #9E1B32 100%);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        color: white;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .results-section {
+        padding: 40px;
+        background: #f8f9fa;
+    }
+
+    .payment-breakdown {
+        background: white;
+        padding: 30px;
+        border-radius: 6px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e0e0e0;
+        margin-bottom: 30px;
+    }
+
+    .breakdown-title {
+        font-size: 1.5em;
+        color: #333;
+        margin-bottom: 25px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .payment-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .payment-row:last-of-type {
+        border-bottom: none;
+    }
+
+    .payment-label {
+        font-size: 1.1em;
+        color: #666;
+    }
+
+    .payment-amount {
+        font-size: 1.3em;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .total-row {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid #4CAF50;
+    }
+
+    .total-row .payment-label {
+        font-size: 1.3em;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .total-row .payment-amount {
+        font-size: 2em;
+        font-weight: bold;
+        color: #4CAF50;
+    }
+
+    .app-info {
+        text-align: center;
+        font-size: 0.95em;
+        color: #666;
+        margin-top: 10px;
+        font-style: italic;
+    }
+
+    .instructions {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 6px;
+        padding: 25px;
+        margin-top: 30px;
+        color: #856404;
+        font-size: 1.1em;
+        line-height: 1.6;
+    }
+
+    .instructions h3 {
+        margin: 0 0 15px 0;
+        color: #6c5a0b;
+        font-size: 1.3em;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .footer {
+        padding: 30px;
+        background: white;
+        text-align: center;
+        border-top: 1px solid #e0e0e0;
+        color: #666;
+    }
+
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 10px;
+            border-radius: 6px;
+        }
+        .total-row .payment-amount {
+            font-size: 1.8em;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1>Experiment Complete</h1>
+        <p>Your final payment has been determined</p>
+    </div>
+
+    <div class="results-section">
+        <div class="payment-breakdown">
+            <h2 class="breakdown-title">Payment Breakdown</h2>
+            
+            <div class="payment-row">
+                <span class="payment-label">Participation Bonus</span>
+                <span class="payment-amount">${{ participation_bonus }}</span>
+            </div>
+            
+            <div class="payment-row">
+                <span class="payment-label">Market Earnings (Period {{ selected_app }})</span>
+                <span class="payment-amount">${{ selected_payoff }}</span>
+            </div>
+            
+            <div class="payment-row total-row">
+                <span class="payment-label">Total Payment</span>
+                <span class="payment-amount">${{ total_payment }}</span>
+            </div>
+            
+            <div class="app-info">
+                *Market earnings were randomly selected from one of the four market periods
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>Important Instructions</h3>
+            <p>
+                Your market earnings of <strong>${{ selected_payoff }}</strong> were <strong>randomly selected</strong> from Market Period {{ selected_app }}.
+                This amount, combined with your participation bonus of <strong>${{ participation_bonus }}</strong>, 
+                gives you a total payment of <strong>${{ total_payment }}</strong>.
+            </p>
+            <p>
+                <strong>Please remain seated quietly and await final instructions from the experimenter.</strong>
+            </p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for your participation in this experiment</p>
+    </div>
+</div>
+
+{{ endblock }}
