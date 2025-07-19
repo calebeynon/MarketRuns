@@ -3,7 +3,7 @@ import numpy as np
 import random
 
 class C(BaseConstants):
-    NAME_IN_URL = 'better_ui'
+    NAME_IN_URL = 'chat_noavg4'
     PLAYERS_PER_GROUP = 4
     NUM_ROUNDS = min(np.random.geometric(p=0.125), 14)  # Geometric distribution with mean 8
     INITIAL_PRICE = 8
@@ -19,8 +19,16 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     sold = models.BooleanField(initial=False)
+    signal = models.FloatField(initial=C.INITIAL_SIGNAL)
+    price = models.FloatField(initial=C.INITIAL_PRICE)  
+    state = models.BooleanField(initial=C.STATE)   
 
 #FUNCTIONS
+def creating_session(subsession: Subsession):
+    grouping = [[1,8,10,15],[2,7,9,16],[3,6,12,13],[4,5,11,14]]
+    subsession.set_group_matrix(grouping)
+
+
 def set_all_false(group: Group):
     players = group.get_players()
     for p in players:
@@ -148,8 +156,8 @@ class PeriodResults(Page):
     def get_timeout_seconds(player):
         return 10
     def vars_for_template(player):
-        sellers = [p.id_in_group for p in player.group.get_players() if p.participant.vars['sold']]
-        last_round_sellers = [p.id_in_group for p in player.group.get_players() if p.sold]
+        sellers = [p.participant.label for p in player.group.get_players() if p.participant.vars['sold']]
+        last_round_sellers = [p.participant.label for p in player.group.get_players() if p.sold]
         return {
             'sold_status': player.participant.vars['sold'],
             'payoff': player.participant.vars['payoff'],
@@ -157,6 +165,13 @@ class PeriodResults(Page):
             'last_round_sellers': last_round_sellers,
             'signal': np.round(player.participant.vars['signal'], 2)
         }
+    def before_next_page(player, timeout_happened):
+        player.payoff = player.participant.vars['payoff']
+        player.signal = player.participant.vars['signal']
+        player.price = player.participant.vars['price']
+        player.state = C.STATE
+        player.sold = player.participant.vars['sold']
+
     
 class ResultsWait(WaitPage):
     after_all_players_arrive = final_sale
@@ -168,6 +183,9 @@ class Results(Page):
     def is_displayed(player):
         return player.round_number == C.NUM_ROUNDS
     
+    def before_next_page(player, timeout_happened):
+        player.participant.vars['pay_list'].append(player.participant.vars['payoff'])
+
     def vars_for_template(player):
         return {
             'sold_status': player.participant.vars['sold'],
