@@ -1,74 +1,166 @@
 # MarketRuns
 
-A real-time market simulation game that explores the dynamics of information cascades and market behavior. Players participate in a market where they must make decisions based on their beliefs about the market state and the actions of other participants.
+An experimental economics platform built with oTree for studying market dynamics, information cascades, and trading behavior in controlled laboratory settings. The platform focuses on multi-period market experiments with integrated chat systems and real-time signal processing.
 
 ## Overview
 
-MarketRuns is an interactive web-based game that simulates a market environment where:
-- Players receive private signals about the market state
-- A real-time market price updates based on trading activity
-- Players can observe others' actions and update their beliefs
-- A chat system allows for communication between participants
-- Visual charts display price movements and belief updates
+MarketRuns is a comprehensive experimental platform designed for behavioral economics research. The **`nonlivegame`** folder contains the main experimental framework that enables researchers to:
 
-## Features
+- Conduct controlled market experiments with 4-16 participants
+- Study information cascades and herding behavior in trading environments  
+- Implement various chat and no-chat treatment conditions
+- Collect detailed behavioral and decision-making data
+- Run multi-period experiments with dynamic signal updating
 
-- **Real-time Market Simulation**: Dynamic price updates based on market activity
-- **Interactive UI**: 
-  - Live price and belief charts
-  - Player status tracking
-  - Real-time chat system
-  - Visual feedback for market events
-- **Belief Updating**: Players can update their beliefs based on market signals and other players' actions
-- **Trading Interface**: Simple one-click trading mechanism with a 10-second initial waiting period
-- **Visual Analytics**: 
-  - Price movement charts
-  - Belief updating charts
-  - Player status indicators
+## Experimental Design (nonlivegame)
 
-## Technical Stack
+The `nonlivegame` directory contains multiple experimental treatments:
 
-- Python backend
-- HTML/CSS/JavaScript frontend
-- Chart.js for data visualization
-- Real-time updates using WebSocket technology
+### Core Game Mechanics
+- **4 players per group** organized into market sessions
+- **Variable number of periods** (geometric distribution, mean 8 periods, max 14)
+- **Binary state environment** with probabilistic signals (67.5% accuracy)
+- **Dynamic pricing** based on market activity and selling behavior
+- **Bayesian signal updating** for belief formation
+
+### Treatment Variations
+
+1. **`chat_noavg`** - Primary treatment with chat enabled
+2. **`chat_noavg2`** - Secondary chat treatment variant  
+3. **`chat_noavg3`** - Third chat treatment variant
+4. **`chat_noavg4`** - Fourth chat treatment variant
+5. **`game`** - Base game without specific treatment conditions
+6. **`quiz`** - Pre-experiment comprehension quiz
+7. **`final`** - Post-experiment final results and payoffs
+
+### Experimental Flow
+
+```
+Quiz → Chat Treatment 1 → Chat Treatment 2 → Chat Treatment 3 → Chat Treatment 4 → Final Results
+```
+
+## Key Features
+
+### Market Mechanics
+- **Signal-based Trading**: Players receive private signals about market state
+- **Price Discovery**: Market prices adjust based on selling activity (-$2 per seller)
+- **Payoff Structure**: 
+  - Sellers receive decreasing prices based on order (first seller gets highest price)
+  - Non-sellers receive liquidation value based on true market state
+- **Real-time Visualization**: Dynamic price and signal history charts
+
+### Experimental Controls
+- **Participant Grouping**: Fixed grouping across treatments for within-subject analysis
+- **Random State Assignment**: Binary market state (0 or 1) determined randomly
+- **Standardized Interface**: Professional UI with consistent styling across treatments
+- **Data Collection**: Comprehensive logging of decisions, timing, and chat interactions
+
+### Interactive Elements
+- **Chat System**: Real-time communication between participants (45-second initial chat period)
+- **Visual Analytics**: Live Chart.js visualizations of price and signal histories
+- **Decision Interface**: One-click selling mechanism with 10-second decision windows
+- **Results Feedback**: Period-by-period results showing market outcomes
+
+## Technical Architecture
+
+### Backend (oTree Framework)
+- **Python-based**: Built on the oTree experimental economics platform
+- **Session Management**: Handles participant flow, grouping, and data persistence
+- **Bayesian Updating**: Implements optimal signal processing algorithms
+- **Payment System**: Integrated payoff calculation and participant compensation
+
+### Frontend Technologies
+- **HTML/CSS**: Professional, responsive interface design
+- **JavaScript**: Real-time chart updates and interactive elements
+- **Chart.js**: Dynamic visualization of market data
+- **Bootstrap-style**: Modern, accessible UI components
 
 ## Setup and Installation
 
-1. Clone the repository:
+### Prerequisites
+- Python 3.8+
+- Rye package manager (recommended)
+
+### Installation Steps
+
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/calebeynon/MarketRuns.git
    cd MarketRuns
    ```
 
-2. Create and activate a virtual environment:
+2. **Install dependencies using Rye:**
    ```bash
-   python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   rye sync
    ```
 
-3. Install dependencies:
+3. **Navigate to experimental directory:**
    ```bash
-   pip install -r requirements.lock
+   cd nonlivegame
    ```
 
-4. Run the development server:
+4. **Run the oTree server:**
    ```bash
-   python src/manage.py runserver
+   otree devserver
    ```
 
-## Usage
+5. **Access the experiment:**
+   - Open browser to `http://localhost:8000`
+   - Use the admin interface to create and manage sessions
 
-1. Open your web browser and navigate to `http://localhost:8000`
-2. Join a game session
-3. Observe the market price and other players' actions
-4. Use the chat system to communicate with other participants
-5. Make trading decisions based on your beliefs and market observations
+### Alternative Installation (pip)
+
+If not using Rye:
+```bash
+pip install -r requirements.lock
+cd nonlivegame  
+otree devserver
+```
+
+## Running Experiments
+
+### Session Configuration
+- **Participants**: 16 participants (4 groups of 4)
+- **Duration**: ~45-60 minutes depending on number of periods
+- **Payments**: $7.50 participation fee + variable performance payments
+- **Room Setup**: Uses `participant_labels.txt` for participant identification
+
+### Admin Interface
+1. Navigate to the admin panel
+2. Create a new session using the `chat_noavg` configuration
+3. Generate participant links
+4. Monitor session progress in real-time
+5. Export data after completion
+
+## Data Collection
+
+The platform automatically collects:
+- **Decision Data**: Selling decisions, timing, and payoffs
+- **Signal History**: Complete record of private signals and belief updates
+- **Price Dynamics**: Market price evolution across periods
+- **Chat Logs**: Full transcripts of participant communications
+- **Demographics**: Basic participant information and quiz responses
+
+## Research Applications
+
+This platform is suitable for studying:
+- **Information Cascades**: How private information propagates through markets
+- **Herding Behavior**: Social influence on trading decisions
+- **Communication Effects**: Impact of chat on market efficiency
+- **Signal Processing**: Individual vs. social learning in uncertain environments
+- **Market Microstructure**: Price formation in thin markets
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions welcome! Areas for development:
+- Additional treatment variations
+- Enhanced data visualization
+- Mobile-responsive improvements
+- Advanced statistical analysis tools
+
+Please submit Pull Requests with detailed descriptions of changes.
 
 ## License
 
+MIT License - See LICENSE file for details.
 
