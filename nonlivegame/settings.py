@@ -8,7 +8,7 @@ SESSION_CONFIGS = [
     ),
     dict(
         name = 'nonlivegame_ui',
-        app_sequence = ['better_ui'],
+        app_sequence = ['quiz','better_ui'],
         num_demo_participants = 4,
     ),
 ]
