@@ -228,8 +228,11 @@
 
 <div class="container">
     <div class="header">
-        <h1>Final Results</h1>
-        <p>Your trading session has concluded</p>
+        <h1>Round {{ round_number }} Complete</h1>
+        <p>Your trading results for this round</p>
+        <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 5px;">
+            <strong>Segment {{ segment_number }}/4 | Round {{ round_number }} | Period {{ period_number }}</strong>
+        </div>
     </div>
 
     <div class="results-section">
@@ -262,8 +265,23 @@
         </div>
 
         <div class="completion-message">
-            <h3>Session Complete</h3>
-            <p>Thank you for participating in this trading experiment. Your decisions and behavior contribute valuable data to our research.</p>
+            <h3>Round {{ round_number }} Complete</h3>
+            <p>Thank you for completing this round. Your decisions contribute valuable data to our research.</p>
+        </div>
+        
+        <!-- Number Display Section -->
+        <div style="margin: 40px 0; padding: 40px; background: linear-gradient(135deg, #6c63ff 0%, #5a52d5 100%); border-radius: 8px; box-shadow: 0 10px 30px rgba(108, 99, 255, 0.3);">
+            <h3 style="color: white; margin-bottom: 20px; font-size: 1.5em; font-weight: 300;">Next Stage Indicator</h3>
+            <div style="width: 150px; height: 150px; margin: 0 auto; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
+                <span style="font-size: 5em; font-weight: bold; color: #6c63ff;">{{ display_number }}</span>
+            </div>
+            <p style="color: white; margin-top: 20px; font-size: 1.1em;">
+                {% if display_number == 8 %}
+                    <strong>Moving to next segment!</strong>
+                {% else %}
+                    <strong>Continue to next round in this segment</strong>
+                {% endif %}
+            </p>
         </div>
 
         <div class="stats-grid">

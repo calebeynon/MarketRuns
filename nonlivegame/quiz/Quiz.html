@@ -498,7 +498,24 @@
                 <div class="question-text">Scenario Question: You are in a round where 3 participants remain in the market. The current market price is $6. If you are the only person to sell this round, how much will you receive?</div>
                 <ul class="options">
                     <li class="option">
-                        <input type="text" name="q12" id="q12" placeholder="Enter dollar amount (e.g., 6)">
+                        <label>
+                            <input type="radio" name="q12" value="a"> a) $8
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q12" value="b"> b) $6
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q12" value="c"> c) $4
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q12" value="d"> d) $2
+                        </label>
                     </li>
                 </ul>
                 <span class="feedback" id="feedback12"></span>
@@ -561,17 +578,15 @@
             q9: 'd',
             q10: 'c',
             q11: 'b',
-            q12: '6',
+            q12: 'b',
             q13: 'a'
         };
 
         let allCorrect = true;
         let correctCount = 0;
 
-        // Check questions 1-11 and 13 (radio buttons)
+        // Check all questions (radio buttons)
         for (let i = 1; i <= 13; i++) {
-            if (i === 12) continue; // Skip question 12 as it's handled separately
-            
             let selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
             let feedbackElement = document.getElementById(`feedback${i}`);
             
@@ -588,24 +603,6 @@
                 feedbackElement.style.color = "red";
                 allCorrect = false;
             }
-        }
-
-        // Check question 12 (text input)
-        let q12Answer = document.getElementById('q12').value.trim().replace(/[$\s]/g, '');
-        let feedback12 = document.getElementById('feedback12');
-        
-        if (!q12Answer) {
-            feedback12.textContent = "✘ Please enter an answer!";
-            feedback12.style.color = "red";
-            allCorrect = false;
-        } else if (q12Answer === answers.q12) {
-            feedback12.textContent = "✔ Correct!";
-            feedback12.style.color = "green";
-            correctCount++;
-        } else {
-            feedback12.textContent = "✘ Try again!";
-            feedback12.style.color = "red";
-            allCorrect = false;
         }
 
         // Update progress
