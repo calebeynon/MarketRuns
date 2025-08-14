@@ -20,7 +20,7 @@ class C(BaseConstants):
     NUM_ROUNDS = sum(PERIODS_PER_ROUND)
     
     INITIAL_PRICE = 8
-    STATE = np.random.randint(0, 2)
+    STATE = [np.random.randint(0, 2) for _ in range(NUM_ROUNDS_IN_SEGMENT)]
     PCORRECT = 0.675
     INITIAL_SIGNAL = 0.5
 
@@ -34,7 +34,7 @@ class Player(BasePlayer):
     sold = models.BooleanField(initial=False)
     signal = models.FloatField(initial=C.INITIAL_SIGNAL)
     price = models.FloatField(initial=C.INITIAL_PRICE)  
-    state = models.BooleanField(initial=C.STATE)
+    state = models.BooleanField(initial=C.STATE[0])
     round_number_in_segment = models.IntegerField()
     period_in_round = models.IntegerField()   
 
@@ -70,6 +70,7 @@ def creating_session(subsession: Subsession):
         # Initialize pay_list only on the very first round
         if subsession.round_number == 1:
             p.participant.vars['pay_list'] = []
+            p.participant.vars['pay_list_random'] = []
 
 
 def set_all_false(group: Group):
@@ -109,7 +110,7 @@ def final_sale(group: Group):
     players = group.get_players()
     a_price = players[0].participant.vars['price']
     non_sellers = [p for p in players if not p.participant.vars['sold']]
-    if C.STATE == 0:
+    if C.STATE[players[0].round_number_in_segment - 1] == 0:
         np.random.shuffle(non_sellers)
         pays = np.linspace(a_price, a_price - 2*len(non_sellers) + 2, len(non_sellers))
         for i, p in enumerate(non_sellers):
@@ -121,7 +122,7 @@ def final_sale(group: Group):
 def set_signal(group: Group):
     players = group.get_players()
     a_signal = players[0].participant.vars['signal']
-    if C.STATE:
+    if C.STATE[players[0].round_number_in_segment - 1]:
         signal = 1 if random.random() < C.PCORRECT else 0
         if signal:
             new_signal = (C.PCORRECT * a_signal) / ((C.PCORRECT * a_signal) + ((1 - C.PCORRECT) * (1 - a_signal)))
@@ -147,7 +148,7 @@ class SegmentIntro(Page):
     
     def get_timeout_seconds(player):
         return 15
-    
+
     def vars_for_template(player):
         # Get group members
         group_members = [p.participant.label for p in player.group.get_players()]
@@ -266,7 +267,7 @@ class PeriodResults(Page):
             player.payoff = 0
         player.signal = player.participant.vars['signal']
         player.price = player.participant.vars['price']
-        player.state = C.STATE
+        player.state = C.STATE[player.round_number_in_segment - 1]
         player.sold = player.participant.vars['sold']
 
     
@@ -284,6 +285,12 @@ class Results(Page):
     
     def before_next_page(player, timeout_happened):
         player.participant.vars['pay_list'].append(player.participant.vars['payoff'])
+        
+        # Only add a random payoff at the end of each segment
+        if player.round_number_in_segment == C.NUM_ROUNDS_IN_SEGMENT:
+            # Get all payoffs from this segment and randomly select one
+            segment_payoffs = player.participant.vars['pay_list'][-C.NUM_ROUNDS_IN_SEGMENT:]  # Last N payoffs
+            player.participant.vars['pay_list_random'].append(random.choice(segment_payoffs))
 
     def vars_for_template(player):
         # Show 8 if it's the final round, otherwise random 1-7

@@ -1,5 +1,6 @@
 from otree.api import *
 import random
+import numpy as np
 
 class C(BaseConstants):
     NAME_IN_URL = 'final'
@@ -22,17 +23,17 @@ class Final(Page):
     def vars_for_template(player):
         # Get payoff list from participant vars
         pay_list = player.participant.vars.get('pay_list', [])
+        pay_list_random = player.participant.vars.get('pay_list_random', [])
         
         # If no payoffs recorded, use a default
         if not pay_list:
             selected_payoff = 0
             selected_app = 0
         else:
-            # Randomly select an index
-            selected_index = random.randint(0, len(pay_list) - 1)
-            selected_payoff = pay_list[selected_index]
-            # App number is index + 1 (since apps are numbered 1-4)
-            selected_app = selected_index + 1
+            # Sum all payoffs from pay_list
+            selected_payoff = sum(pay_list_random)
+            # App number is set to 0 since we're summing all apps
+            selected_app = 0
         
         # Calculate total payment
         participation_bonus = 7.50
@@ -47,11 +48,20 @@ class Final(Page):
         # Set as final payoff
         player.payoff = total_payment
         
+        # Calculate real-world currency values
+        # Conversion rate is 0.025 USD per point
+        selected_payoff_usd = selected_payoff * 0.25
+        participation_bonus_usd = participation_bonus
+        total_payment_usd = selected_payoff_usd + participation_bonus_usd
+        
         return {
             'selected_payoff': selected_payoff,
             'selected_app': selected_app,
             'participation_bonus': participation_bonus,
-            'total_payment': total_payment
+            'total_payment': total_payment,
+            'selected_payoff_usd': np.round(selected_payoff_usd, 2),
+            'participation_bonus_usd': np.round(participation_bonus_usd, 2),
+            'total_payment_usd': np.round(total_payment_usd, 2)
         }
 
 page_sequence = [Final]

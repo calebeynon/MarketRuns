@@ -205,7 +205,7 @@
         <div class="info-cards">
             <div class="info-card">
                 <h3>Current Price</h3>
-                <div class="value">${{ price }}</div>
+                <div class="value">{{ price }} ECUs</div>
                 <p>Market price for your item</p>
             </div>
             <div class="info-card">
@@ -233,7 +233,7 @@
     <div class="action-section">
         {% if sold_status %}
             <div class="status-message status-sold">
-You have already sold your item for ${{ payoff }}
+You have already sold your item for {{ payoff }} ECUs
             </div>
             <button class="sell-button" name="sold" value="True" disabled>
                 SOLD
@@ -273,7 +273,7 @@ SELL NOW
         data: {
             labels: xLabels,
             datasets: [{
-                label: 'Price ($)',
+                label: 'Price (ECUs)',
                 data: priceHistory,
                 borderColor: '#4CAF50',
                 backgroundColor: 'rgba(76, 175, 80, 0.1)',
@@ -316,7 +316,7 @@ SELL NOW
                 y: {
                     title: { 
                         display: true, 
-                        text: 'Price ($)',
+                        text: 'Price (ECUs)',
                         font: { size: 14, weight: 'bold' }
                     },
                     min: 0,

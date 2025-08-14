@@ -17,4 +17,5 @@ class Group(BaseGroup):
 class Quiz(Page):
     pass
 
-page_sequence = [Quiz]
+
+page_sequence = [ Quiz]

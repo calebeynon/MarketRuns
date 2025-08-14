@@ -266,9 +266,9 @@
                 <h3>Your Payoff</h3>
                 <div class="value payoff-value">
                     {% if sold_status %}
-                        ${{ payoff }}
+                        {{ payoff }} ECUs
                     {% else %}
-                        $0
+                        0 ECUs
                     {% endif %}
                 </div>
                 <p>Amount earned this period</p>
@@ -278,7 +278,7 @@
         <div class="status-section">
             {% if sold_status %}
                 <div class="status-message status-sold">
-Success! You sold your item for ${{ payoff }}
+Success! You sold your item for {{ payoff }} ECUs
                 </div>
             {% else %}
                 <div class="status-message status-not-sold">
