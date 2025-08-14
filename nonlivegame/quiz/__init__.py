@@ -14,8 +14,14 @@ class Player(BasePlayer):
 class Group(BaseGroup):
     pass
 
+class Instructions(Page):
+    def vars_for_template(player):
+        return {
+            'id': player.participant.label
+        }
+
 class Quiz(Page):
     pass
 
 
-page_sequence = [ Quiz]
+page_sequence = [Instructions, Quiz]

@@ -1,0 +1,388 @@
+{{ block title }}Instructions{{ endblock }}
+{{ block content }}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #c07683 0%, #9E1B32 100%);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+        margin: 10px 0 0;
+        font-size: 1.1em;
+        opacity: 0.9;
+    }
+
+    .instructions-section {
+        padding: 30px;
+        background: white;
+    }
+
+    .instruction-chunk {
+        margin-bottom: 30px;
+        padding: 25px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 5px solid #4CAF50;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        display: none;
+        animation: slideIn 0.5s ease-out;
+    }
+
+    .instruction-chunk.revealed {
+        display: block;
+    }
+
+    @keyframes slideIn {
+        from { 
+            opacity: 0; 
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0);
+        }
+    }
+
+    .chunk-title {
+        font-weight: bold;
+        color: #4CAF50;
+        font-size: 1.3em;
+        margin-bottom: 15px;
+    }
+
+    .chunk-content {
+        font-size: 1.05em;
+        line-height: 1.6;
+        color: #333;
+    }
+
+    .chunk-content ul {
+        margin: 15px 0;
+        padding-left: 25px;
+    }
+
+    .chunk-content li {
+        margin-bottom: 10px;
+    }
+
+    .chunk-content table {
+        width: 100%;
+        margin: 20px 0;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .chunk-content table th,
+    .chunk-content table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .chunk-content table th {
+        background: #4CAF50;
+        color: white;
+        font-weight: 600;
+    }
+
+    .chunk-content table tr:nth-child(even) {
+        background: #f8f9fa;
+    }
+
+    .continue-button {
+        background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        font-size: 1.1em;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(33, 150, 243, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 20px auto;
+        display: block;
+    }
+
+    .continue-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(33, 150, 243, 0.4);
+    }
+
+    .continue-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+
+    .progress-indicator {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 0.95em;
+        color: #666;
+    }
+
+    .action-section {
+        padding: 30px;
+        background: #f8f9fa;
+        text-align: center;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    #nextButtonContainer {
+        display: none;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    #nextButtonContainer.visible {
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 10px;
+            border-radius: 6px;
+        }
+        .instructions-section {
+            padding: 20px;
+        }
+        .instruction-chunk {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1>Market Runs Instructions</h1>
+        <p>Please read through all instructions carefully</p>
+    </div>
+
+    <div class="instructions-section">
+        <!-- Welcome Page -->
+        <div class="instruction-chunk revealed" id="chunk1">
+            <div class="chunk-title">Welcome</div>
+            <div class="chunk-content">
+                <p>Welcome to our study. At this time, please make sure you have turned off and put away all personal electronic devices. This study will take no more than 75 minutes.</p>
+                
+                <p>You will be paid your earnings from the study in addition to the $7.50 participation payment in cash. Your earnings will depend on the decisions you and others make in this study, so it is important that you fully understand these instructions.</p>
+                
+                <p>These earnings will be denominated in experimental currency units (or ECUs for short). At the end of the study, ECUs will be converted into dollars at the exchange rate of <strong>4 ECUs for 1 dollar</strong> and will be paid to you privately in cash.</p>
+                
+                <p>If you have a question at any point, please raise your hand.</p>
+            </div>
+        </div>
+
+        <!-- Page 1 -->
+        <div class="instruction-chunk" id="chunk2">
+            <div class="chunk-title">Study Structure</div>
+            <div class="chunk-content">
+                <p>You will interact with other participants in this experiment through a virtual environment. Your identity or identifying characteristics will not be shared. You will be referred to by other participants as <strong>Participant {{id}}</strong>.</p>
+                
+                <p>This study consists of <strong>4 segments</strong>. At the beginning of these segments, all participants will be randomly placed in a group of 4. Each group will remain the same throughout a segment.</p>
+                
+                <p>When a new segment begins, all participants will be randomly placed in a new group of 4. In these 4 segments, you will be placed in 4 different groups and will not interact with the same persons in different segments.</p>
+            </div>
+        </div>
+
+        <!-- Page 2 -->
+        <div class="instruction-chunk" id="chunk3">
+            <div class="chunk-title">Rounds and Segments</div>
+            <div class="chunk-content">
+                <p>Each segment consists of an uncertain number of <strong>rounds</strong>. The number of rounds in a segment is determined as follows:</p>
+                
+                <ul>
+                    <li>For each round, the computer has randomly selected a number from 1 to 8, each with an equal chance (1/8 or 12.5%), for the entire session to determine whether another round of the same segment will follow.</li>
+                    
+                    <li>If the selected number is from 1 to 7, the next round will follow. If the selected number is 8, the segment will end.</li>
+                    
+                    <li>We will reveal the selected number to you at the end of each round. So, at the beginning of each round, you only know that there is an <strong>87.5% chance</strong> that another round of the same segment will follow and there is a <strong>12.5% chance</strong> that the segment will end after this round.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page 3 -->
+        <div class="instruction-chunk" id="chunk4">
+            <div class="chunk-title">Market Periods</div>
+            <div class="chunk-content">
+                <p>Each round consists of an uncertain number of <strong>market periods</strong> (or trading periods). Each market period lasts <strong>4 seconds</strong>. The number of market periods in a round is determined as follows:</p>
+                
+                <ul>
+                    <li>After each market period, the computer has randomly selected a number from 1 to 8, each with an equal chance (1/8 or 12.5%), for the entire session to determine whether another market period of the same round will follow.</li>
+                    
+                    <li>If the selected number is from 1 to 7, the next market period will immediately follow. If the selected number is 8, the round will end.</li>
+                    
+                    <li>Since the next market period follows immediately (if the round continues), we will not reveal the selected number after each market period. We will only inform you after the last market period that the round has ended.</li>
+                    
+                    <li>At the beginning of each market period, you only know that there is an <strong>87.5% chance</strong> that another period of the same round will follow and there is a <strong>12.5% chance</strong> that the round will end immediately after this period.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page 4 -->
+        <div class="instruction-chunk" id="chunk5">
+            <div class="chunk-title">Your Asset and Trading Decisions</div>
+            <div class="chunk-content">
+                <p>You will be endowed with an asset at the beginning of each round. This asset has an <strong>unknown final value</strong>. The value will either be <strong>20 ECUs</strong> or the <strong>current market price</strong> at the end of each round.</p>
+                
+                <p>In each market period you will face the following decision task:</p>
+                
+                <ul>
+                    <li>Each participant will receive information about the final value of the asset. There will be a decimal displayed in text and graphical form. This is the probability in decimal form that the asset's final value is 20. For example, a value of 0.58 represents a 58% chance that the asset's final value is 20. This probability will update every round.</li>
+                    
+                    <li>All participants begin each round <strong>in the market</strong>. Each participant can freely exit the market during a market period by clicking the <strong>SELL button</strong>.</li>
+                    
+                    <li>By clicking the SELL button, you are accepting the current market price for that market period. You will also be <strong>out of the market</strong> for the entirety of that round. It will not affect your status in future rounds. The market price will be displayed on the screen in text and graphical form.</li>
+                    
+                    <li>The current market price is determined by the number of participants currently <strong>in the market</strong>. The market price according to the number of participants is as follows:</li>
+                </ul>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Number of Participants</th>
+                            <th>Market Price (ECUs)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>4</td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>6</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>2</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>Each time someone exits the market, the price will update in the next market period.</p>
+                
+                <ul>
+                    <li>If you elect to not hit the SELL button at any point during a round, you will receive the asset's final value for that round. Keep in mind there are two possibilities for this value.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page 5 (continuation of Page 4) -->
+        <div class="instruction-chunk" id="chunk6">
+            <div class="chunk-title">Asset Final Value Distribution (IMPORTANT)</div>
+            <div class="chunk-content">
+                <p>If the asset's final value ends up being the current market price and there are multiple participants still in the market, then the price received will be <strong>randomized</strong>.</p>
+                
+                <p>For example, if there are 3 participants remaining at the end of a market period and the asset's final value is the current market price, one person will receive 6, another 4, and the other 2. This will be completely random.</p>
+            </div>
+        </div>
+
+        <!-- Page 6 (Communication - placeholder) -->
+        <div class="instruction-chunk" id="chunk7">
+            <div class="chunk-title">Communication in Segments 3 and 4</div>
+            <div class="chunk-content">
+                <p>During segments 3 and 4, you will have the ability to communicate with other participants in your group through a chat interface.</p>
+                
+                <p>Communication rules and guidelines will be provided at the beginning of those segments.</p>
+            </div>
+        </div>
+
+        <!-- Page 7 (Payment) -->
+        <div class="instruction-chunk" id="chunk8">
+            <div class="chunk-title">Payment Calculation</div>
+            <div class="chunk-content">
+                <p>Even though you will make decisions in many rounds and the computer will calculate your earnings in ECUs for all of these rounds, the computer will randomly select <strong>only 1 round from each of the four segments</strong> to calculate your cash payment.</p>
+                
+                <p>The computer will use the sum of your earnings from the 4 selected rounds and convert it into dollars at the exchange rate of <strong>4 ECUs for 1 dollar</strong>.</p>
+                
+                <p>You will know which rounds are selected for your cash earnings at the end of the study.</p>
+            </div>
+        </div>
+
+        <div class="progress-indicator" id="progressIndicator">
+            Page <span id="currentPage">1</span> of 8
+        </div>
+
+        <button type="button" class="continue-button" id="continueBtn">CONTINUE</button>
+    </div>
+
+    <div class="action-section">
+        <div id="nextButtonContainer">
+            {{ next_button }}
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentChunk = 1;
+    const totalChunks = 8;
+    
+    document.getElementById("continueBtn").addEventListener("click", function() {
+        if (currentChunk < totalChunks) {
+            currentChunk++;
+            document.getElementById(`chunk${currentChunk}`).classList.add('revealed');
+            document.getElementById("currentPage").textContent = currentChunk;
+            
+            // Scroll to the new chunk
+            document.getElementById(`chunk${currentChunk}`).scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+            
+            // If we've revealed all chunks, hide continue button and show next button
+            if (currentChunk === totalChunks) {
+                this.disabled = true;
+                this.textContent = "ALL INSTRUCTIONS READ";
+                document.getElementById("nextButtonContainer").classList.add('visible');
+            }
+        }
+    });
+    
+    // Update initial progress indicator
+    document.getElementById("currentPage").textContent = "1";
+</script>
+
+{{ endblock }}
