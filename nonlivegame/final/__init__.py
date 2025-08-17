@@ -49,7 +49,7 @@ class Final(Page):
         player.payoff = total_payment
         
         # Calculate real-world currency values
-        # Conversion rate is 0.025 USD per point
+        # Conversion rate is 0.25 USD per point
         selected_payoff_usd = selected_payoff * 0.25
         participation_bonus_usd = participation_bonus
         total_payment_usd = selected_payoff_usd + participation_bonus_usd
