@@ -232,7 +232,7 @@ class MarketPeriod(Page):
             'sold_status': player.participant.vars['sold'],
             'price': player.participant.vars['price'],
             'payoff': player.participant.vars['payoff'],    
-            'signal': np.round(player.participant.vars['signal'], 2),
+            'signal': int(np.round(player.participant.vars['signal'] * 100)),
             'signal_history': list(player.participant.vars['signal_history']),
             'price_history': list(player.participant.vars['price_history']),
             'segment_number': C.SEGMENT_NUMBER,
@@ -255,7 +255,7 @@ class PeriodResults(Page):
             'payoff': player.participant.vars['payoff'],
             'sellers': sellers,
             'last_round_sellers': last_round_sellers,
-            'signal': np.round(player.participant.vars['signal'], 2),
+            'signal': int(np.round(player.participant.vars['signal'] * 100)),
             'segment_number': C.SEGMENT_NUMBER,
             'round_number': player.round_number_in_segment,
             'period_number': player.period_in_round

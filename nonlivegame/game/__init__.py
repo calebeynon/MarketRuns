@@ -135,7 +135,7 @@ class MarketPeriod(Page):
             'sold_status': player.participant.vars['sold'],
             'price': player.participant.vars['price'],
             'payoff': player.participant.vars['payoff'],    
-            'signal': player.participant.vars['signal'],
+            'signal': int(round(player.participant.vars['signal'] * 100)),
             'signal_history': list(player.participant.vars['signal_history']),
             'price_history': list(player.participant.vars['price_history'])
         }
@@ -155,7 +155,7 @@ class PeriodResults(Page):
             'payoff': player.participant.vars['payoff'],
             'sellers': sellers,
             'last_round_sellers': last_round_sellers,
-            'signal': player.participant.vars['signal']
+            'signal': int(round(player.participant.vars['signal'] * 100))
         }
     
 class ResultsWait(WaitPage):
