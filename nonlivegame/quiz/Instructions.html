@@ -300,7 +300,11 @@
                 </table>
                 
                 <p>Each time someone exits the market, the price will update in the next market period.</p>
-                
+
+                <p>If you exit the market in a market period, and another participant also exits the market in the same market period, then one person will receive the current market price and the other will receive the current market price minus 2 ECUs.</p>
+                <p>For example, if the current market price is 6 ECUs and two participants exit the market in the same market period, one person will receive 6 ECUs and the other will receive 4 ECUs.</p>
+                <p>The same logic applies if more than two participants exit the market in the same market period.</p>
+
                 <ul>
                     <li>If you elect to not hit the SELL button at any point during a round, you will receive the asset's final value for that round. Keep in mind there are two possibilities for this value.</li>
                 </ul>
@@ -309,7 +313,7 @@
 
         <!-- Page 5 (continuation of Page 4) -->
         <div class="instruction-chunk" id="chunk6">
-            <div class="chunk-title">Asset Final Value Distribution (IMPORTANT)</div>
+            <div class="chunk-title">Asset Final Value Distribution</div>
             <div class="chunk-content">
                 <p>If the asset's final value ends up being the current market price and there are multiple participants still in the market, then the price received will be <strong>randomized</strong>.</p>
                 
@@ -335,7 +339,6 @@
                 
                 <p>The computer will use the sum of your earnings from the 4 selected rounds and convert it into dollars at the exchange rate of <strong>4 ECUs for 1 dollar</strong>.</p>
                 
-                <p>You will know which rounds are selected for your cash earnings at the end of the study.</p>
             </div>
         </div>
 

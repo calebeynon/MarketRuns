@@ -6,6 +6,7 @@ class C(BaseConstants):
     NAME_IN_URL = 'final'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
+    ECUS_DOLLAR = 4
 
 class Subsession(BaseSubsession):
     pass
@@ -18,6 +19,7 @@ class Player(BasePlayer):
     selected_app = models.IntegerField()
     participation_bonus = models.FloatField(initial=7.50)
     total_payment = models.FloatField()
+    survey_bonus = models.FloatField()
 
 class Final(Page):
     def vars_for_template(player):
@@ -37,12 +39,14 @@ class Final(Page):
         
         # Calculate total payment
         participation_bonus = 7.50
-        total_payment = selected_payoff + participation_bonus
+        survey_bonus = 2.50
+        total_payment = selected_payoff/C.ECUS_DOLLAR + participation_bonus + survey_bonus
         
         # Store in player fields
         player.selected_payoff = selected_payoff
         player.selected_app = selected_app
         player.participation_bonus = participation_bonus
+        player.survey_bonus = survey_bonus
         player.total_payment = total_payment
         
         # Set as final payoff
@@ -52,7 +56,8 @@ class Final(Page):
         # Conversion rate is 0.25 USD per point
         selected_payoff_usd = selected_payoff * 0.25
         participation_bonus_usd = participation_bonus
-        total_payment_usd = selected_payoff_usd + participation_bonus_usd
+        survey_bonus_usd = survey_bonus
+        total_payment_usd = selected_payoff_usd + participation_bonus_usd + survey_bonus_usd
         
         return {
             'selected_payoff': selected_payoff,
@@ -61,6 +66,7 @@ class Final(Page):
             'total_payment': total_payment,
             'selected_payoff_usd': np.round(selected_payoff_usd, 2),
             'participation_bonus_usd': np.round(participation_bonus_usd, 2),
+            'survey_bonus_usd': np.round(survey_bonus_usd, 2),
             'total_payment_usd': np.round(total_payment_usd, 2)
         }
 

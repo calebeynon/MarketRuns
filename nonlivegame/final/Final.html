@@ -176,6 +176,11 @@
                 <span class="payment-amount">{{ selected_payoff_usd }} USD</span>
             </div>
             
+            <div class="payment-row">
+                <span class="payment-label">Survey Bonus</span>
+                <span class="payment-amount">{{ survey_bonus_usd }} USD</span>
+            </div>
+            
             <div class="payment-row total-row">
                 <span class="payment-label">Total Payment</span>
                 <span class="payment-amount">{{ total_payment_usd }} USD</span>
@@ -190,7 +195,7 @@
             <h3>Important Instructions</h3>
             <p>
                 Your market earnings of {{selected_payoff}} were converted to <strong>${{ selected_payoff_usd }}</strong> and <strong>summed</strong> from all four market periods.
-                This amount, combined with your participation bonus of <strong>${{ participation_bonus_usd }}</strong>, 
+                This amount, combined with your participation bonus of <strong>${{ participation_bonus_usd }}</strong> and survey bonus of <strong>${{ survey_bonus_usd }}</strong>, 
                 gives you a total payment of <strong>${{ total_payment_usd }}</strong>.
                 <br>
                 <br>
@@ -203,7 +208,6 @@
         <p>Thank you for your participation in this experiment</p>
     </div>
 
-    {{ next_button }}
 </div>
 
 {{ endblock }}
