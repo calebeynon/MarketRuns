@@ -3,11 +3,8 @@
 
 <style>
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #c07683 0%, #9E1B32 100%);
-        margin: 0;
-        padding: 20px;
-        min-height: 100vh;
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
     }
 
     .container {
@@ -26,7 +23,7 @@
     }
 
     .header {
-        background: linear-gradient(135deg, #6c63ff 0%, #5a52d5 100%);
+        background: #555;
         color: white;
         padding: 30px;
         text-align: center;
@@ -81,11 +78,11 @@
     }
 
     .signal-value {
-        color: #ff6b6b;
+        color: #555;
     }
 
     .payoff-value {
-        color: #4CAF50;
+        color: #555;
     }
 
     .status-section {
@@ -106,15 +103,15 @@
     }
 
     .status-sold {
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
+        background: #f5f5f5;
+        color: #424242;
+        border: 1px solid #e0e0e0;
     }
 
     .status-not-sold {
-        background: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
+        background: #f5f5f5;
+        color: #424242;
+        border: 1px solid #e0e0e0;
     }
 
     .sellers-section {
@@ -155,7 +152,7 @@
     }
 
     .sellers-table thead {
-        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        background: #555;
         color: white;
     }
 
@@ -177,16 +174,16 @@
     }
 
     .sellers-table tbody tr.recent-seller {
-        background: #ffebee;
-        color: #c62828;
+        background: #f5f5f5;
+        color: #424242;
         font-weight: bold;
         animation: highlight 2s ease-in-out;
     }
 
     @keyframes highlight {
-        0% { background: #ffcdd2; }
-        50% { background: #ef5350; color: white; }
-        100% { background: #ffebee; color: #c62828; }
+        0% { background: #f5f5f5; }
+        50% { background: #e0e0e0; color: #424242; }
+        100% { background: #f5f5f5; color: #424242; }
     }
 
     .sellers-table td {
@@ -221,8 +218,8 @@
     }
 
     .legend-recent {
-        background: #ffebee;
-        border: 2px solid #c62828;
+        background: #f5f5f5;
+        border: 2px solid #555;
     }
 
     .legend-normal {
@@ -268,7 +265,7 @@
                     {% if sold_status %}
                         {{ payoff }} ECUs
                     {% else %}
-                        0 ECUs
+                        --
                     {% endif %}
                 </div>
                 <p>Amount earned this period</p>
@@ -278,7 +275,7 @@
         <div class="status-section">
             {% if sold_status %}
                 <div class="status-message status-sold">
-Success! You sold your item for {{ payoff }} ECUs
+You sold your item for {{ payoff }} ECUs
                 </div>
             {% else %}
                 <div class="status-message status-not-sold">
@@ -290,7 +287,7 @@ You chose not to sell your item this period
         <div class="sellers-section">
             <h3 class="sellers-title">Active Sellers</h3>
             <p class="sellers-subtitle">
-                Players who have sold their items. Recent sellers are highlighted in red.
+                Players who have sold their items. Recent sellers are highlighted.
             </p>
             
             <div class="sellers-table-container">
@@ -317,7 +314,7 @@ You chose not to sell your item this period
             <div class="legend">
                 <div class="legend-item">
                     <div class="legend-color legend-recent"></div>
-                    <span>Recent sellers (this round)</span>
+                    <span>Recent sellers (this period)</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-color legend-normal"></div>

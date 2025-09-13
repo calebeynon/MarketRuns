@@ -3,11 +3,8 @@
 
 <style>
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #c07683 0%, #9E1B32 100%);
-        margin: 0;
-        padding: 20px;
-        min-height: 100vh;
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
     }
 
     .container {
@@ -26,7 +23,7 @@
     }
 
     .header {
-        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        background: #555;
         color: white;
         padding: 30px;
         text-align: center;
@@ -43,7 +40,7 @@
     .info-section {
         padding: 30px;
         background: #f8f9fa;
-        border-left: 5px solid #4CAF50;
+        border-left: 5px solid #555;
     }
 
     .info-cards {
@@ -77,7 +74,7 @@
     .info-card .value {
         font-size: 2em;
         font-weight: bold;
-        color: #4CAF50;
+        color: #555;
         margin: 10px 0;
     }
 
@@ -125,7 +122,7 @@
     }
 
     .sell-button {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        background: #555;
         color: white;
         border: none;
         padding: 20px 50px;
@@ -134,14 +131,14 @@
         border-radius: 6px;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        box-shadow: 0 8px 20px rgba(85, 85, 85, 0.3);
         text-transform: uppercase;
         letter-spacing: 1px;
     }
 
     .sell-button:hover:not(:disabled) {
         transform: translateY(-3px);
-        box-shadow: 0 12px 25px rgba(255, 107, 107, 0.4);
+        box-shadow: 0 12px 25px rgba(85, 85, 85, 0.4);
     }
 
     .sell-button:disabled {
@@ -160,15 +157,15 @@
     }
 
     .status-sold {
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
+        background: #f5f5f5;
+        color: #424242;
+        border: 1px solid #e0e0e0;
     }
 
     .status-available {
-        background: #fff3cd;
-        color: #856404;
-        border: 1px solid #ffeaa7;
+        background: #f5f5f5;
+        color: #424242;
+        border: 1px solid #e0e0e0;
     }
 
     .pulse {
@@ -196,6 +193,9 @@
     <div class="header">
         <h1>Market Period</h1>
         <p>Make your trading decision within the time limit</p>
+        <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 5px;">
+            <strong>Segment {{ segment_number }}/4 | Round {{ round_number }} | Period {{ period_number }}</strong>
+        </div>
     </div>
 
     <div class="info-section">
@@ -261,7 +261,7 @@ SELL NOW
     const xLabels = Array.from({length: 17}, (_, i) => i);
 
     // Chart.js default configuration
-    Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    Chart.defaults.font.family = "''Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
     Chart.defaults.font.size = 12;
 
     // Price Chart
@@ -272,13 +272,13 @@ SELL NOW
             datasets: [{
                 label: 'Price (ECUs)',
                 data: priceHistory,
-                borderColor: '#4CAF50',
-                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                borderColor: '#555',
+                backgroundColor: 'rgba(85, 85, 85, 0.1)',
                 fill: true,
                 tension: 0.1,
                 stepped: true,
                 borderWidth: 3,
-                pointBackgroundColor: '#4CAF50',
+                pointBackgroundColor: '#555',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
                 pointRadius: 5,
@@ -334,12 +334,12 @@ SELL NOW
             datasets: [{
                 label: 'Probability of High Value (%)',
                 data: signalHistory.map(val => val * 100),
-                borderColor: '#ff6b6b',
-                backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                borderColor: '#888',
+                backgroundColor: 'rgba(136, 136, 136, 0.1)',
                 fill: true,
                 tension: 0.1,
                 borderWidth: 3,
-                pointBackgroundColor: '#ff6b6b',
+                pointBackgroundColor: '#888',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
                 pointRadius: 5,

@@ -1,13 +1,10 @@
-{{ block title }}Post-Experiment Survey{{ endblock }}
+{{ block title }}Survey{{ endblock }}
 {{ block content }}
 
 <style>
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #c07683 0%, #9E1B32 100%);
-        margin: 0;
-        padding: 20px;
-        min-height: 100vh;
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
     }
 
     .container {
@@ -26,7 +23,7 @@
     }
 
     .header {
-        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        background: #555;
         color: white;
         padding: 30px;
         text-align: center;
@@ -51,104 +48,78 @@
         background: white;
     }
 
-    .survey-instructions {
-        background: #e3f2fd;
-        padding: 20px;
-        border-radius: 6px;
-        margin-bottom: 30px;
-        border: 2px solid #bbdefb;
-    }
-
-    .survey-instructions p {
-        margin: 0;
-        font-size: 1.1em;
-        color: #1565C0;
-        text-align: center;
-    }
-
-    .question-group {
-        margin-bottom: 40px;
-    }
-
-    .group-title {
-        font-size: 1.3em;
-        font-weight: bold;
-        color: #4CAF50;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #4CAF50;
-    }
-
-    .question-block {
+    .form-group {
         margin-bottom: 25px;
         padding: 20px;
         background: #f8f9fa;
         border-radius: 6px;
-        border-left: 4px solid #4CAF50;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-left: 5px solid #555;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
     }
 
-    .question-text {
-        font-size: 1.05em;
+    .form-group .form-label {
+        font-weight: bold;
         color: #333;
+        font-size: 1.1em;
         margin-bottom: 15px;
-        font-weight: 500;
+        display: block;
     }
 
-    .scale-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-    }
-
-    .scale-labels {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        font-size: 0.9em;
-        color: #666;
-    }
-
-    .scale-label-left {
-        text-align: left;
-    }
-
-    .scale-label-right {
-        text-align: right;
-    }
-
-    .radio-group {
-        display: flex;
-        justify-content: space-between;
+    .form-group .form-control {
         width: 100%;
-        max-width: 500px;
-        margin: 0 auto;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 1em;
+        font-family: inherit;
+        transition: border-color 0.3s ease;
     }
 
-    .radio-option {
+    .form-group .form-control:focus {
+        outline: none;
+        border-color: #555;
+    }
+
+    .form-group .form-check-label {
         display: flex;
-        flex-direction: column;
         align-items: center;
+        padding: 10px 15px;
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
         cursor: pointer;
         transition: all 0.3s ease;
+        font-size: 1em;
     }
 
-    .radio-option input[type="radio"] {
-        margin-bottom: 5px;
-        cursor: pointer;
-        transform: scale(1.3);
+    .form-group .form-check-label:hover {
+        background: #f5f5f5;
+        border-color: #555;
     }
 
-    .radio-option label {
-        font-size: 1.1em;
-        font-weight: bold;
+    .form-group .form-check-input {
+        margin-right: 10px;
+    }
+
+    .question-section {
+        margin-bottom: 40px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 5px solid #555;
+    }
+
+    .question-section h3 {
         color: #555;
-        cursor: pointer;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+        font-weight: 600;
     }
 
-    .radio-option:hover {
-        transform: translateY(-3px);
+    .question-section p {
+        color: #666;
+        margin-bottom: 20px;
+        font-style: italic;
     }
 
     .action-section {
@@ -158,10 +129,24 @@
         border-top: 1px solid #e0e0e0;
     }
 
-    .progress-indicator {
-        margin-bottom: 20px;
-        font-size: 1.1em;
-        color: #666;
+    .submit-button {
+        background: #555;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        font-size: 1.2em;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(85, 85, 85, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .submit-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(85, 85, 85, 0.4);
     }
 
     @media (max-width: 768px) {
@@ -172,7 +157,7 @@
         .survey-section {
             padding: 20px;
         }
-        .question-block {
+        .form-group {
             padding: 15px;
         }
     }
@@ -181,777 +166,220 @@
 <div class="container">
     <div class="header">
         <h1>Post-Experiment Survey</h1>
-        <p>Please rate the following statements on a scale from 1 to 5. You will be paid $2.50 for full completion of the survey.</p>
+        <p>Your feedback is valuable to us</p>
     </div>
 
     <div class="survey-section">
-        <div class="survey-instructions">
-            <p><strong>Instructions:</strong> Rate each statement from 1 (Very False) to 5 (Very True)</p>
-        </div>
-
-        <form id="surveyForm">
+        <form method="post">
             <!-- Risk Aversion Questions -->
-            <div class="question-group">
-                <div class="group-title">Risk Attitudes</div>
+            <div class="question-section">
+                <h3>Risk Aversion Questions</h3>
+                <p>Please rate how much you agree with each statement (1 = Very False, 5 = Very True):</p>
                 
-                <div class="question-block">
-                    <div class="question-text">{{ form.q1.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q1" id="q1_{{ value }}" value="{{ value }}">
-                            <label for="q1_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                <div class="form-group">
+                    {{ formfield 'q1' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q2.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q2" id="q2_{{ value }}" value="{{ value }}">
-                            <label for="q2_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q2' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q3.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q3" id="q3_{{ value }}" value="{{ value }}">
-                            <label for="q3_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q3' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q4.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q4" id="q4_{{ value }}" value="{{ value }}">
-                            <label for="q4_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q4' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q5.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q5" id="q5_{{ value }}" value="{{ value }}">
-                            <label for="q5_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q5' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q6.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q6" id="q6_{{ value }}" value="{{ value }}">
-                            <label for="q6_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q6' }}
                 </div>
             </div>
 
-            <!-- Personality Traits -->
-            <div class="question-group">
-                <div class="group-title">Personality Traits</div>
+            <!-- Personality Questions -->
+            <div class="question-section">
+                <h3>Personality Questions</h3>
+                <p>Please rate how much you agree with each statement (1 = Very False, 5 = Very True):</p>
                 
-                <div class="question-block">
-                    <div class="question-text">{{ form.q7.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q7" id="q7_{{ value }}" value="{{ value }}">
-                            <label for="q7_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                <div class="form-group">
+                    {{ formfield 'q7' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q8.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q8" id="q8_{{ value }}" value="{{ value }}">
-                            <label for="q8_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q9.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q9" id="q9_{{ value }}" value="{{ value }}">
-                            <label for="q9_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q10.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q10" id="q10_{{ value }}" value="{{ value }}">
-                            <label for="q10_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q11.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q11" id="q11_{{ value }}" value="{{ value }}">
-                            <label for="q11_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q12.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q12" id="q12_{{ value }}" value="{{ value }}">
-                            <label for="q12_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q13.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q13" id="q13_{{ value }}" value="{{ value }}">
-                            <label for="q13_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q14.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q14" id="q14_{{ value }}" value="{{ value }}">
-                            <label for="q14_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q15.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q15" id="q15_{{ value }}" value="{{ value }}">
-                            <label for="q15_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q16.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q16" id="q16_{{ value }}" value="{{ value }}">
-                            <label for="q16_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q17.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q17" id="q17_{{ value }}" value="{{ value }}">
-                            <label for="q17_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q18.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q18" id="q18_{{ value }}" value="{{ value }}">
-                            <label for="q18_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q19.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q19" id="q19_{{ value }}" value="{{ value }}">
-                            <label for="q19_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q20.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q20" id="q20_{{ value }}" value="{{ value }}">
-                            <label for="q20_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q21.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q21" id="q21_{{ value }}" value="{{ value }}">
-                            <label for="q21_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q22.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q22" id="q22_{{ value }}" value="{{ value }}">
-                            <label for="q22_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q23.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q23" id="q23_{{ value }}" value="{{ value }}">
-                            <label for="q23_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q24.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q24" id="q24_{{ value }}" value="{{ value }}">
-                            <label for="q24_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q25.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q25" id="q25_{{ value }}" value="{{ value }}">
-                            <label for="q25_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q26.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q26" id="q26_{{ value }}" value="{{ value }}">
-                            <label for="q26_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q27.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q27" id="q27_{{ value }}" value="{{ value }}">
-                            <label for="q27_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q28.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q28" id="q28_{{ value }}" value="{{ value }}">
-                            <label for="q28_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q29.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q29" id="q29_{{ value }}" value="{{ value }}">
-                            <label for="q29_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q30.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q30" id="q30_{{ value }}" value="{{ value }}">
-                            <label for="q30_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q31.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q31" id="q31_{{ value }}" value="{{ value }}">
-                            <label for="q31_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Emotions -->
-            <div class="question-group">
-                <div class="group-title">Emotions and Feelings</div>
                 
-                <div class="question-block">
-                    <div class="question-text">{{ form.q32.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q32" id="q32_{{ value }}" value="{{ value }}">
-                            <label for="q32_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                <div class="form-group">
+                    {{ formfield 'q8' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q33.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q33" id="q33_{{ value }}" value="{{ value }}">
-                            <label for="q33_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q9' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q34.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q34" id="q34_{{ value }}" value="{{ value }}">
-                            <label for="q34_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q10' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q35.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q35" id="q35_{{ value }}" value="{{ value }}">
-                            <label for="q35_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q11' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q36.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q36" id="q36_{{ value }}" value="{{ value }}">
-                            <label for="q36_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q12' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q37.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q37" id="q37_{{ value }}" value="{{ value }}">
-                            <label for="q37_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q13' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q38.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q38" id="q38_{{ value }}" value="{{ value }}">
-                            <label for="q38_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q14' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q39.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q39" id="q39_{{ value }}" value="{{ value }}">
-                            <label for="q39_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q15' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q40.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q40" id="q40_{{ value }}" value="{{ value }}">
-                            <label for="q40_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q16' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q41.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q41" id="q41_{{ value }}" value="{{ value }}">
-                            <label for="q41_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q17' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q42.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q42" id="q42_{{ value }}" value="{{ value }}">
-                            <label for="q42_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q18' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q43.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q43" id="q43_{{ value }}" value="{{ value }}">
-                            <label for="q43_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q19' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q44.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q44" id="q44_{{ value }}" value="{{ value }}">
-                            <label for="q44_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q20' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q45.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q45" id="q45_{{ value }}" value="{{ value }}">
-                            <label for="q45_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q21' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q46.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q46" id="q46_{{ value }}" value="{{ value }}">
-                            <label for="q46_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q22' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q47.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q47" id="q47_{{ value }}" value="{{ value }}">
-                            <label for="q47_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q23' }}
                 </div>
-                <div class="question-block">
-                    <div class="question-text">{{ form.q48.label }}</div>
-                    <div class="scale-labels">
-                        <span class="scale-label-left">1 = Very False</span>
-                        <span class="scale-label-right">5 = Very True</span>
-                    </div>
-                    <div class="radio-group">
-                        {% for value in [1, 2, 3, 4, 5] %}
-                        <div class="radio-option">
-                            <input type="radio" name="q48" id="q48_{{ value }}" value="{{ value }}">
-                            <label for="q48_{{ value }}">{{ value }}</label>
-                        </div>
-                        {% endfor %}
-                    </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q24' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q25' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q26' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q27' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q28' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q29' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q30' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q31' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q32' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q33' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q34' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q35' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q36' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q37' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q38' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q39' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q40' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q41' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q42' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q43' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q44' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q45' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q46' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q47' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q48' }}
                 </div>
             </div>
         </form>
     </div>
 
     <div class="action-section">
-        <div class="progress-indicator">
-            Please answer all questions before proceeding
-        </div>
         {{ next_button }}
     </div>
 </div>
-
-<script>
-    // Add visual feedback when options are selected
-    document.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            // Remove highlight from other options in the same question
-            const questionName = this.name;
-            document.querySelectorAll(`input[name="${questionName}"]`).forEach(r => {
-                r.parentElement.style.background = 'transparent';
-            });
-            // Highlight selected option
-            this.parentElement.style.background = 'rgba(76, 175, 80, 0.1)';
-            this.parentElement.style.borderRadius = '6px';
-        });
-    });
-</script>
 
 {{ endblock }}

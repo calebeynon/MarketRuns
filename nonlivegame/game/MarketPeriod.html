@@ -1,5 +1,15 @@
 {{block title}}Market Period{{endblock}}
 {{block content}}
+<style>
+    body {
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
+    }
+    .otree-btn-primary {
+        background-color: #555;
+        border-color: #555;
+    }
+</style>
 <p>The market period is now open. You will have 4 seconds to decide whether to sell your item. The price is {{price}}.</p>
 <p>The probability of high value is {{ signal }}%.</p>
 
@@ -45,7 +55,7 @@
             datasets: [{
                 label: 'Price',
                 data: priceHistory,
-                borderColor: 'blue',
+                borderColor: '#555',
                 fill: false,
                 tension: 0.1,
                 stepped: true // Make the line step-wise
@@ -75,7 +85,7 @@
             datasets: [{
                 label: 'Probability of High Value (%)',
                 data: signalHistory.map(val => val * 100),
-                borderColor: 'green',
+                borderColor: '#888',
                 fill: false,
                 tension: 0.1
             }]

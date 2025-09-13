@@ -3,11 +3,8 @@
 
 <style>
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #c07683 0%, #9E1B32 100%);
-        margin: 0;
-        padding: 20px;
-        min-height: 100vh;
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
     }
 
     .container {
@@ -26,7 +23,7 @@
     }
 
     .header {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        background: #555;
         color: white;
         padding: 40px;
         text-align: center;
@@ -97,12 +94,12 @@
     }
 
     .payoff-display {
-        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        background: #555;
         color: white;
         padding: 20px;
         border-radius: 6px;
         margin: 20px 0;
-        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        box-shadow: 0 5px 15px rgba(85, 85, 85, 0.3);
     }
 
     .payoff-label {
@@ -119,40 +116,40 @@
     }
 
     .sold-status {
-        background: #d4edda;
-        border: 2px solid #4CAF50;
+        background: #f5f5f5;
+        border: 2px solid #555;
     }
 
     .sold-status .status-icon {
-        color: #4CAF50;
+        color: #555;
     }
 
     .not-sold-status {
-        background: #f8d7da;
-        border: 2px solid #dc3545;
+        background: #f5f5f5;
+        border: 2px solid #888;
     }
 
     .not-sold-status .status-icon {
-        color: #dc3545;
+        color: #888;
     }
 
     .completion-message {
-        background: #e3f2fd;
-        border: 2px solid #2196F3;
+        background: #f5f5f5;
+        border: 2px solid #555;
         padding: 30px;
         border-radius: 6px;
         margin: 30px 0;
-        box-shadow: 0 5px 15px rgba(33, 150, 243, 0.2);
+        box-shadow: 0 5px 15px rgba(85, 85, 85, 0.2);
     }
 
     .completion-message h3 {
-        color: #1976D2;
+        color: #333;
         font-size: 1.5em;
         margin-bottom: 15px;
     }
 
     .completion-message p {
-        color: #1565C0;
+        color: #555;
         font-size: 1.1em;
         margin: 0;
     }
@@ -164,7 +161,7 @@
     }
 
     .next-button {
-        background: linear-gradient(135deg, #6c63ff 0%, #5a52d5 100%);
+        background: #555;
         color: white;
         border: none;
         padding: 15px 40px;
@@ -173,14 +170,14 @@
         border-radius: 6px;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(108, 99, 255, 0.3);
+        box-shadow: 0 8px 20px rgba(85, 85, 85, 0.3);
         text-transform: uppercase;
         letter-spacing: 1px;
     }
 
     .next-button:hover {
         transform: translateY(-3px);
-        box-shadow: 0 12px 25px rgba(108, 99, 255, 0.4);
+        box-shadow: 0 12px 25px rgba(85, 85, 85, 0.4);
     }
 
     .stats-grid {
@@ -230,7 +227,7 @@
     <div class="header">
         <h1>Round {{ round_number }} Complete</h1>
         <p>Your trading results for this round</p>
-        <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 5px;">
+        <div style="margin-top: 15px; padding: 10px; background: #e0e0e0; border-radius: 5px;">
             <strong>Segment {{ segment_number }}/4 | Round {{ round_number }} | Period {{ period_number }}</strong>
         </div>
     </div>
@@ -270,10 +267,10 @@
         </div>
         
         <!-- Number Display Section -->
-        <div style="margin: 40px 0; padding: 40px; background: linear-gradient(135deg, #6c63ff 0%, #5a52d5 100%); border-radius: 8px; box-shadow: 0 10px 30px rgba(108, 99, 255, 0.3);">
+        <div style="margin: 40px 0; padding: 40px; background: #555; border-radius: 8px; box-shadow: 0 10px 30px rgba(85, 85, 85, 0.3);">
             <h3 style="color: white; margin-bottom: 20px; font-size: 1.5em; font-weight: 300;">Next Stage Indicator</h3>
             <div style="width: 150px; height: 150px; margin: 0 auto; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
-                <span style="font-size: 5em; font-weight: bold; color: #6c63ff;">{{ display_number }}</span>
+                <span style="font-size: 5em; font-weight: bold; color: #555;">{{ display_number }}</span>
             </div>
             <p style="color: white; margin-top: 20px; font-size: 1.1em;">
                 {% if display_number == 8 %}

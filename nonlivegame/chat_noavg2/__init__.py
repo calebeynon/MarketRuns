@@ -8,12 +8,13 @@ class C(BaseConstants):
     SEGMENT_NUMBER = 2  # This is the second segment
     
     # Generate random number of rounds for this segment
-    NUM_ROUNDS_IN_SEGMENT = min(np.random.geometric(p=0.125), 14)  # 1-14 rounds
+    NUM_ROUNDS_IN_SEGMENT = 2 #min(np.random.geometric(p=0.125), 14)  # 1-14 rounds
     
     # For each round, generate random number of periods
     PERIODS_PER_ROUND = []
     for round_num in range(NUM_ROUNDS_IN_SEGMENT):
-        periods = min(np.random.geometric(p=0.125), 14)  # 1-14 periods per round
+        #periods = min(np.random.geometric(p=0.125), 14)  # 1-14 periods per round
+        periods = 2
         PERIODS_PER_ROUND.append(periods)
     
     # Total number of oTree rounds (sum of all periods across all rounds)
