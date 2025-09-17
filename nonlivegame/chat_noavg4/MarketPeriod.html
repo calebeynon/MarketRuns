@@ -3,142 +3,144 @@
 
 <style>
     body {
-        background-color: #f0f0f0; /* Light Gray */
-        color: #333; /* Dark Gray */
+        background-color: #f0f0f0;
+        color: #333;
+        margin: 0;
+        padding: 10px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .container {
-        max-width: 1400px;
+        max-width: 1200px;
         margin: 0 auto;
         background: white;
         border-radius: 8px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         overflow: hidden;
-        animation: fadeIn 0.8s ease-out;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
     }
 
     .header {
         background: #555;
         color: white;
-        padding: 30px;
+        padding: 8px 15px;
         text-align: center;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 
     .header h1 {
         margin: 0;
-        font-size: 2.5em;
+        font-size: 1.4em;
         font-weight: 300;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
 
-    .info-section {
-        padding: 30px;
-        background: #f8f9fa;
-        border-left: 5px solid #555;
+    .segment-info {
+        margin-top: 4px;
+        padding: 3px 8px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 3px;
+        font-size: 0.8em;
     }
 
-    .info-cards {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-bottom: 30px;
-    }
-
-    .info-card {
-        background: white;
-        padding: 25px;
-        border-radius: 6px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        border: 1px solid #e0e0e0;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .info-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    }
-
-    .info-card h3 {
-        margin: 0 0 10px 0;
-        color: #333;
-        font-size: 1.2em;
-        font-weight: 600;
-    }
-
-    .info-card .value {
-        font-size: 2em;
-        font-weight: bold;
-        color: #555;
-        margin: 10px 0;
+    .main-content {
+        padding: 20px;
     }
 
     .charts-section {
-        padding: 30px;
-        background: white;
-    }
-
-    .charts-title {
-        text-align: center;
-        font-size: 2em;
-        color: #333;
-        margin-bottom: 30px;
-        font-weight: 300;
+        margin-bottom: 20px;
     }
 
     .charts-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 40px;
-        margin-bottom: 40px;
+        gap: 20px;
     }
 
     .chart-wrapper {
         background: #f8f9fa;
-        padding: 25px;
+        padding: 15px;
         border-radius: 6px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         border: 1px solid #e0e0e0;
     }
 
     .chart-title {
-        font-size: 1.4em;
+        font-size: 1.1em;
         color: #333;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         text-align: center;
         font-weight: 600;
     }
 
-    .action-section {
-        padding: 30px;
+    .info-action-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 200px;
+        gap: 20px;
+        margin-bottom: 20px;
+        align-items: center;
+    }
+
+    .info-card {
         background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px solid #e0e0e0;
         text-align: center;
-        border-top: 1px solid #e0e0e0;
+    }
+
+    .info-card h3 {
+        margin: 0 0 5px 0;
+        color: #333;
+        font-size: 1em;
+        font-weight: 600;
+    }
+
+    .info-card .value {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #555;
+        margin: 5px 0;
+    }
+
+    .info-card p {
+        margin: 5px 0 0 0;
+        font-size: 0.85em;
+        color: #666;
+    }
+
+    .action-container {
+        text-align: center;
+    }
+
+    .status-message {
+        font-size: 0.9em;
+        margin-bottom: 10px;
+        padding: 8px;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+
+    .status-sold, .status-available {
+        background: #f5f5f5;
+        color: #424242;
+        border: 1px solid #e0e0e0;
     }
 
     .sell-button {
         background: #555;
         color: white;
         border: none;
-        padding: 20px 50px;
-        font-size: 1.4em;
+        padding: 12px 25px;
+        font-size: 1.1em;
         font-weight: 600;
         border-radius: 6px;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(85, 85, 85, 0.3);
         text-transform: uppercase;
         letter-spacing: 1px;
+        width: 100%;
     }
 
     .sell-button:hover:not(:disabled) {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 25px rgba(85, 85, 85, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(85, 85, 85, 0.3);
     }
 
     .sell-button:disabled {
@@ -148,55 +150,26 @@
         box-shadow: none;
     }
 
-    .status-message {
-        font-size: 1.2em;
-        margin-bottom: 20px;
+    .sellers-section {
+        background: #f8f9fa;
         padding: 15px;
         border-radius: 6px;
-        font-weight: 500;
-    }
-
-    .status-sold {
-        background: #f5f5f5;
-        color: #424242;
         border: 1px solid #e0e0e0;
-    }
-
-    .status-available {
-        background: #f5f5f5;
-        color: #424242;
-        border: 1px solid #e0e0e0;
-    }
-
-    .pulse {
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-
-    .sellers-section {
-        background: white;
-        padding: 30px;
-        border-top: 1px solid #e0e0e0;
     }
 
     .sellers-title {
-        font-size: 1.5em;
+        font-size: 1.2em;
         color: #333;
-        margin-bottom: 20px;
+        margin-bottom: 8px;
         font-weight: 600;
         text-align: center;
     }
 
     .sellers-subtitle {
         color: #666;
-        margin-bottom: 30px;
+        margin-bottom: 15px;
         text-align: center;
-        font-size: 1.1em;
+        font-size: 0.9em;
     }
 
     .sellers-table-container {
@@ -208,9 +181,9 @@
         background: white;
         border-radius: 6px;
         overflow: hidden;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         border: 1px solid #e0e0e0;
-        min-width: 300px;
+        min-width: 250px;
+        font-size: 0.9em;
     }
 
     .sellers-table thead {
@@ -219,10 +192,10 @@
     }
 
     .sellers-table th {
-        padding: 15px 20px;
+        padding: 8px 15px;
         text-align: center;
         font-weight: 600;
-        font-size: 1.1em;
+        font-size: 0.95em;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
@@ -236,7 +209,7 @@
     }
 
     .sellers-table td {
-        padding: 12px 20px;
+        padding: 6px 15px;
         text-align: center;
         border-bottom: 1px solid #e0e0e0;
     }
@@ -246,15 +219,15 @@
     }
 
     @media (max-width: 768px) {
-        .info-cards, .charts-container {
+        .charts-container, .info-action-row {
             grid-template-columns: 1fr;
         }
         .container {
-            margin: 10px;
+            margin: 5px;
             border-radius: 6px;
         }
-        .sellers-table {
-            min-width: 250px;
+        .main-content {
+            padding: 15px;
         }
     }
 </style>
@@ -262,14 +235,28 @@
 <div class="container">
     <div class="header">
         <h1>Market Period</h1>
-        <p>Make your trading decision within the time limit</p>
-        <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 5px;">
+        <div class="segment-info">
             <strong>Segment {{ segment_number }}/4 | Round {{ round_number }} | Period {{ period_number }}</strong>
         </div>
     </div>
 
-    <div class="info-section">
-        <div class="info-cards">
+    <div class="main-content">
+        <!-- Charts at the top -->
+        <div class="charts-section">
+            <div class="charts-container">
+                <div class="chart-wrapper">
+                    <h4 class="chart-title">Price History</h4>
+                    <canvas id="priceChart" width="500" height="200"></canvas>
+                </div>
+                <div class="chart-wrapper">
+                    <h4 class="chart-title">Probability History</h4>
+                    <canvas id="signalChart" width="500" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info cards and sell button in one row -->
+        <div class="info-action-row">
             <div class="info-card">
                 <h3>Current Price</h3>
                 <div class="value">{{ price }} ECUs</div>
@@ -280,67 +267,53 @@
                 <div class="value">{{ signal }}%</div>
                 <p>Probability that asset value will be 20</p>
             </div>
-        </div>
-    </div>
-
-    <div class="charts-section">
-        <h2 class="charts-title">Market Analytics</h2>
-        <div class="charts-container">
-            <div class="chart-wrapper">
-                <h4 class="chart-title">Price History</h4>
-                <canvas id="priceChart" width="600" height="300"></canvas>
+            <div class="action-container">
+                {% if sold_status %}
+                    <div class="status-message status-sold">
+                        You have already sold your item for {{ payoff }} ECUs
+                    </div>
+                    <button class="sell-button" name="sold" value="True" disabled>
+                        SOLD
+                    </button>
+                {% else %}
+                    <div class="status-message status-available">
+                        Click the button below to sell your item at the current market price
+                    </div>
+                    <button class="sell-button" name="sold" value="True">
+                        SELL NOW
+                    </button>
+                {% endif %}
             </div>
-            <div class="chart-wrapper">
-                <h4 class="chart-title">Probability History</h4>
-                <canvas id="signalChart" width="600" height="300"></canvas>
-            </div>
         </div>
-    </div>
 
-    <div class="sellers-section">
-        <h3 class="sellers-title">Active Sellers</h3>
-        <p class="sellers-subtitle">
-            Players who have sold their items.
-        </p>
-        
-        <div class="sellers-table-container">
-            <table class="sellers-table">
-                <thead>
-                    <tr>
-                        <th>Seller ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for seller in all_sellers %}
+        <!-- Sellers table at the bottom -->
+        <div class="sellers-section">
+            <h3 class="sellers-title">Active Sellers</h3>
+            <p class="sellers-subtitle">
+                Players who have sold their items.
+            </p>
+
+            <div class="sellers-table-container">
+                <table class="sellers-table">
+                    <thead>
                         <tr>
-                            <td>Player {{ seller }}</td>
+                            <th>Seller ID</th>
                         </tr>
-                    {% empty %}
-                        <tr>
-                            <td style="color: #888; font-style: italic;">No sellers yet</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for seller in all_sellers %}
+                            <tr>
+                                <td>Player {{ seller }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td style="color: #888; font-style: italic;">No sellers yet</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-
-    <div class="action-section">
-        {% if sold_status %}
-            <div class="status-message status-sold">
-You have already sold your item for {{ payoff }} ECUs
-            </div>
-            <button class="sell-button" name="sold" value="True" disabled>
-                SOLD
-            </button>
-        {% else %}
-            <div class="status-message status-available">
-Click the button below to sell your item at the current market price
-            </div>
-            <button class="sell-button" name="sold" value="True">
-SELL NOW
-            </button>
-        {% endif %}
     </div>
 </div>
 
@@ -350,17 +323,13 @@ SELL NOW
     // These variables are injected by oTree's js_vars
     const signalHistory = js_vars.signal_history;
     const priceHistory = js_vars.price_history;
-    
-    // Debug: Log the data to console
-    console.log('Signal History:', signalHistory);
-    console.log('Price History:', priceHistory);
 
     // Generate x-axis labels (e.g., 0, 1, 2, ... up to 16)
     const xLabels = Array.from({length: 17}, (_, i) => i);
 
     // Chart.js default configuration
-    Chart.defaults.font.family = "''Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
-    Chart.defaults.font.size = 12;
+    Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    Chart.defaults.font.size = 11;
 
     // Price Chart
     new Chart(document.getElementById('priceChart'), {
@@ -375,32 +344,27 @@ SELL NOW
                 fill: true,
                 tension: 0.1,
                 stepped: true,
-                borderWidth: 3,
+                borderWidth: 2,
                 pointBackgroundColor: '#2196F3',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
-                pointRadius: 5,
-                pointHoverRadius: 7
+                pointRadius: 4,
+                pointHoverRadius: 6
             }]
         },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20
-                    }
+                    display: false
                 }
             },
             scales: {
                 x: {
-                    title: { 
-                        display: true, 
+                    title: {
+                        display: true,
                         text: 'Period',
-                        font: { size: 14, weight: 'bold' }
+                        font: { size: 12, weight: 'bold' }
                     },
                     min: 0,
                     max: 16,
@@ -409,10 +373,10 @@ SELL NOW
                     }
                 },
                 y: {
-                    title: { 
-                        display: true, 
+                    title: {
+                        display: true,
                         text: 'Price (ECUs)',
-                        font: { size: 14, weight: 'bold' }
+                        font: { size: 12, weight: 'bold' }
                     },
                     min: 0,
                     max: 10,
@@ -436,32 +400,27 @@ SELL NOW
                 backgroundColor: 'rgba(25, 118, 210, 0.1)',
                 fill: true,
                 tension: 0.1,
-                borderWidth: 3,
+                borderWidth: 2,
                 pointBackgroundColor: '#1976D2',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
-                pointRadius: 5,
-                pointHoverRadius: 7
+                pointRadius: 4,
+                pointHoverRadius: 6
             }]
         },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20
-                    }
+                    display: false
                 }
             },
             scales: {
                 x: {
-                    title: { 
-                        display: true, 
+                    title: {
+                        display: true,
                         text: 'Period',
-                        font: { size: 14, weight: 'bold' }
+                        font: { size: 12, weight: 'bold' }
                     },
                     min: 0,
                     max: 16,
@@ -470,10 +429,10 @@ SELL NOW
                     }
                 },
                 y: {
-                    title: { 
-                        display: true, 
+                    title: {
+                        display: true,
                         text: 'Probability of High Value (%)',
-                        font: { size: 14, weight: 'bold' }
+                        font: { size: 12, weight: 'bold' }
                     },
                     min: 0,
                     max: 100,
