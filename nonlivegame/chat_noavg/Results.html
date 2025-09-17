@@ -1,4 +1,4 @@
-{{ block title }}Final Results{{ endblock }}
+{{ block title }}Round Results{{ endblock }}
 {{ block content }}
 
 <style>
@@ -242,7 +242,7 @@
                         You made a successful sale during this trading session.
                     </div>
                     <div class="payoff-display">
-                        <div class="payoff-label">Your Final Payoff</div>
+                        <div class="payoff-label">Your Round Payoff</div>
                         <div class="payoff-amount">{{ payoff }} ECUs</div>
                     </div>
                 </div>
@@ -254,7 +254,7 @@
                         You chose not to sell your item during this trading session.
                     </div>
                     <div class="payoff-display">
-                        <div class="payoff-label">Your Final Payoff</div>
+                        <div class="payoff-label">Your Round Payoff</div>
                         <div class="payoff-amount">{{ payoff }} ECUs</div>
                     </div>
                 </div>
@@ -276,7 +276,7 @@
                 {% if display_number == 8 %}
                     <strong>Moving to next segment.</strong>
                 {% else %}
-                    <strong>Continue to next round in this segment</strong>
+                    <strong>Continue to next round in this segment.  As a reminder, you will be IN the market for this round, and have the option to exit the market by clicking SELL.</strong>
                 {% endif %}
             </p>
         </div>
@@ -293,7 +293,7 @@ Held
                 </div>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Final Earning</div>
+                <div class="stat-label">Round Earning</div>
                 <div class="stat-value">{{ payoff }} ECUs</div>
             </div>
         </div>

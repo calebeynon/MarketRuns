@@ -168,6 +168,16 @@ def set_signal(group: Group):
         p.participant.vars['signal_history_length'] += 1
 
 # PAGES
+class NewRule(Page):
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1 and player.period_in_round == 1
+
+class NewRuleWait(WaitPage):
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1 and player.period_in_round == 1
+
 class SegmentIntro(Page):
     @staticmethod
     def is_displayed(player):
@@ -383,7 +393,7 @@ class RoundEnd(Page):
             'is_final_round': player.round_number_in_segment == C.NUM_ROUNDS_IN_SEGMENT
         }
 
-page_sequence = [SegmentIntro, SegmentIntroWait, ChatWait, Chat, MarketPeriodWait, MarketPeriod, MarketPeriodPayoffWait, ResultsWait, Results]
+page_sequence = [NewRule, NewRuleWait, SegmentIntro, SegmentIntroWait, ChatWait, Chat, MarketPeriodWait, MarketPeriod, MarketPeriodPayoffWait, ResultsWait, Results]
 
 
 

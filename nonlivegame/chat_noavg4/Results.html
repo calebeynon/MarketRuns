@@ -1,4 +1,4 @@
-{{ block title }}Final Results{{ endblock }}
+{{ block title }}Round Results{{ endblock }}
 {{ block content }}
 
 <style>
@@ -225,8 +225,11 @@
 
 <div class="container">
     <div class="header">
-        <h1>Final Results</h1>
-        <p>Your trading session has concluded</p>
+        <h1>Round {{ round_number }} Complete</h1>
+        <p>Your trading results for this round</p>
+        <div style="margin-top: 15px; padding: 10px; background: #e0e0e0; border-radius: 5px;">
+            <strong>Segment {{ segment_number }}/4 | Round {{ round_number }} | Period {{ period_number }}</strong>
+        </div>
     </div>
 
     <div class="results-section">
@@ -239,7 +242,7 @@
                         You made a successful sale during this trading session.
                     </div>
                     <div class="payoff-display">
-                        <div class="payoff-label">Your Final Payoff</div>
+                        <div class="payoff-label">Your Round Payoff</div>
                         <div class="payoff-amount">{{ payoff }} ECUs</div>
                     </div>
                 </div>
@@ -251,7 +254,7 @@
                         You chose not to sell your item during this trading session.
                     </div>
                     <div class="payoff-display">
-                        <div class="payoff-label">Your Final Payoff</div>
+                        <div class="payoff-label">Your Round Payoff</div>
                         <div class="payoff-amount">{{ payoff }} ECUs</div>
                     </div>
                 </div>
@@ -259,8 +262,23 @@
         </div>
 
         <div class="completion-message">
-            <h3>Session Complete</h3>
-            <p>Thank you for participating in this trading experiment.</p>
+            <h3>Round {{ round_number }} Complete</h3>
+            <p>Thank you for completing this round.</p>
+        </div>
+        
+        <!-- Number Display Section -->
+        <div style="margin: 40px 0; padding: 40px; background: #555; border-radius: 8px; box-shadow: 0 10px 30px rgba(85, 85, 85, 0.3);">
+            <h3 style="color: white; margin-bottom: 20px; font-size: 1.5em; font-weight: 300;">Next Stage Indicator</h3>
+            <div style="width: 150px; height: 150px; margin: 0 auto; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(0,0,0,0.2);">
+                <span style="font-size: 5em; font-weight: bold; color: #555;">{{ display_number }}</span>
+            </div>
+            <p style="color: white; margin-top: 20px; font-size: 1.1em;">
+                {% if display_number == 8 %}
+                    <strong>Moving to next segment.</strong>
+                {% else %}
+                    <strong>Continue to next round in this segment.  As a reminder, you will be IN the market for this round, and have the option to exit the market by clicking SELL.</strong>
+                {% endif %}
+            </p>
         </div>
 
         <div class="stats-grid">
@@ -275,7 +293,7 @@ Held
                 </div>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Final Earning</div>
+                <div class="stat-label">Round Earning</div>
                 <div class="stat-value">{{ payoff }} ECUs</div>
             </div>
         </div>
