@@ -265,20 +265,20 @@ class MarketPeriod(Page):
         }
 
     def vars_for_template(player):
-        # Get all unique sellers from current period and previous periods
+        # Get all unique sellers from current period and previous custom rounds
         all_sellers = set()
-        
+
         # Get sellers from current period
         for p in player.group.get_players():
             if p.participant.vars['sold']:
                 all_sellers.add(p.participant.label)
-        
-        # Get sellers from all previous periods in this round
-        if player.subsession.round_number > 1:
-            for prev_round in range(1, player.subsession.round_number):
-                prev_player = player.in_round(prev_round)
-                if prev_player.sold:
-                    all_sellers.add(prev_player.participant.label)
+
+        # Get sellers from all previous custom rounds in this segment
+        for prev_round_num in range(1, player.round_number_in_segment):
+            for p in player.group.get_players():
+                # Check if this player sold in that specific custom round
+                if p.get_round_payoff(prev_round_num) > 0:
+                    all_sellers.add(p.participant.label)
         
         return {
             'sold_status': player.participant.vars['sold'],
