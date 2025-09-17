@@ -39,6 +39,32 @@ class Player(BasePlayer):
     round_number_in_segment = models.IntegerField()
     period_in_round = models.IntegerField()
 
+    # Store payoffs for each custom round (up to 14 rounds per segment)
+    round_1_payoff = models.FloatField(initial=0)
+    round_2_payoff = models.FloatField(initial=0)
+    round_3_payoff = models.FloatField(initial=0)
+    round_4_payoff = models.FloatField(initial=0)
+    round_5_payoff = models.FloatField(initial=0)
+    round_6_payoff = models.FloatField(initial=0)
+    round_7_payoff = models.FloatField(initial=0)
+    round_8_payoff = models.FloatField(initial=0)
+    round_9_payoff = models.FloatField(initial=0)
+    round_10_payoff = models.FloatField(initial=0)
+    round_11_payoff = models.FloatField(initial=0)
+    round_12_payoff = models.FloatField(initial=0)
+    round_13_payoff = models.FloatField(initial=0)
+    round_14_payoff = models.FloatField(initial=0)
+
+    def set_round_payoff(self, round_number, payoff):
+        """Helper method to set payoff for a specific custom round"""
+        field_name = f'round_{round_number}_payoff'
+        setattr(self, field_name, payoff)
+
+    def get_round_payoff(self, round_number):
+        """Helper method to get payoff for a specific custom round"""
+        field_name = f'round_{round_number}_payoff'
+        return getattr(self, field_name, 0)
+
 #FUNCTIONS
 def creating_session(subsession: Subsession):
     grouping = [[1,7,12,14],[2,8,11,13],[3,5,10,16],[4,6,9,15]]
@@ -229,6 +255,21 @@ class MarketPeriod(Page):
         }
 
     def vars_for_template(player):
+        # Get all unique sellers from current period and previous periods
+        all_sellers = set()
+        
+        # Get sellers from current period
+        for p in player.group.get_players():
+            if p.participant.vars['sold']:
+                all_sellers.add(p.participant.label)
+        
+        # Get sellers from all previous periods in this round
+        if player.subsession.round_number > 1:
+            for prev_round in range(1, player.subsession.round_number):
+                prev_player = player.in_round(prev_round)
+                if prev_player.sold:
+                    all_sellers.add(prev_player.participant.label)
+        
         return {
             'sold_status': player.participant.vars['sold'],
             'price': player.participant.vars['price'],
@@ -236,44 +277,48 @@ class MarketPeriod(Page):
             'signal': int(np.round(player.participant.vars['signal'] * 100)),
             'signal_history': list(player.participant.vars['signal_history']),
             'price_history': list(player.participant.vars['price_history']),
+            'all_sellers': sorted(list(all_sellers)),
             'segment_number': C.SEGMENT_NUMBER,
             'round_number': player.round_number_in_segment,
             'period_number': player.period_in_round
         }
     
 
-class PeriodResultsWait(WaitPage):
-    after_all_players_arrive = set_payoffs
+class MarketPeriodPayoffWait(WaitPage):
+    @staticmethod
+    def after_all_players_arrive(group):
+        # Calculate payoffs based on who sold
+        set_payoffs(group)
 
-class PeriodResults(Page):
-    def get_timeout_seconds(player):
-        return 5
-    def vars_for_template(player):
-        sellers = [p.participant.label for p in player.group.get_players() if p.participant.vars['sold']]
-        last_round_sellers = [p.participant.label for p in player.group.get_players() if p.sold]
-        return {
-            'sold_status': player.participant.vars['sold'],
-            'payoff': player.participant.vars['payoff'],
-            'sellers': sellers,
-            'last_round_sellers': last_round_sellers,
-            'signal': int(np.round(player.participant.vars['signal'] * 100)),
-            'segment_number': C.SEGMENT_NUMBER,
-            'round_number': player.round_number_in_segment,
-            'period_number': player.period_in_round
-        }
-    def before_next_page(player, timeout_happened):
-        # Only set player.payoff if the player has sold
-        if player.participant.vars['sold']:
-            player.payoff = player.participant.vars['payoff']
-        else:
-            player.payoff = 0
-        player.signal = player.participant.vars['signal']
-        player.price = player.participant.vars['price']
-        player.state = C.STATE[player.round_number_in_segment - 1]
-        player.sold = player.participant.vars['sold']
+        # Update player model fields for all players
+        for player in group.get_players():
+            # Store round-specific payoff
+            if player.participant.vars['sold']:
+                round_payoff = player.participant.vars['payoff']
+                player.set_round_payoff(player.round_number_in_segment, round_payoff)
+                player.payoff = round_payoff  # Still set current payoff for oTree
+            else:
+                player.set_round_payoff(player.round_number_in_segment, 0)
+                player.payoff = 0
+
+            # Update other fields
+            player.signal = player.participant.vars['signal']
+            player.price = player.participant.vars['price']
+            player.state = C.STATE[player.round_number_in_segment - 1]
+            player.sold = player.participant.vars['sold']
+
 
 class ResultsWait(WaitPage):
-    after_all_players_arrive = final_sale
+    @staticmethod
+    def after_all_players_arrive(group):
+        # Apply final sale logic
+        final_sale(group)
+
+        # Update round payoffs after final sale
+        for player in group.get_players():
+            final_payoff = player.participant.vars['payoff']
+            player.set_round_payoff(player.round_number_in_segment, final_payoff)
+            player.payoff = final_payoff
 
 class Results(Page):
     def get_timeout_seconds(player):
@@ -285,8 +330,10 @@ class Results(Page):
         return player.period_in_round == periods_in_current_round
     
     def before_next_page(player, timeout_happened):
-        player.participant.vars['pay_list'].append(player.participant.vars['payoff'])
-        
+        # Use the stored round payoff instead of participant.vars
+        round_payoff = player.get_round_payoff(player.round_number_in_segment)
+        player.participant.vars['pay_list'].append(round_payoff)
+
         # Only add a random payoff at the end of each segment
         if player.round_number_in_segment == C.NUM_ROUNDS_IN_SEGMENT:
             # Get all payoffs from this segment and randomly select one
@@ -298,10 +345,13 @@ class Results(Page):
             display_number = 8
         else:
             display_number = random.randint(1, 7)
-            
+
+        # Use the stored round payoff
+        round_payoff = player.get_round_payoff(player.round_number_in_segment)
+
         return {
             'sold_status': player.participant.vars['sold'],
-            'payoff': player.participant.vars['payoff'],
+            'payoff': round_payoff,
             'segment_number': C.SEGMENT_NUMBER,
             'round_number': player.round_number_in_segment,
             'period_number': player.period_in_round,
@@ -333,7 +383,7 @@ class RoundEnd(Page):
             'is_final_round': player.round_number_in_segment == C.NUM_ROUNDS_IN_SEGMENT
         }
 
-page_sequence = [SegmentIntro, SegmentIntroWait, ChatWait, Chat, MarketPeriodWait, MarketPeriod, PeriodResultsWait, PeriodResults, ResultsWait, Results]
+page_sequence = [SegmentIntro, SegmentIntroWait, ChatWait, Chat, MarketPeriodWait, MarketPeriod, MarketPeriodPayoffWait, ResultsWait, Results]
 
 
 

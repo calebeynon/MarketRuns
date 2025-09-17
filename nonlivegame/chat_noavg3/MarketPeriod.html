@@ -178,6 +178,73 @@
         100% { transform: scale(1); }
     }
 
+    .sellers-section {
+        background: white;
+        padding: 30px;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .sellers-title {
+        font-size: 1.5em;
+        color: #333;
+        margin-bottom: 20px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .sellers-subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 1.1em;
+    }
+
+    .sellers-table-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .sellers-table {
+        background: white;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
+        min-width: 300px;
+    }
+
+    .sellers-table thead {
+        background: #555;
+        color: white;
+    }
+
+    .sellers-table th {
+        padding: 15px 20px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.1em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .sellers-table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .sellers-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .sellers-table td {
+        padding: 12px 20px;
+        text-align: center;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .sellers-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
     @media (max-width: 768px) {
         .info-cards, .charts-container {
             grid-template-columns: 1fr;
@@ -185,6 +252,9 @@
         .container {
             margin: 10px;
             border-radius: 6px;
+        }
+        .sellers-table {
+            min-width: 250px;
         }
     }
 </style>
@@ -224,6 +294,34 @@
                 <h4 class="chart-title">Probability History</h4>
                 <canvas id="signalChart" width="600" height="300"></canvas>
             </div>
+        </div>
+    </div>
+
+    <div class="sellers-section">
+        <h3 class="sellers-title">Active Sellers</h3>
+        <p class="sellers-subtitle">
+            Players who have sold their items.
+        </p>
+        
+        <div class="sellers-table-container">
+            <table class="sellers-table">
+                <thead>
+                    <tr>
+                        <th>Seller ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for seller in all_sellers %}
+                        <tr>
+                            <td>Player {{ seller }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td style="color: #888; font-style: italic;">No sellers yet</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 
