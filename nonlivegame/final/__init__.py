@@ -1,6 +1,5 @@
 from otree.api import *
 import random
-import numpy as np
 
 class C(BaseConstants):
     NAME_IN_URL = 'final'
@@ -64,10 +63,10 @@ class Final(Page):
             'selected_app': selected_app,
             'participation_bonus': participation_bonus,
             'total_payment': total_payment,
-            'selected_payoff_usd': np.round(selected_payoff_usd, 2),
-            'participation_bonus_usd': np.round(participation_bonus_usd, 2),
-            'survey_bonus_usd': np.round(survey_bonus_usd, 2),
-            'total_payment_usd': np.round(total_payment_usd, 2)
+            'selected_payoff_usd': round(selected_payoff_usd, 2),
+            'participation_bonus_usd': round(participation_bonus_usd, 2),
+            'survey_bonus_usd': round(survey_bonus_usd, 2),
+            'total_payment_usd': round(total_payment_usd, 2)
         }
 
 page_sequence = [Final]

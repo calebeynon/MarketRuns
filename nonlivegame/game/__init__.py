@@ -1,13 +1,12 @@
 from otree.api import *
-import numpy as np
 import random
 
 class C(BaseConstants):
     NAME_IN_URL = 'game'
     PLAYERS_PER_GROUP = 4
-    NUM_ROUNDS = min(np.random.geometric(p=0.125), 14)  # Geometric distribution with mean 8
+    NUM_ROUNDS = min(random.randint(1, 14), 14)  # Random number between 1-14
     INITIAL_PRICE = 8
-    STATE = np.random.randint(0, 2)
+    STATE = random.randint(0, 1)
     PCORRECT = 0.675
     INITIAL_SIGNAL = 0.5
 
@@ -42,8 +41,8 @@ def set_payoffs(group: Group):
 
     a_price = players[0].participant.vars['price']
     if len(sellers) > 0:
-        np.random.shuffle(sellers)        
-        pays = np.linspace(a_price, a_price - 2*len(sellers) + 2, len(sellers))
+        random.shuffle(sellers)        
+        pays = [a_price - 2*i for i in range(len(sellers))] if len(sellers) > 1 else [a_price] if len(sellers) == 1 else []
         for i,p in enumerate(players):
             p.participant.vars['price'] = a_price - 2*len(sellers)
         for i, p in enumerate(sellers):
@@ -59,8 +58,8 @@ def final_sale(group: Group):
     a_price = players[0].participant.vars['price']
     non_sellers = [p for p in players if not p.participant.vars['sold']]
     if C.STATE == 0:
-        np.random.shuffle(non_sellers)
-        pays = np.linspace(a_price, a_price - 2*len(non_sellers) + 2, len(non_sellers))
+        random.shuffle(non_sellers)
+        pays = [a_price - 2*i for i in range(len(non_sellers))] if len(non_sellers) > 1 else [a_price] if len(non_sellers) == 1 else []
         for i, p in enumerate(non_sellers):
             p.participant.vars['payoff'] = pays[i]
     else:

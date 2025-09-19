@@ -1,5 +1,4 @@
 from otree.api import *
-import numpy as np
 import random
 
 class C(BaseConstants):
@@ -21,7 +20,7 @@ class C(BaseConstants):
     NUM_ROUNDS = sum(PERIODS_PER_ROUND)
     
     INITIAL_PRICE = 8
-    STATE = [np.random.randint(0, 2) for _ in range(NUM_ROUNDS_IN_SEGMENT)]
+    STATE = [random.randint(0, 1) for _ in range(NUM_ROUNDS_IN_SEGMENT)]
     PCORRECT = 0.675
     INITIAL_SIGNAL = 0.5
 
@@ -120,8 +119,8 @@ def set_payoffs(group: Group):
 
     a_price = players[0].participant.vars['price']
     if len(sellers) > 0:
-        np.random.shuffle(sellers)        
-        pays = np.linspace(a_price, a_price - 2*len(sellers) + 2, len(sellers))
+        random.shuffle(sellers)        
+        pays = [a_price - 2*i for i in range(len(sellers))] if len(sellers) > 1 else [a_price] if len(sellers) == 1 else []
         for i,p in enumerate(players):
             p.participant.vars['price'] = a_price - 2*len(sellers)
         for i, p in enumerate(sellers):
@@ -137,8 +136,8 @@ def final_sale(group: Group):
     a_price = players[0].participant.vars['price']
     non_sellers = [p for p in players if not p.participant.vars['sold']]
     if C.STATE[players[0].round_number_in_segment - 1] == 0:
-        np.random.shuffle(non_sellers)
-        pays = np.linspace(a_price, a_price - 2*len(non_sellers) + 2, len(non_sellers))
+        random.shuffle(non_sellers)
+        pays = [a_price - 2*i for i in range(len(non_sellers))] if len(non_sellers) > 1 else [a_price] if len(non_sellers) == 1 else []
         for i, p in enumerate(non_sellers):
             p.participant.vars['payoff'] = pays[i]
             p.payoff = pays[i]
@@ -278,7 +277,7 @@ class MarketPeriod(Page):
             'sold_status': player.participant.vars['sold'],
             'price': player.participant.vars['price'],
             'payoff': player.participant.vars['payoff'],    
-            'signal': int(np.round(player.participant.vars['signal'] * 100)),
+            'signal': int(round(player.participant.vars['signal'] * 100)),
             'signal_history': list(player.participant.vars['signal_history']),
             'price_history': list(player.participant.vars['price_history']),
             'all_sellers': sorted(list(all_sellers)),
