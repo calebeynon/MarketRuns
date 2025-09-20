@@ -177,6 +177,12 @@ class NewRuleWait(WaitPage):
     def is_displayed(player):
         return player.round_number == 1 and player.period_in_round == 1
 
+class SegmentIntroWait1(WaitPage):
+    wait_for_all_groups = True
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1 and player.period_in_round == 1
+
 class SegmentIntro(Page):
     @staticmethod
     def is_displayed(player):
@@ -318,16 +324,18 @@ class MarketPeriodPayoffWait(WaitPage):
 
 
 class ResultsWait(WaitPage):
+    wait_for_all_groups = True
     @staticmethod
-    def after_all_players_arrive(group):
-        # Apply final sale logic
-        final_sale(group)
+    def after_all_players_arrive(subsession):
+        # Apply final sale logic to all groups
+        for group in subsession.get_groups():
+            final_sale(group)
 
-        # Update round payoffs after final sale
-        for player in group.get_players():
-            final_payoff = player.participant.vars['payoff']
-            player.set_round_payoff(player.round_number_in_segment, final_payoff)
-            player.payoff = final_payoff
+            # Update round payoffs after final sale
+            for player in group.get_players():
+                final_payoff = player.participant.vars['payoff']
+                player.set_round_payoff(player.round_number_in_segment, final_payoff)
+                player.payoff = final_payoff
 
 class Results(Page):
     def get_timeout_seconds(player):
@@ -392,7 +400,7 @@ class RoundEnd(Page):
             'is_final_round': player.round_number_in_segment == C.NUM_ROUNDS_IN_SEGMENT
         }
 
-page_sequence = [NewRule, NewRuleWait, SegmentIntro, SegmentIntroWait, ChatWait, Chat, MarketPeriodWait, MarketPeriod, MarketPeriodPayoffWait, ResultsWait, Results]
+page_sequence = [NewRule, NewRuleWait, SegmentIntroWait1, SegmentIntro, SegmentIntroWait, ChatWait, Chat, MarketPeriodWait, MarketPeriod, MarketPeriodPayoffWait, ResultsWait, Results]
 
 
 

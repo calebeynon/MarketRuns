@@ -166,6 +166,12 @@ def set_signal(group: Group):
         p.participant.vars['signal_history_length'] += 1
 
 # PAGES
+class SegmentIntroWait1(WaitPage):
+    wait_for_all_groups = True
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1 and player.period_in_round == 1
+
 class SegmentIntro(Page):
     @staticmethod
     def is_displayed(player):
@@ -283,27 +289,29 @@ class MarketPeriod(Page):
     
 
 class MarketPeriodPayoffWait(WaitPage):
+    wait_for_all_groups = True
     @staticmethod
-    def after_all_players_arrive(group):
-        # Calculate payoffs based on who sold
-        set_payoffs(group)
+    def after_all_players_arrive(subsession):
+        # Calculate payoffs based on who sold for all groups
+        for group in subsession.get_groups():
+            set_payoffs(group)
 
-        # Update player model fields for all players
-        for player in group.get_players():
-            # Store round-specific payoff
-            if player.participant.vars['sold']:
-                round_payoff = player.participant.vars['payoff']
-                player.set_round_payoff(player.round_number_in_segment, round_payoff)
-                player.payoff = round_payoff  # Still set current payoff for oTree
-            else:
-                player.set_round_payoff(player.round_number_in_segment, 0)
-                player.payoff = 0
+            # Update player model fields for all players
+            for player in group.get_players():
+                # Store round-specific payoff
+                if player.participant.vars['sold']:
+                    round_payoff = player.participant.vars['payoff']
+                    player.set_round_payoff(player.round_number_in_segment, round_payoff)
+                    player.payoff = round_payoff  # Still set current payoff for oTree
+                else:
+                    player.set_round_payoff(player.round_number_in_segment, 0)
+                    player.payoff = 0
 
-            # Update other fields
-            player.signal = player.participant.vars['signal']
-            player.price = player.participant.vars['price']
-            player.state = C.STATE[player.round_number_in_segment - 1]
-            player.sold = player.participant.vars['sold']
+                # Update other fields
+                player.signal = player.participant.vars['signal']
+                player.price = player.participant.vars['price']
+                player.state = C.STATE[player.round_number_in_segment - 1]
+                player.sold = player.participant.vars['sold']
 
 
     
@@ -383,7 +391,7 @@ class RoundEnd(Page):
             'is_final_round': player.round_number_in_segment == C.NUM_ROUNDS_IN_SEGMENT
         }
 
-page_sequence = [SegmentIntro, SegmentIntroWait, ChatWait, Chat, MarketPeriodWait, MarketPeriod, MarketPeriodPayoffWait, ResultsWait, Results]
+page_sequence = [SegmentIntroWait1, SegmentIntro, SegmentIntroWait, ChatWait, Chat, MarketPeriodWait, MarketPeriod, MarketPeriodPayoffWait, ResultsWait, Results]
 
 
 
