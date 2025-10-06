@@ -97,6 +97,7 @@ def creating_session(subsession: Subsession):
         if subsession.round_number == 1:
             p.participant.vars['pay_list'] = []
             p.participant.vars['pay_list_random'] = []
+            p.participant.vars['pay_list_random_index'] = []
 
 def set_all_false(group: Group):
     players = group.get_players()
@@ -349,7 +350,10 @@ class Results(Page):
         if player.round_number_in_segment == C.NUM_ROUNDS_IN_SEGMENT:
             # Get all payoffs from this segment and randomly select one
             segment_payoffs = player.participant.vars['pay_list'][-C.NUM_ROUNDS_IN_SEGMENT:]  # Last N payoffs
-            player.participant.vars['pay_list_random'].append(random.choice(segment_payoffs))
+            selected_payoff = random.choice(segment_payoffs)
+            selected_index = segment_payoffs.index(selected_payoff)
+            player.participant.vars['pay_list_random'].append(selected_payoff)
+            player.participant.vars['pay_list_random_index'].append(selected_index)
 
     def vars_for_template(player):
         # Show 8 if it's the final round, otherwise random 1-7
