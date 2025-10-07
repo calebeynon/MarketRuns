@@ -55,12 +55,7 @@
         border-radius: 6px;
         border-left: 5px solid #555;
         box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-        display: none;
         animation: slideIn 0.5s ease-out;
-    }
-
-    .instruction-chunk.revealed {
-        display: block;
     }
 
     @keyframes slideIn {
@@ -121,41 +116,6 @@
         background: #f8f9fa;
     }
 
-    .continue-button {
-        background: #555;
-        color: white;
-        border: none;
-        padding: 15px 40px;
-        font-size: 1.1em;
-        font-weight: 600;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(85, 85, 85, 0.3);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin: 20px auto;
-        display: block;
-    }
-
-    .continue-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 25px rgba(85, 85, 85, 0.4);
-    }
-
-    .continue-button:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-        box-shadow: none;
-        transform: none;
-    }
-
-    .progress-indicator {
-        text-align: center;
-        margin: 20px 0;
-        font-size: 0.95em;
-        color: #666;
-    }
 
     .action-section {
         padding: 30px;
@@ -164,14 +124,6 @@
         border-top: 1px solid #e0e0e0;
     }
 
-    #nextButtonContainer {
-        display: none;
-        animation: fadeIn 0.5s ease-out;
-    }
-
-    #nextButtonContainer.visible {
-        display: block;
-    }
 
     @media (max-width: 768px) {
         .container {
@@ -195,7 +147,7 @@
 
     <div class="instructions-section">
         <!-- Welcome Page -->
-        <div class="instruction-chunk revealed" id="chunk1">
+        <div class="instruction-chunk" id="chunk1">
             <div class="chunk-title">Welcome</div>
             <div class="chunk-content">
                 <p>Welcome to our study. At this time, please make sure you have turned off and put away all personal electronic devices. This study will take no more than 75 minutes.</p>
@@ -306,7 +258,7 @@
                 
                 <p>Each time someone exits the market, the price will update in the next market period.</p>
 
-                <p>If you exit the market in a market period, and another participant also exits the market in the same market period, then one person will receive the current market price and the other will receive the current market price minus 2 ECUs.</p>
+                <p>If you SELL in a market period, and another participant also SELLs in the same market period, then one person will receive the current market price and the other will receive the current market price minus 2 ECUs.</p>
                 <p>For example, if the current market price is 6 ECUs and two participants exit the market in the same market period, one person will receive 6 ECUs and the other will receive 4 ECUs. This will be randomly determined.</p>
                 <p>The same logic applies if more than two participants exit the market in the same market period.</p>
 
@@ -327,14 +279,7 @@
             </div>
         </div>
 
-        <!-- Page 6 (Communication - placeholder) -->
-        <div class="instruction-chunk" id="chunk7">
-            <div class="chunk-title">Segments 3 and 4</div>
-            <div class="chunk-content">
-                <p>Prior to segments 3 and 4, we may introduce an additional rule.</p>
-            </div>
-        </div>
-
+        
         <!-- Page 7 (Payment) -->
         <div class="instruction-chunk" id="chunk8">
             <div class="chunk-title">Payment Calculation</div>
@@ -345,48 +290,21 @@
                 
             </div>
         </div>
-
-        <div class="progress-indicator" id="progressIndicator">
-            Page <span id="currentPage">1</span> of 8
+        
+        <!-- Page 6 (Communication - placeholder) -->
+        <div class="instruction-chunk" id="chunk7">
+            <div class="chunk-title">Segments 3 and 4</div>
+            <div class="chunk-content">
+                <p>At the beginning of Segments 3 and 4, you will be able to chat with other participants in your group through a chat box.
+                    Your messages will be broadcast to the entire group and you will be able to see all messages from other participants.
+                    You may chat about any topic, but please refrain from using profanity or any language other than English.
+                    Additionally, do not reveal any personal identifying information in order to protect anonymity.
+                </p>
+            </div>
         </div>
-
-        <button type="button" class="continue-button" id="continueBtn">CONTINUE</button>
     </div>
 
-    <div class="action-section">
-        <div id="nextButtonContainer">
-            {{ next_button }}
-        </div>
-    </div>
 </div>
 
-<script>
-    let currentChunk = 1;
-    const totalChunks = 8;
-    
-    document.getElementById("continueBtn").addEventListener("click", function() {
-        if (currentChunk < totalChunks) {
-            currentChunk++;
-            document.getElementById(`chunk${currentChunk}`).classList.add('revealed');
-            document.getElementById("currentPage").textContent = currentChunk;
-            
-            // Scroll to the new chunk
-            document.getElementById(`chunk${currentChunk}`).scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
-            
-            // If we've revealed all chunks, hide continue button and show next button
-            if (currentChunk === totalChunks) {
-                this.disabled = true;
-                this.textContent = "ALL INSTRUCTIONS READ";
-                document.getElementById("nextButtonContainer").classList.add('visible');
-            }
-        }
-    });
-    
-    // Update initial progress indicator
-    document.getElementById("currentPage").textContent = "1";
-</script>
 
 {{ endblock }}

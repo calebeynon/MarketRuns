@@ -554,9 +554,6 @@
         <div class="progress-info">
             <span class="correct-count">0</span> out of 13 questions answered correctly
         </div>
-        <div id="nextButtonContainer">
-            {{ next_button }}
-        </div>
     </div>
 </div>
 
@@ -605,15 +602,8 @@
         // Update progress
         document.querySelector('.correct-count').textContent = correctCount;
 
-        // Enable or disable the next button based on correctness
-        let nextButtonContainer = document.getElementById("nextButtonContainer");
-        nextButtonContainer.style.pointerEvents = allCorrect ? "auto" : "none";
-        nextButtonContainer.style.opacity = allCorrect ? "1" : "0.5";
     });
 
-    // Disable next button on page load
-    document.getElementById("nextButtonContainer").style.pointerEvents = "none";
-    document.getElementById("nextButtonContainer").style.opacity = "0.5";
 </script>
 
 {{ endblock }}
