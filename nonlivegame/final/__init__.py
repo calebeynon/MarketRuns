@@ -38,7 +38,7 @@ class Final(Page):
             selected_app = 0
         
         # Calculate total payment
-        participation_bonus = 5.00
+        participation_bonus = 7.50
         survey_bonus = player.participant.vars['survey_payoff']
         total_payment = selected_payoff/C.ECUS_DOLLAR + participation_bonus + survey_bonus/C.ECUS_DOLLAR
         
