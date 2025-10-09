@@ -167,17 +167,17 @@
             <h2 class="breakdown-title">Payment Breakdown</h2>
             
             <div class="payment-row">
-                <span class="payment-label">Participation Bonus</span>
+                <span class="payment-label">Participation</span>
                 <span class="payment-amount">{{ participation_bonus_usd }} USD</span>
             </div>
             
             <div class="payment-row">
-                <span class="payment-label">Market Earnings</span>
+                <span class="payment-label">Part 1</span>
                 <span class="payment-amount">{{ selected_payoff_usd }} USD</span>
             </div>
             
             <div class="payment-row">
-                <span class="payment-label">Survey Bonus</span>
+                <span class="payment-label">Part 2</span>
                 <span class="payment-amount">{{ survey_bonus_usd }} USD</span>
             </div>
             
@@ -192,7 +192,7 @@
         </div>
 
         <div class="instructions">
-            <h3>Important Instructions</h3>
+            <h3>Payment Calculation</h3>
             <p>
                 Your market earnings of {{selected_payoff}} were converted to <strong>${{ selected_payoff_usd }}</strong> and <strong>summed</strong> from all four rounds.
                 This amount, combined with your participation bonus of <strong>${{ participation_bonus_usd }}</strong> and survey bonus of <strong>${{ survey_bonus_usd }}</strong>, 

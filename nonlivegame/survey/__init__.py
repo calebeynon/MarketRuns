@@ -158,6 +158,9 @@ class Player(BasePlayer):
 class Group(BaseGroup):
     pass
 
+class SurveyWait(WaitPage):
+    pass
+
 class Survey(Page):
     form_model = 'player'
     form_fields = [f'q{i}' for i in range(1, 29)]
@@ -183,4 +186,4 @@ class Results(Page):
             'allocate': allocate
         }
 
-page_sequence = [Survey, Allocate, Results]
+page_sequence = [SurveyWait, Survey, Allocate, Results]
