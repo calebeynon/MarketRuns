@@ -20,8 +20,14 @@ class Instructions(Page):
             'id': player.participant.label
         }
 
+class Label(Page):
+    def vars_for_template(player):
+        return {
+            'id': player.participant.label
+        }
+
 class Quiz(Page):
     pass
 
 
-page_sequence = [Instructions, Quiz]
+page_sequence = [Quiz, Label]
