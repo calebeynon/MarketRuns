@@ -279,9 +279,12 @@
                     <div class="status-message status-available">
                         Click the button below to sell your item at the current market price
                     </div>
-                    <button class="sell-button" name="sold" value="True">
+                    <button class="sell-button" type="button" onclick="sellButtonClicked()">
                         SELL NOW
                     </button>
+                    <!-- Hidden form fields -->
+                    <input type="hidden" name="sold" id="soldField" value="False">
+                    <input type="hidden" name="sell_click_time" id="sellClickTimeField" value="">
                 {% endif %}
             </div>
         </div>
@@ -443,6 +446,19 @@
             }
         }
     });
+
+    // Function to handle sell button click
+    function sellButtonClicked() {
+        // Capture the exact timestamp when the button is clicked
+        const clickTimestamp = Date.now() / 1000; // Convert to seconds (Unix timestamp)
+        
+        // Set the hidden form fields
+        document.getElementById('soldField').value = 'True';
+        document.getElementById('sellClickTimeField').value = clickTimestamp.toString();
+        
+        // Submit the form
+        document.querySelector('form').submit();
+    }
 </script>
 
 {{ endblock }}

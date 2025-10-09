@@ -32,6 +32,7 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     sold = models.BooleanField(initial=False)
+    sell_click_time = models.FloatField(blank=True, initial=None)
     signal = models.FloatField(initial=C.INITIAL_SIGNAL)
     price = models.FloatField(initial=C.INITIAL_PRICE)
     state = models.BooleanField(initial=C.STATE[0])
@@ -259,7 +260,7 @@ class MarketPeriod(Page):
 
     @staticmethod
     def get_form_fields(player: Player):
-        return ['sold']
+        return ['sold', 'sell_click_time']
 
     @staticmethod
     def js_vars(player):
