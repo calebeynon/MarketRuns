@@ -189,7 +189,20 @@
     </div>
 
     <div class="quiz-section">
-        <form id="quizForm">
+        <!-- Hidden fields to store first answers (bound to Player fields) -->
+        <input type="hidden" name="first_q1" id="first_q1">
+        <input type="hidden" name="first_q2" id="first_q2">
+        <input type="hidden" name="first_q3" id="first_q3">
+        <input type="hidden" name="first_q4" id="first_q4">
+        <input type="hidden" name="first_q5" id="first_q5">
+        <input type="hidden" name="first_q6" id="first_q6">
+        <input type="hidden" name="first_q7" id="first_q7">
+        <input type="hidden" name="first_q8" id="first_q8">
+        <input type="hidden" name="first_q9" id="first_q9">
+        <input type="hidden" name="first_q10" id="first_q10">
+        <input type="hidden" name="first_q11" id="first_q11">
+        <input type="hidden" name="first_q12" id="first_q12">
+        <input type="hidden" name="first_q13" id="first_q13">
             <!-- Question 1 -->
             <div class="question-block">
                 <div class="question-number">Question 1</div>
@@ -395,7 +408,7 @@
                     </li>
                     <li class="option">
                         <label>
-                            <input type="radio" name="q8" value="b"> b) You receive the asset's final value
+                            <input type="radio" name="q8" value="b"> b) You receive the asset's final value OR will be forced to sell at the current market price
                         </label>
                     </li>
                     <li class="option">
@@ -429,7 +442,7 @@
                     </li>
                     <li class="option">
                         <label>
-                            <input type="radio" name="q9" value="c"> c) Probability of final asset value being 20 ECUs
+                            <input type="radio" name="q9" value="c"> c) Probability of your asset being in a good situation
                         </label>
                     </li>
                     <li class="option">
@@ -546,7 +559,7 @@
                 </ul>
                 <span class="feedback" id="feedback13"></span>
             </div>
-        </form>
+        
     </div>
 
     <div class="action-section">
@@ -554,15 +567,20 @@
         <div class="progress-info">
             <span class="correct-count">0</span> out of 13 questions answered correctly
         </div>
+        <div id="nextButtonContainer" style="display:none; margin-top:10px;">
+            {{ next_button }}
+        </div>
     </div>
 </div>
 
 <script>
+    let firstCaptured = false;
+
     document.getElementById("checkAnswersBtn").addEventListener("click", function() {
         // Correct answers
         let answers = {
             q1: 'c',
-            q2: 'd',
+            q2: 'b',
             q3: 'd',
             q4: 'd',
             q5: 'b',
@@ -597,11 +615,31 @@
                 feedbackElement.style.color = "red";
                 allCorrect = false;
             }
+
+            // Capture first selections only once
+            if (!firstCaptured && selectedOption) {
+                const hiddenField = document.getElementById(`first_q${i}`);
+                if (hiddenField && !hiddenField.value) {
+                    hiddenField.value = selectedOption.value;
+                }
+            }
         }
 
         // Update progress
         document.querySelector('.correct-count').textContent = correctCount;
 
+        // After the first check, mark that we've captured first answers
+        if (!firstCaptured) {
+            firstCaptured = true;
+        }
+
+        // Show Next button only when all answers are correct
+        const nextContainer = document.getElementById('nextButtonContainer');
+        if (allCorrect) {
+            nextContainer.style.display = 'block';
+        } else {
+            nextContainer.style.display = 'none';
+        }
     });
 
 </script>
