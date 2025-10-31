@@ -250,7 +250,7 @@ class MarketPeriodWait(WaitPage):
 
 class MarketPeriod(Page):
     def get_timeout_seconds(player):
-        return 8
+        return 4
     form_model = 'player'
 
     @staticmethod
