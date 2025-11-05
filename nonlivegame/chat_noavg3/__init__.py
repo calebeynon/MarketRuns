@@ -8,9 +8,11 @@ class C(BaseConstants):
     
     # Generate random number of rounds for this segment
     NUM_ROUNDS_IN_SEGMENT = 6 #min(np.random.geometric(p=0.125), 14)  # 1-14 rounds
+    #NUM_ROUNDS_IN_SEGMENT = 2
     
     # For each round, generate random number of periods
-    PERIODS_PER_ROUND = [9, 8, 1, 4, 3, 2]
+    PERIODS_PER_ROUND = [9, 8, 4, 4, 3, 5]
+    #PERIODS_PER_ROUND = [2, 2]
     """     for round_num in range(NUM_ROUNDS_IN_SEGMENT):
         #periods = min(np.random.geometric(p=0.125), 14)  # 1-14 periods per round
         periods = 2
@@ -230,6 +232,8 @@ class Chat(Page):
     def get_timeout_seconds(player):
         if player.round_number_in_segment == 1:
             return 90
+        elif player.round_number_in_segment == 2:
+            return 60
         else:
             return 45
     
