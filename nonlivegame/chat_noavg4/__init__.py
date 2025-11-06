@@ -216,15 +216,10 @@ class ChatWait(WaitPage):
 class Chat(Page):
     def is_displayed(player):
         # Display at the start of each round
-        return player.period_in_round == 1
+        return player.round_number == 1
 
     def get_timeout_seconds(player):
-        if player.round_number_in_segment == 1:
-            return 90
-        elif player.round_number_in_segment == 2:
-            return 60
-        else:
-            return 45
+        return 90
     
     def vars_for_template(player):
         return {
