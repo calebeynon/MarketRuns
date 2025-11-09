@@ -1,0 +1,111 @@
+{{block title}}Market Period{{endblock}}
+{{block content}}
+<style>
+    body {
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
+    }
+    .otree-btn-primary {
+        background-color: #555;
+        border-color: #555;
+    }
+</style>
+<p>The market period is now open. You will have 4 seconds to decide whether to sell your item. The price is {{price}}.</p>
+<p>The probability of high value is {{ signal }}%.</p>
+
+<!-- Graphs Side by Side -->
+<div style="display: flex; gap: 40px; justify-content: center;">
+    <div>
+        <h4>Price History</h4>
+        <canvas id="priceChart" width="600" height="300"></canvas>
+    </div>
+    <div>
+        <h4>Probability History</h4>
+        <canvas id="signalChart" width="600" height="300"></canvas>
+    </div>
+</div>
+
+{% if sold_status %}
+    <p>You have already sold your item for {{ payoff }}.</p>
+    <button name="sold" value="True" disabled style="opacity:0.5; cursor:not-allowed;">SELL</button>
+{% else %}
+    <p>Click the button below to sell your item.</p>
+    <button name="sold" value="True">SELL</button>
+{% endif %}
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // These variables are injected by oTree's js_vars
+    const signalHistory = js_vars.signal_history;
+    const priceHistory = js_vars.price_history;
+    
+    // Debug: Log the data to console
+    console.log('Signal History:', signalHistory);
+    console.log('Price History:', priceHistory);
+
+    // Generate x-axis labels (e.g., 0, 1, 2, ... up to 16)
+    const xLabels = Array.from({length: 17}, (_, i) => i);
+
+    // Price Chart
+    new Chart(document.getElementById('priceChart'), {
+        type: 'line',
+        data: {
+            labels: xLabels,
+            datasets: [{
+                label: 'Price',
+                data: priceHistory,
+                borderColor: '#555',
+                fill: false,
+                tension: 0.1,
+                stepped: true // Make the line step-wise
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: { display: true, text: 'Period' },
+                    min: 0,
+                    max: 16
+                },
+                y: {
+                    title: { display: true, text: 'Price' },
+                    min: 0,
+                    max: 10
+                }
+            }
+        }
+    });
+
+    // Signal Chart
+    new Chart(document.getElementById('signalChart'), {
+        type: 'line',
+        data: {
+            labels: xLabels,
+            datasets: [{
+                label: 'Probability of High Value (%)',
+                data: signalHistory.map(val => val * 100),
+                borderColor: '#888',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: { display: true, text: 'Period' },
+                    min: 0,
+                    max: 16
+                },
+                y: {
+                    title: { display: true, text: 'Probability of High Value (%)' },
+                    min: 0,
+                    max: 100
+                }
+            }
+        }
+    });
+
+</script>
+
+{{endblock}}

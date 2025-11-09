@@ -1,0 +1,34 @@
+{{block title}}Period Results{{endblock}}
+{{block content}}
+<style>
+    body {
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
+    }
+</style>
+<p>The probability of high value was {{ signal }}%.</p>
+
+{% if sold_status %}
+    <p>You sold your item for {{ payoff }}.</p>
+{% else %}
+    <p>You did not sell your item.</p>
+{% endif %}
+<p> The following players sold their item, those highlighted sold their item in the last period.</p>
+<div style="display: inline-block; width: 200px;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Seller</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for seller in sellers %}
+                <tr {% if seller in last_round_sellers %}style="background-color: #e0e0e0; font-weight: bold;"{% endif %}>
+                    <td>{{ seller }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{{endblock}}

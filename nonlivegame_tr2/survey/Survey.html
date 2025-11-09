@@ -1,0 +1,566 @@
+{{ block title }}Part 2{{ endblock }}
+{{ block content }}
+
+<style>
+    body {
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+        background: #555;
+        color: white;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+        margin: 10px 0 0;
+        font-size: 1.1em;
+        opacity: 0.9;
+    }
+
+    .survey-section {
+        padding: 30px;
+        background: white;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 5px solid #555;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+
+    .form-group .form-label {
+        font-weight: bold;
+        color: #333;
+        font-size: 1.1em;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .form-group .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 1em;
+        font-family: inherit;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-group .form-control:focus {
+        outline: none;
+        border-color: #555;
+    }
+
+    .form-group .form-check-label {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1em;
+    }
+
+    .form-group .form-check-label:hover {
+        background: #f5f5f5;
+        border-color: #555;
+    }
+
+    .form-group .form-check-input {
+        margin-right: 10px;
+    }
+
+    .question-section {
+        margin-bottom: 40px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 5px solid #555;
+    }
+
+    .question-section h3 {
+        color: #555;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+        font-weight: 600;
+    }
+
+    .question-section p {
+        color: #666;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+
+    .action-section {
+        padding: 30px;
+        background: #f8f9fa;
+        text-align: center;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .submit-button {
+        background: #555;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        font-size: 1.2em;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(85, 85, 85, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .submit-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(85, 85, 85, 0.4);
+    }
+
+    .section-container {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+    
+    .section-container.active {
+        display: block;
+        opacity: 1;
+    }
+    
+    .continue-button {
+        background: #555;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        font-size: 1.1em;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 15px rgba(85, 85, 85, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 20px 0;
+        display: none;
+    }
+    
+    .continue-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(85, 85, 85, 0.4);
+    }
+    
+    .continue-button.visible {
+        display: inline-block;
+    }
+    
+    .section-progress {
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .progress-indicator {
+        font-size: 1.1em;
+        color: #555;
+        font-weight: 600;
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            margin: 10px;
+            border-radius: 6px;
+        }
+        .survey-section {
+            padding: 20px;
+        }
+        .form-group {
+            padding: 15px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="header">
+        In this part of the study, you will not interact with other participants. Your earnings from this part will only depend on your own decisions.
+        Part 2 of this study consists of 5 sections. We provide instructions for each section below.
+    </div>
+
+    <div class="section-progress">
+        <div class="progress-indicator">Section 1 of 5</div>
+    </div>
+
+    <div class="survey-section">
+        <form method="post">
+            <div id="section-1" class="section-container active">
+                <div class="question-section">
+                    <h3>Section 1</h3>
+                <p>Read each statement and choose one of the response options ( Not at all, Somewhat, Moderately, Very much) to indicate how you feel right now.
+                    You will earn 5 ECUs after completing this section.<br>
+                    I feel:
+                </p>
+                
+                <div class="form-group">
+                    {{ formfield 'q1' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q2' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q3' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q4' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q5' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q6' }}
+                </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button type="button" class="continue-button" id="continue-1" onclick="continueToSection(2)">
+                        Continue to Section 2
+                    </button>
+                </div>
+            </div>
+
+            <div id="section-2" class="section-container">
+                <div class="question-section">
+                    <h3>Section 2</h3>
+                <p>Please choose a number for each statement to indicate the extent to which you agree or disagree with that statement (Strongly Disagree, Disagree Moderately, Disagree a little, Neither agree nor disagree, Agree a little, Agree Moderately, Strongly Agree)
+                    You should rate the extent to which the pair of traits applies to you, even if one characteristic applies more strongly than the other. You will earn 5 ECUs after completing this section.<br>
+                    I see myself as:
+                </p>
+                
+                <div class="form-group">
+                    {{ formfield 'q7' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q8' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q9' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q10' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q11' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q12' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q13' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q14' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q15' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q16' }}
+                </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button type="button" class="continue-button" id="continue-2" onclick="continueToSection(3)">
+                        Continue to Section 3
+                    </button>
+                </div>
+            </div>
+
+            <div id="section-3" class="section-container">
+                <div class="question-section">
+                    <h3>Section 3</h3>
+                    <p>Please choose a number for each statement to indicate the extent to which you agree or disagree with that statement (Strongly Disagree, Disagree Moderately, Disagree a little, Neither agree nor disagree, Agree a little, Agree Moderately, Strongly Agree)
+                        You will earn 5 ECUs after completing this section.
+                    </p>
+                </div>
+                <div class="form-group">
+                    {{ formfield 'q17' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q18' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q19' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q20' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q21' }}
+                </div>
+
+                <div class="form-group">
+                    {{ formfield 'q22' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q23' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q24' }}
+                </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button type="button" class="continue-button" id="continue-3" onclick="continueToSection(4)">
+                        Continue to Section 4
+                    </button>
+                </div>
+            </div>
+
+            <div id="section-4" class="section-container">
+                <div class="question-section">
+                    <h3>Section 4</h3>
+                <p>Please answer the following demographic survey questions. You will earn 5 ECUs after completing this section.
+                </p>
+
+                <div class="form-group">
+                    {{ formfield 'q25' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q26' }}
+                </div>
+
+                <div class="form-group">
+                    {{ formfield 'q27' }}
+                </div>
+                
+                <div class="form-group">
+                    {{ formfield 'q28' }}
+                </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button type="button" class="continue-button" id="continue-4" onclick="submitSurvey()">
+                        Complete Survey
+                    </button>
+                </div>
+            </div>
+            
+        </form>
+    </div>
+
+    <div class="action-section" id="submit-section" style="display: none;">
+        {{ next_button }}
+    </div>
+</div>
+
+<script>
+    let currentSection = 1;
+    const totalSections = 4;
+    
+    // Section question mappings
+    const sectionQuestions = {
+        1: ['q1', 'q2', 'q3', 'q4', 'q5', 'q6'],
+        2: ['q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16'],
+        3: ['q17', 'q18', 'q19', 'q20', 'q21', 'q22', 'q23', 'q24'],
+        4: ['q25', 'q26', 'q27', 'q28']
+    };
+    
+    function updateProgressIndicator() {
+        const progressElement = document.querySelector('.progress-indicator');
+        progressElement.textContent = `Section ${currentSection} of ${totalSections}`;
+    }
+    
+    function showContinueButton(sectionNumber) {
+        const continueButton = document.getElementById(`continue-${sectionNumber}`);
+        continueButton.classList.add('visible');
+    }
+    
+    function continueToSection(nextSection) {
+        // Check if current section is complete before allowing continuation
+        if (!checkSectionComplete(currentSection)) {
+            alert(`Please complete all questions in Section ${currentSection} before continuing.`);
+            return;
+        }
+        
+        if (currentSection < totalSections) {
+            // Hide continue button for current section
+            document.getElementById(`continue-${currentSection}`).classList.remove('visible');
+            
+            // Hide current section
+            document.getElementById(`section-${currentSection}`).classList.remove('active');
+            
+            // Show next section
+            currentSection = nextSection;
+            document.getElementById(`section-${currentSection}`).classList.add('active');
+            
+            // Update progress indicator
+            updateProgressIndicator();
+            
+            // Scroll to top of page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Check if new section is complete and show continue button if so
+            checkAndShowContinueButton(currentSection);
+        }
+    }
+    
+    function checkSectionComplete(sectionNumber) {
+        const questions = sectionQuestions[sectionNumber];
+        
+        for (let question of questions) {
+            const inputs = document.querySelectorAll(`input[name="${question}"], select[name="${question}"]`);
+            let hasAnswer = false;
+            
+            for (let input of inputs) {
+                if (input.checked || (input.value && input.value.trim() !== '')) {
+                    hasAnswer = true;
+                    break;
+                }
+            }
+            
+            if (!hasAnswer) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    function findFirstIncompleteSection() {
+        for (let sectionNum = 1; sectionNum <= totalSections; sectionNum++) {
+            if (!checkSectionComplete(sectionNum)) {
+                return sectionNum;
+            }
+        }
+        return null;
+    }
+    
+    function goToSection(sectionNumber) {
+        // Hide all sections
+        for (let i = 1; i <= totalSections; i++) {
+            document.getElementById(`section-${i}`).classList.remove('active');
+            document.getElementById(`continue-${i}`).classList.remove('visible');
+        }
+        
+        // Show target section
+        document.getElementById(`section-${sectionNumber}`).classList.add('active');
+        
+        // Update current section and progress
+        currentSection = sectionNumber;
+        updateProgressIndicator();
+        
+        // Check if section is complete and show continue button if so
+        checkAndShowContinueButton(currentSection);
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function submitSurvey() {
+        // Check for incomplete sections
+        const firstIncomplete = findFirstIncompleteSection();
+        
+        if (firstIncomplete !== null) {
+            // Go back to first incomplete section
+            goToSection(firstIncomplete);
+            alert(`Please complete all questions in Section ${firstIncomplete} before submitting.`);
+            return;
+        }
+        
+        // Hide continue button for current section
+        document.getElementById(`continue-${currentSection}`).classList.remove('visible');
+        
+        // Scroll to top of page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Show the submit section and trigger the form submission
+        document.getElementById('submit-section').style.display = 'block';
+        document.querySelector('form').submit();
+    }
+    
+    // Check if section is complete and show continue button accordingly
+    function checkAndShowContinueButton(sectionNumber) {
+        if (checkSectionComplete(sectionNumber)) {
+            showContinueButton(sectionNumber);
+        } else {
+            const continueButton = document.getElementById(`continue-${sectionNumber}`);
+            continueButton.classList.remove('visible');
+        }
+    }
+    
+    // Add event listeners to all form inputs to check completion status
+    function addValidationListeners() {
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('change', function() {
+                checkAndShowContinueButton(currentSection);
+            });
+            input.addEventListener('input', function() {
+                checkAndShowContinueButton(currentSection);
+            });
+        });
+    }
+    
+    // Initialize page when loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add validation listeners to all inputs
+        addValidationListeners();
+        
+        // Check if current section is already complete and show button if so
+        checkAndShowContinueButton(currentSection);
+    });
+</script>
+
+{{ endblock }}

@@ -1,0 +1,331 @@
+{{ block title }}Period Results{{ endblock }}
+{{ block content }}
+
+<style>
+    body {
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+        background: #555;
+        color: white;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .results-section {
+        padding: 40px;
+        background: white;
+    }
+
+    .result-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .result-card {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 6px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e0e0e0;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .result-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .result-card h3 {
+        margin: 0 0 15px 0;
+        color: #333;
+        font-size: 1.3em;
+        font-weight: 600;
+    }
+
+    .result-card .value {
+        font-size: 2.5em;
+        font-weight: bold;
+        margin: 15px 0;
+    }
+
+    .signal-value {
+        color: #555;
+    }
+
+    .payoff-value {
+        color: #555;
+    }
+
+    .status-section {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 6px;
+        margin-bottom: 40px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+    .status-message {
+        font-size: 1.4em;
+        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .status-sold {
+        background: #f5f5f5;
+        color: #424242;
+        border: 1px solid #e0e0e0;
+    }
+
+    .status-not-sold {
+        background: #f5f5f5;
+        color: #424242;
+        border: 1px solid #e0e0e0;
+    }
+
+    .sellers-section {
+        background: white;
+        padding: 30px;
+        border-radius: 6px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e0e0e0;
+    }
+
+    .sellers-title {
+        font-size: 1.5em;
+        color: #333;
+        margin-bottom: 20px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .sellers-subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 1.1em;
+    }
+
+    .sellers-table-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .sellers-table {
+        background: white;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
+        min-width: 300px;
+    }
+
+    .sellers-table thead {
+        background: #555;
+        color: white;
+    }
+
+    .sellers-table th {
+        padding: 15px 20px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.1em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .sellers-table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .sellers-table tbody tr:hover {
+        background: #f8f9fa;
+    }
+
+    .sellers-table tbody tr.recent-seller {
+        background: #f5f5f5;
+        color: #424242;
+        font-weight: bold;
+        animation: highlight 2s ease-in-out;
+    }
+
+    @keyframes highlight {
+        0% { background: #f5f5f5; }
+        50% { background: #e0e0e0; color: #424242; }
+        100% { background: #f5f5f5; color: #424242; }
+    }
+
+    .sellers-table td {
+        padding: 12px 20px;
+        text-align: center;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .sellers-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .legend {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        gap: 30px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+    }
+
+    .legend-recent {
+        background: #f5f5f5;
+        border: 2px solid #555;
+    }
+
+    .legend-normal {
+        background: white;
+        border: 2px solid #e0e0e0;
+    }
+
+    @media (max-width: 768px) {
+        .result-cards {
+            grid-template-columns: 1fr;
+        }
+        .container {
+            margin: 10px;
+            border-radius: 6px;
+        }
+        .sellers-table {
+            min-width: 250px;
+        }
+        .legend {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1>Period Results</h1>
+        <p>Your trading this period</p>
+        <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 5px;">
+            <strong>Segment {{ segment_number }}/4 | Round {{ round_number }} | Period {{ period_number }}</strong>
+        </div>
+    </div>
+
+    <div class="results-section">
+        <div class="result-cards">
+            <div class="result-card">
+                <h3>Probability of High Value</h3>
+                <div class="value signal-value">{{ signal }}%</div>
+                <p>Probability that asset value will be 20</p>
+            </div>
+            <div class="result-card">
+                <h3>Your Payoff</h3>
+                <div class="value payoff-value">
+                    {% if sold_status %}
+                        {{ payoff }} ECUs
+                    {% else %}
+                        --
+                    {% endif %}
+                </div>
+                <p>Amount earned this period</p>
+            </div>
+        </div>
+
+        <div class="status-section">
+            {% if sold_status %}
+                <div class="status-message status-sold">
+You sold your item for {{ payoff }} ECUs
+                </div>
+            {% else %}
+                <div class="status-message status-not-sold">
+You chose not to sell your item this period
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="sellers-section">
+            <h3 class="sellers-title">Active Sellers</h3>
+            <p class="sellers-subtitle">
+                Players who have sold their items. Recent sellers are highlighted.
+            </p>
+            
+            <div class="sellers-table-container">
+                <table class="sellers-table">
+                    <thead>
+                        <tr>
+                            <th>Seller ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for seller in sellers %}
+                            <tr {% if seller in last_round_sellers %}class="recent-seller"{% endif %}>
+                                <td>Player {{ seller }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td style="color: #888; font-style: italic;">No sellers yet</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-recent"></div>
+                    <span>Recent sellers (this period)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-normal"></div>
+                    <span>Previous sellers</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ endblock }}

@@ -1,0 +1,647 @@
+{{ block title }}Quiz{{ endblock }}
+{{ block content }}
+
+<style>
+    body {
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+        background: #555;
+        color: white;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+        margin: 10px 0 0;
+        font-size: 1.1em;
+        opacity: 0.9;
+    }
+
+    .quiz-section {
+        padding: 30px;
+        background: white;
+    }
+
+    .question-block {
+        margin-bottom: 30px;
+        padding: 25px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 5px solid #555;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+
+    .question-number {
+        font-weight: bold;
+        color: #555;
+        font-size: 1.1em;
+        margin-bottom: 10px;
+    }
+
+    .question-text {
+        font-size: 1.1em;
+        color: #333;
+        margin-bottom: 15px;
+        font-weight: 500;
+    }
+
+    .options {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .option {
+        margin-bottom: 10px;
+    }
+
+    .option label {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1em;
+    }
+
+    .option label:hover {
+        background: #f5f5f5;
+        border-color: #555;
+        transform: translateX(5px);
+    }
+
+    .option input[type="radio"] {
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .option input[type="text"] {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 1em;
+        font-family: inherit;
+        transition: border-color 0.3s ease;
+    }
+
+    .option input[type="text"]:focus {
+        outline: none;
+        border-color: #555;
+    }
+
+    .feedback {
+        margin-left: 10px;
+        font-weight: bold;
+        font-size: 1em;
+    }
+
+    .action-section {
+        padding: 30px;
+        background: #f8f9fa;
+        text-align: center;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .check-button {
+        background: #555;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        font-size: 1.2em;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(85, 85, 85, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+
+    .check-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(85, 85, 85, 0.4);
+    }
+
+    .progress-info {
+        margin-bottom: 20px;
+        font-size: 1.1em;
+        color: #666;
+    }
+
+    .progress-info .correct-count {
+        color: #555;
+        font-weight: bold;
+    }
+
+    #nextButtonContainer {
+        transition: opacity 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 10px;
+            border-radius: 6px;
+        }
+        .quiz-section {
+            padding: 20px;
+        }
+        .question-block {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1>Comprehension Quiz</h1>
+        <p>Please answer all questions correctly before proceeding</p>
+    </div>
+
+    <div class="quiz-section">
+        <!-- Hidden fields to store first answers (bound to Player fields) -->
+        <input type="hidden" name="first_q1" id="first_q1">
+        <input type="hidden" name="first_q2" id="first_q2">
+        <input type="hidden" name="first_q3" id="first_q3">
+        <input type="hidden" name="first_q4" id="first_q4">
+        <input type="hidden" name="first_q5" id="first_q5">
+        <input type="hidden" name="first_q6" id="first_q6">
+        <input type="hidden" name="first_q7" id="first_q7">
+        <input type="hidden" name="first_q8" id="first_q8">
+        <input type="hidden" name="first_q9" id="first_q9">
+        <input type="hidden" name="first_q10" id="first_q10">
+        <input type="hidden" name="first_q11" id="first_q11">
+        <input type="hidden" name="first_q12" id="first_q12">
+        <input type="hidden" name="first_q13" id="first_q13">
+            <!-- Question 1 -->
+            <div class="question-block">
+                <div class="question-number">Question 1</div>
+                <div class="question-text">How many participants will be in your group?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q1" value="a"> a) 2 participants
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q1" value="b"> b) 3 participants
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q1" value="c"> c) 4 participants
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q1" value="d"> d) 5 participants
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback1"></span>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-block">
+                <div class="question-number">Question 2</div>
+                <div class="question-text">How long does each market period last?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q2" value="a"> a) 2 seconds
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q2" value="b"> b) 4 seconds
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q2" value="c"> c) 6 seconds
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q2" value="d"> d) 8 seconds
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback2"></span>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-block">
+                <div class="question-number">Question 3</div>
+                <div class="question-text">What number must be randomly selected for a round to end?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q3" value="a"> a) 1
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q3" value="b"> b) 4
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q3" value="c"> c) 6
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q3" value="d"> d) 8
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback3"></span>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-block">
+                <div class="question-number">Question 4</div>
+                <div class="question-text">If all 4 participants are still in the market, what is the current market price?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q4" value="a"> a) 2 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q4" value="b"> b) 4 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q4" value="c"> c) 6 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q4" value="d"> d) 8 ECUs
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback4"></span>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-block">
+                <div class="question-number">Question 5</div>
+                <div class="question-text">If only 2 participants remain in the market, what is the current market price?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q5" value="a"> a) 2 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q5" value="b"> b) 4 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q5" value="c"> c) 6 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q5" value="d"> d) 8 ECUs
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback5"></span>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-block">
+                <div class="question-number">Question 6</div>
+                <div class="question-text">Suppose the current market price is 6 ECUs and two participants decide to sell in the same round. What will they receive?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q6" value="a"> a) Both receive 6 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q6" value="b"> b) Both receive 4 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q6" value="c"> c) One receives 6 ECUs, the other receives 4 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q6" value="d"> d) Both receive 5 ECUs (the average of 6 ECUs and 4 ECUs)
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback6"></span>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-block">
+                <div class="question-number">Question 7</div>
+                <div class="question-text">Are you required to sell your asset during the market period?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q7" value="a"> a) Yes, you must sell
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q7" value="b"> b) No, selling is optional
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback7"></span>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-block">
+                <div class="question-number">Question 8</div>
+                <div class="question-text">If you choose not to sell your asset, what determines your earnings for that round?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q8" value="a"> a) You receive 0 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q8" value="b"> b) You receive the asset's final value OR will be forced to sell at the average remaining market price
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q8" value="c"> c) You receive the current market price
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q8" value="d"> d) You receive 2 ECUs
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback8"></span>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-block">
+                <div class="question-number">Question 9</div>
+                <div class="question-text">What information will you see during each round?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q9" value="a"> a) Current market price
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q9" value="b"> b) Graphical display of previous market prices
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q9" value="c"> c) Probability of your asset being in a good situation
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q9" value="d"> d) All of the above
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback9"></span>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="question-block">
+                <div class="question-number">Question 10</div>
+                <div class="question-text">How will your final payment for Part 1 be determined?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q10" value="a"> a) Average of all market periods
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q10" value="b"> b) Sum of all market periods
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q10" value="c"> c) One randomly selected round will be selected from each segment. These rounds will then be summed.
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q10" value="d"> d) Your best performing market period
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback10"></span>
+            </div>
+
+            <!-- Question 11 -->
+            <div class="question-block">
+                <div class="question-number">Question 11</div>
+                <div class="question-text">True or False: Your identity will be revealed to other participants.</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q11" value="a"> a) True
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q11" value="b"> b) False
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback11"></span>
+            </div>
+
+            <!-- Question 12 -->
+            <div class="question-block">
+                <div class="question-number">Question 12</div>
+                <div class="question-text">Scenario Question: You are in a round where 3 participants remain in the market. The current market price is 6 ECUs. If you are the only person to sell this round, how much will you receive?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q12" value="a"> a) 8 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q12" value="b"> b) 6 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q12" value="c"> c) 4 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q12" value="d"> d) 2 ECUs
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback12"></span>
+            </div>
+
+            <!-- Question 13 -->
+            <div class="question-block">
+                <div class="question-number">Question 13</div>
+                <div class="question-text">Scenario Question: It's the final round of a market period. Only 1 participant (you) remains in the market, so the current market price is 2 ECUs. If you don't sell, what are the two possible final values for your asset?</div>
+                <ul class="options">
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q13" value="a"> a) 20 ECUs and 2 ECUs
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q13" value="b"> b) 20 ECUs only
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q13" value="c"> c) 2 ECUs only
+                        </label>
+                    </li>
+                    <li class="option">
+                        <label>
+                            <input type="radio" name="q13" value="d"> d) 0 ECUs and 2 ECUs
+                        </label>
+                    </li>
+                </ul>
+                <span class="feedback" id="feedback13"></span>
+            </div>
+        
+    </div>
+
+    <div class="action-section">
+        <button type="button" class="check-button" id="checkAnswersBtn">CHECK ANSWERS</button>
+        <div class="progress-info">
+            <span class="correct-count">0</span> out of 13 questions answered correctly
+        </div>
+        <div id="nextButtonContainer" style="display:none; margin-top:10px;">
+            {{ next_button }}
+        </div>
+    </div>
+</div>
+
+<script>
+    let firstCaptured = false;
+
+    document.getElementById("checkAnswersBtn").addEventListener("click", function() {
+        // Correct answers
+        let answers = {
+            q1: 'c',
+            q2: 'b',
+            q3: 'd',
+            q4: 'd',
+            q5: 'b',
+            q6: 'd',
+            q7: 'b',
+            q8: 'b',
+            q9: 'd',
+            q10: 'c',
+            q11: 'b',
+            q12: 'b',
+            q13: 'a'
+        };
+
+        let allCorrect = true;
+        let correctCount = 0;
+
+        // Check all questions (radio buttons)
+        for (let i = 1; i <= 13; i++) {
+            let selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+            let feedbackElement = document.getElementById(`feedback${i}`);
+            
+            if (!selectedOption) {
+                feedbackElement.textContent = "✘ Please select an answer!";
+                feedbackElement.style.color = "red";
+                allCorrect = false;
+            } else if (selectedOption.value === answers[`q${i}`]) {
+                feedbackElement.textContent = "✔ Correct!";
+                feedbackElement.style.color = "green";
+                correctCount++;
+            } else {
+                feedbackElement.textContent = "✘ Try again!";
+                feedbackElement.style.color = "red";
+                allCorrect = false;
+            }
+
+            // Capture first selections only once
+            if (!firstCaptured && selectedOption) {
+                const hiddenField = document.getElementById(`first_q${i}`);
+                if (hiddenField && !hiddenField.value) {
+                    hiddenField.value = selectedOption.value;
+                }
+            }
+        }
+
+        // Update progress
+        document.querySelector('.correct-count').textContent = correctCount;
+
+        // After the first check, mark that we've captured first answers
+        if (!firstCaptured) {
+            firstCaptured = true;
+        }
+
+        // Show Next button only when all answers are correct
+        const nextContainer = document.getElementById('nextButtonContainer');
+        if (allCorrect) {
+            nextContainer.style.display = 'block';
+        } else {
+            nextContainer.style.display = 'none';
+        }
+    });
+
+</script>
+
+{{ endblock }}

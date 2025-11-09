@@ -1,0 +1,211 @@
+{{ block title }}Segment Introduction{{ endblock }}
+{{ block content }}
+
+<style>
+    body {
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .container {
+        max-width: 700px;
+        width: 100%;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+        background: #555;
+        color: white;
+        padding: 50px 40px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 3em;
+        font-weight: 300;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        animation: slideIn 0.8s ease-out;
+    }
+
+    @keyframes slideIn {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    .segment-indicator {
+        font-size: 1.3em;
+        margin-top: 15px;
+        opacity: 0.9;
+    }
+
+    .content-section {
+        padding: 40px;
+        background: white;
+    }
+
+    .info-box {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 6px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e0e0e0;
+        margin-bottom: 30px;
+    }
+
+    .info-box h3 {
+        margin: 0 0 20px 0;
+        color: #333;
+        font-size: 1.5em;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .icon {
+        width: 30px;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #555;
+        color: white;
+        border-radius: 50%;
+        font-size: 1.2em;
+    }
+
+    .group-members {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .member-tag {
+        background: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        border: 2px solid #e0e0e0;
+        font-weight: 500;
+        color: #333;
+        transition: all 0.3s ease;
+    }
+
+    .member-tag:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        border-color: #555;
+    }
+
+    .communication-status {
+        padding: 20px;
+        border-radius: 6px;
+        text-align: center;
+        font-size: 1.2em;
+        margin-top: 20px;
+    }
+
+    .comm-enabled {
+        background: #f5f5f5;
+        color: #424242;
+        border: 2px solid #e0e0e0;
+    }
+
+    .comm-disabled {
+        background: #f5f5f5;
+        color: #424242;
+        border: 2px solid #e0e0e0;
+    }
+
+    .ready-message {
+        background: #f5f5f5;
+        padding: 25px;
+        border-radius: 6px;
+        text-align: center;
+        margin-top: 30px;
+        border: 2px solid #e0e0e0;
+    }
+
+    .ready-message p {
+        margin: 0;
+        font-size: 1.1em;
+        color: #424242;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 20px;
+            border-radius: 6px;
+        }
+        .header h1 {
+            font-size: 2em;
+        }
+        .content-section {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1>Starting Segment {{ segment_number }}</h1>
+        <div class="segment-indicator">
+            Segment {{ segment_number }} of {{ total_segments }}
+        </div>
+    </div>
+
+    <div class="content-section">
+        <div class="info-box">
+            <h3>
+                <span class="icon">👥</span>
+                Your Group Members
+            </h3>
+            <p>You will be trading with the following participants in this segment:</p>
+            <div class="group-members">
+                {% for member in group_members %}
+                    <div class="member-tag">{{ member }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+
+        <div class="ready-message">
+            <p>
+                <strong>The segment will begin now.</strong><br>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add entrance animations with delays
+    document.addEventListener('DOMContentLoaded', function() {
+        const infoBoxes = document.querySelectorAll('.info-box');
+        infoBoxes.forEach((box, index) => {
+            box.style.opacity = '0';
+            box.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                box.style.transition = 'all 0.5s ease-out';
+                box.style.opacity = '1';
+                box.style.transform = 'translateY(0)';
+            }, 300 + (index * 200));
+        });
+    });
+</script>
+
+{{ endblock }}

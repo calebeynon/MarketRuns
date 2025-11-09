@@ -1,0 +1,266 @@
+{{ block title }}Results{{ endblock }}
+{{ block content }}
+
+<style>
+    body {
+        background-color: #f0f0f0; /* Light Gray */
+        color: #333; /* Dark Gray */
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+        background: #555;
+        color: white;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+        margin: 10px 0 0;
+        font-size: 1.1em;
+        opacity: 0.9;
+    }
+
+    .results-section {
+        padding: 30px;
+        background: white;
+    }
+
+    .result-card {
+        margin-bottom: 25px;
+        padding: 25px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 5px solid #555;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+
+    .result-card h3 {
+        color: #555;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+        font-weight: 600;
+    }
+
+    .result-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .result-item:last-child {
+        border-bottom: none;
+    }
+
+    .result-label {
+        font-weight: bold;
+        color: #333;
+        font-size: 1.1em;
+    }
+
+    .result-value {
+        color: #555;
+        font-size: 1.1em;
+        font-weight: 600;
+    }
+
+    .coin-result {
+        text-align: center;
+        padding: 20px;
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        margin: 20px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .coin-result.success {
+        border-color: #28a745;
+        background: #f8fff9;
+    }
+
+    .coin-result.failure {
+        border-color: #dc3545;
+        background: #fff8f8;
+    }
+
+    .coin-result h4 {
+        margin: 0 0 10px 0;
+        font-size: 1.2em;
+        font-weight: 600;
+    }
+
+    .coin-result .coin-display {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .coin-result.success .coin-display {
+        color: #28a745;
+    }
+
+    .coin-result.failure .coin-display {
+        color: #dc3545;
+    }
+
+    .payoff-display {
+        text-align: center;
+        padding: 30px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+
+    .payoff-display h3 {
+        color: #555;
+        margin-bottom: 15px;
+        font-size: 1.4em;
+    }
+
+    .payoff-amount {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #555;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .summary-section {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+
+    .summary-section h3 {
+        color: #555;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+        font-weight: 600;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+        font-weight: bold;
+        font-size: 1.1em;
+        color: #555;
+    }
+
+    .action-section {
+        padding: 30px;
+        background: #f8f9fa;
+        text-align: center;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .continue-button {
+        background: #555;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        font-size: 1.2em;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(85, 85, 85, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .continue-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(85, 85, 85, 0.4);
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            margin: 10px;
+            border-radius: 6px;
+        }
+        .results-section {
+            padding: 20px;
+        }
+        .result-card {
+            padding: 20px;
+        }
+        .payoff-amount {
+            font-size: 2em;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1>Investment Results</h1>
+        <p>Here are the results of your investment decision</p>
+    </div>
+
+
+        <div class="payoff-display">
+            <h3>Your Total Earnings</h3>
+            <div class="payoff-amount">{{ payoff }} ECUs</div>
+        </div>
+
+        <div class="summary-section">
+            <h3>Earnings Breakdown</h3>
+            <div class="summary-item">
+                <span>Base earnings from previous sections:</span>
+                <span>20 ECUs</span>
+            </div>
+            <div class="summary-item">
+                <span>Amount invested:</span>
+                <span>{{ allocate }} ECUs</span>
+            </div>
+            <div class="summary-item">
+                <span>You chose:</span>
+                <span>{{ selected_coin }}</span>
+            </div>
+            <div class="summary-item">
+                <span>The actual coin result was:</span>
+                <span>{{ coin_result }}</span>
+            </div>
+            <div class="summary-item">
+                <span>Total earnings:</span>
+                <span>{{ payoff }} ECUs</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-section">
+        <button name="submit" value="True" class="continue-button">Next</button>
+    </div>
+</div>
+
+{{ endblock }}
