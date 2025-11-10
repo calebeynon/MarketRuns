@@ -8,11 +8,11 @@ class C(BaseConstants):
     
     # Generate random number of rounds for this segment
     #
-    #NUM_ROUNDS_IN_SEGMENT = 10 #min(np.random.geometric(p=0.125), 14)  # 1-14 rounds
-    NUM_ROUNDS_IN_SEGMENT = 2
+    NUM_ROUNDS_IN_SEGMENT = 10 #min(np.random.geometric(p=0.125), 14)  # 1-14 rounds
+    #NUM_ROUNDS_IN_SEGMENT = 2
     # For each round, generate random number of periods
-    #PERIODS_PER_ROUND = [3, 10, 8, 4, 2, 3, 9, 7, 4, 6]
-    PERIODS_PER_ROUND = [2, 2]
+    PERIODS_PER_ROUND = [3, 10, 8, 4, 2, 3, 9, 7, 4, 6]
+    #PERIODS_PER_ROUND = [2, 2]
     """ for round_num in range(NUM_ROUNDS_IN_SEGMENT):
         #periods = min(np.random.geometric(p=0.125), 14)  # 1-14 periods per round
         periods = 2
