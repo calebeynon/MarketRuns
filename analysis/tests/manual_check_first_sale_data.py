@@ -56,6 +56,9 @@ def main():
     assert(seller_mismatches == 0)
     assert(period_mismatches == 0)
 
+# ===
+# Helper functions, load reference data
+# ===
 
 def player_signal(period_obj,player_label) -> float:
     player = period_obj.get_player(player_label)
@@ -74,6 +77,9 @@ def return_seg_group_sellers(seg,group,roun) -> Tuple[List[str], List[float], in
         elif period_num == max(sorted(r.periods.keys())):
             return [], [], None
 
+# === 
+# Helper functions, load check data
+# ===
 
 def round_signal_first_sale_data(seg,group,roun) -> Tuple[float, int, int]:
     """ returns signal, period, n_sellers """
