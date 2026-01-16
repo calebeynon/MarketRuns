@@ -223,8 +223,8 @@ def validate_against_raw_csv(data):
 # Validation of sale timing variables
 # =====
 def validate_sale_timing_vars(data):
-    """Validate sale_prev_period and any_sale_earlier are computed correctly."""
-    mismatches = {"sale_prev_period": 0, "any_sale_earlier": 0}
+    """Validate sale_prev_period and n_sales_earlier are computed correctly."""
+    mismatches = {"sale_prev_period": 0, "n_sales_earlier": 0}
     rows_checked = 0
 
     # Group by group_round_id and check logic
@@ -247,19 +247,18 @@ def validate_sale_timing_vars(data):
             else:
                 expected_sale_prev = 0
 
-            # Expected any_sale_earlier: any sale in periods < t-1
-            earlier_sales = sum(
+            # Expected n_sales_earlier: count of sales in periods 1 to t-2
+            expected_n_earlier = sum(
                 sales_by_period.get(p, 0) for p in periods if p < period - 1
             )
-            expected_any_earlier = 1 if earlier_sales > 0 else 0
 
             # Check all players in this period
             for _, player_row in period_df.iterrows():
                 rows_checked += 1
                 if player_row["sale_prev_period"] != expected_sale_prev:
                     mismatches["sale_prev_period"] += 1
-                if player_row["any_sale_earlier"] != expected_any_earlier:
-                    mismatches["any_sale_earlier"] += 1
+                if player_row["n_sales_earlier"] != expected_n_earlier:
+                    mismatches["n_sales_earlier"] += 1
 
     print_mismatch_results(mismatches, rows_checked, "timing logic")
     return sum(mismatches.values())

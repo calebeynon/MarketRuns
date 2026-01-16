@@ -101,10 +101,16 @@ print_data_summary <- function(df) {
 run_models <- function(df) {
   models <- list()
 
-  cat("[1/1] LPM (no player FE)...\n")
-  models$lpm <- feols(
-    sold ~ n_sales_earlier + sale_prev_period + period + signal +
-      round + segment + treatment,
+  cat("[1/2] LPM with n_sales_earlier only...\n")
+  models$m1 <- feols(
+    sold ~ n_sales_earlier + period + signal + round + segment + treatment,
+    cluster = ~global_group_id,
+    data = df
+  )
+
+  cat("[2/2] LPM with sale_prev_period only...\n")
+  models$m2 <- feols(
+    sold ~ sale_prev_period + period + signal + round + segment + treatment,
     cluster = ~global_group_id,
     data = df
   )
@@ -122,7 +128,7 @@ export_table <- function(models, output_path) {
   }
 
   etable(
-    models$lpm,
+    models$m1, models$m2,
     dict = c(
       "(Intercept)" = "Constant",
       n_sales_earlier = "n\\_sales\\_earlier",
@@ -149,8 +155,11 @@ print_results <- function(models) {
   cat("MODEL RESULTS\n")
   cat(strrep("=", 60), "\n")
 
-  cat("\nLPM:\n")
-  print(summary(models$lpm))
+  cat("\nModel 1 (n_sales_earlier only):\n")
+  print(summary(models$m1))
+
+  cat("\nModel 2 (sale_prev_period only):\n")
+  print(summary(models$m2))
 }
 
 # %%
