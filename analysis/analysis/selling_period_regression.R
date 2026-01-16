@@ -71,12 +71,13 @@ create_sale_timing_vars <- function(df) {
   df <- merge(df, period_sales[, .(group_round_id, period, prev_period_n_sales)],
               by = c("group_round_id", "period"), all.x = TRUE)
 
-  # Any prior sale in periods 1 to t-1 (baseline cascade activity)
-  df[, any_prior_sale := as.integer(prior_group_sales > 0)]
-
   # Sale in immediately previous period t-1 (recency effect)
   df[, sale_prev_period := as.integer(!is.na(prev_period_n_sales) &
                                         prev_period_n_sales > 0)]
+
+  # Number of sales in periods 1 to t-2 (excludes t-1, independent of sale_prev_period)
+  df[, n_sales_earlier := prior_group_sales - fifelse(is.na(prev_period_n_sales), 0L,
+                                                       as.integer(prev_period_n_sales))]
 
   # Clean up temp columns
   df[, c("prev_period_n_sales") := NULL]
@@ -86,7 +87,8 @@ create_sale_timing_vars <- function(df) {
 
 print_data_summary <- function(df) {
   cat("\nVariable summary:\n")
-  cat("  any_prior_sale:", sum(df$any_prior_sale), "obs with any prior sale\n")
+  cat("  n_sales_earlier: mean =", round(mean(df$n_sales_earlier), 3),
+      ", max =", max(df$n_sales_earlier), "\n")
   cat("  sale_prev_period:", sum(df$sale_prev_period), "obs with sale in prev period\n")
   cat("  Segments:", paste(levels(df$segment), collapse = ", "), "\n")
   cat("  Treatments:", paste(levels(df$treatment), collapse = ", "), "\n")
@@ -101,7 +103,7 @@ run_models <- function(df) {
 
   cat("[1/1] LPM (no player FE)...\n")
   models$lpm <- feols(
-    sold ~ any_prior_sale + sale_prev_period + period + signal +
+    sold ~ n_sales_earlier + sale_prev_period + period + signal +
       round + segment + treatment,
     cluster = ~global_group_id,
     data = df
@@ -123,7 +125,7 @@ export_table <- function(models, output_path) {
     models$lpm,
     dict = c(
       "(Intercept)" = "Constant",
-      any_prior_sale = "any\\_prior\\_sale",
+      n_sales_earlier = "n\\_sales\\_earlier",
       sale_prev_period = "sale\\_prev\\_period",
       period = "period",
       signal = "signal",
