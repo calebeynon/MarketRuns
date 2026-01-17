@@ -34,8 +34,9 @@ import argparse
 import os
 
 # Default path to data file
-CSV_PATH = "/Users/caleb/Library/CloudStorage/Box-Box/SharedFolder_Caleb_Paan/BankMarketRuns/raw/1_tr_data.csv"
-CHAT_PATH = "/Users/caleb/Library/CloudStorage/Box-Box/SharedFolder_Caleb_Paan/BankMarketRuns/raw/1_tr_chat.csv"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+CSV_PATH = PROJECT_ROOT / "datastore/raw/1_tr_data.csv"
+CHAT_PATH = PROJECT_ROOT / "datastore/raw/1_tr_chat.csv"
 
 class ParsingError(Exception):
     """Raised when there are issues parsing the experimental data."""

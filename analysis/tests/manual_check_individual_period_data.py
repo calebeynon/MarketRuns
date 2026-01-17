@@ -16,7 +16,8 @@ import market_data as md
 # =====
 # File paths
 # =====
-DATASTORE = Path("/Users/caleb/Research/marketruns/datastore")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+DATASTORE = PROJECT_ROOT / "datastore"
 INDIVIDUAL_PERIOD_DATA = DATASTORE / "derived" / "individual_period_dataset.csv"
 SESSION_DATA = DATASTORE / "1_11-7-tr1" / "all_apps_wide_2025-11-07.csv"
 

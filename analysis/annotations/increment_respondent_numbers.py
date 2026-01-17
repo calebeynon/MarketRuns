@@ -3,7 +3,8 @@ from pathlib import Path
 import re
 import argparse
 
-INPUT_DIR = Path("/Users/caleb/Library/CloudStorage/Box-Box/SharedFolder_Caleb_Paan/BankMarketRuns/annotations/annotations_filtered")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+INPUT_DIR = PROJECT_ROOT / "datastore/annotations/annotations_filtered"
 
 
 def increment_respondent_name(name):

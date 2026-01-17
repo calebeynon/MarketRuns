@@ -17,7 +17,8 @@ from market_data import parse_experiment
 # =====
 # File paths
 # =====
-DATASTORE = Path("/Users/caleb/Research/marketruns/datastore")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+DATASTORE = PROJECT_ROOT / "datastore"
 FIRST_SALE_DATA = DATASTORE / "derived" / "first_sale_data.csv"
 
 SESSIONS = {

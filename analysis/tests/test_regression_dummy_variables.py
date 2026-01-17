@@ -24,7 +24,8 @@ import market_data as md
 # =====
 # File paths
 # =====
-DATASTORE = Path("/Users/caleb/Research/marketruns/datastore")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+DATASTORE = PROJECT_ROOT / "datastore"
 INPUT_DATA = DATASTORE / "derived" / "individual_period_dataset.csv"
 
 # Session data files for parser validation

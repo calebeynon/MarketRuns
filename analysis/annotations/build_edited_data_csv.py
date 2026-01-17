@@ -18,9 +18,11 @@ import pandas as pd
 from dateutil import parser as date_parser
 
 # GLOBAL CONFIGURATION
-DEFAULT_PAGETIMES = "/Users/caleb/Research/marketruns/datastore/annotations/pagetimes/p1.csv"
-DEFAULT_TIMESHEET = "/Users/caleb/Research/marketruns/datastore/annotations/timesheets/t1.xlsx"
-DEFAULT_OUTPUT = "/Users/caleb/Research/marketruns/datastore/annotations/edited_data/e1.csv"
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent.parent
+DEFAULT_PAGETIMES = PROJECT_ROOT / "datastore/annotations/pagetimes/p1.csv"
+DEFAULT_TIMESHEET = PROJECT_ROOT / "datastore/annotations/timesheets/t1.xlsx"
+DEFAULT_OUTPUT = PROJECT_ROOT / "datastore/annotations/edited_data/e1.csv"
 TZ_NAME = "America/Chicago"
 CST_OFFSET_HOURS = 6
 LETTER_TO_ID = {

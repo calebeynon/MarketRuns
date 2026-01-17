@@ -45,7 +45,8 @@ from pathlib import Path
 # =====
 # File paths
 # =====
-DATASTORE = Path("/Users/caleb/Research/marketruns/datastore")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+DATASTORE = PROJECT_ROOT / "datastore"
 OUTPUT_PATH = DATASTORE / "derived" / "individual_period_dataset.csv"
 
 # Session folders with treatment indicators
