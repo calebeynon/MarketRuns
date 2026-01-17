@@ -8,3 +8,17 @@ wheels/
 
 # venv
 .venv
+
+# LaTeX build artifacts
+analysis/paper/
+
+# System files
+.DS_Store
+.Rhistory
+
+# Presentation files
+*.pptx
+*.rtf
+
+# Analysis output
+analysis/output/analysis/*.tex
