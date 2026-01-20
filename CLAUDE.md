@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## GitHub
+
+- **Repository owner**: `calebeynon`
+
 ## Project Overview
 
 MarketRuns is an experimental economics platform built with oTree for studying market dynamics, information cascades, and trading behavior. The platform runs multi-period market experiments with integrated chat systems and real-time signal processing.
@@ -104,3 +108,10 @@ Key classes: `MarketRunsExperiment`, `Session`, `Segment`, `Round`, `Period`, `P
 
 - **Raw session data**: `datastore/<session_folder>/` (e.g., `datastore/1_11-7-tr1/`)
 - **Derived datasets**: `datastore/derived/` (created by scripts in `analysis/derived/`)
+
+## Visualization Standards
+
+- **All visualizations must be created using ggplot2 in R**
+- **Never include plot titles** - titles go in the paper/document, not the figure
+- Visualization scripts go in `analysis/` with descriptive names (e.g., `visualize_selling_timing.R`)
+- Output plots saved to `analysis/output/plots/`
