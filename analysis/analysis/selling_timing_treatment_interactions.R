@@ -75,8 +75,8 @@ prepare_data <- function(df) {
   # Cluster at segment-group level (groups reshuffle across segments)
   df[, global_group_id := paste(session_id, segment, group_id, sep = "_")]
   df[, segment := as.factor(segment)]
-  # Set tr2 as reference so interactions show Treatment 2 effect
-  df[, treatment := relevel(as.factor(treatment), ref = "tr2")]
+  # Treatment 1 = 0 (reference), Treatment 2 = 1
+  df[, treatment := as.integer(treatment == "tr2")]
 
   return(df)
 }
@@ -145,14 +145,14 @@ export_table <- function(model, output_path) {
 create_coef_dict <- function() {
   dict <- c(
     "(Intercept)" = "Constant",
-    "treatmenttr1" = "Treatment 1",
+    "treatment" = "Treatment 2",
     "signal" = "Signal",
     "round" = "Round"
   )
   # Add period dummies (1-14)
   for (p in 1:14) {
     dict[paste0("period::", p)] <- paste0("Period ", p)
-    dict[paste0("treatmenttr2:period::", p)] <- paste0("Treatment 2 $\\times$ Period ", p)
+    dict[paste0("treatment:period::", p)] <- paste0("Treatment 2 $\\times$ Period ", p)
   }
   # Add segment dummies
   for (s in 2:4) {

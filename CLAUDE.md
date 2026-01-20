@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## GitHub
+
+- **Repository owner**: `calebeynon`
+
 ## Project Overview
 
 MarketRuns is an experimental economics platform built with oTree for studying market dynamics, information cascades, and trading behavior. The platform runs multi-period market experiments with integrated chat systems and real-time signal processing.

@@ -183,9 +183,14 @@ def find_seller_info(sales_df: pd.DataFrame) -> list[dict]:
 # =====
 def load_segment_data(session_folder: Path, segment: str) -> pd.DataFrame:
     """Load segment CSV file from session folder."""
-    csv_files = list(session_folder.glob(f"{segment}_*.csv"))
+    csv_files = sorted(session_folder.glob(f"{segment}_*.csv"))
     if not csv_files:
         raise FileNotFoundError(f"No CSV found for {segment} in {session_folder}")
+    if len(csv_files) > 1:
+        raise ValueError(
+            f"Multiple CSVs found for {segment} in {session_folder}: "
+            f"{[f.name for f in csv_files]}. Expected exactly one."
+        )
     return pd.read_csv(csv_files[0])
 
 
