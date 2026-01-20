@@ -1,0 +1,32 @@
+
+\begingroup
+\centering
+\begin{tabular}{lcc}
+   \toprule
+    & \multicolumn{2}{c}{sold}\\
+                             & LPM             & Logit \\   
+                             & (1)             & (2)\\  
+                             &  OLS            & Logit\\  
+   \midrule 
+   Sale in Prev Period       & 0.1021$^{***}$  & 2.612$^{***}$\\   
+                             & (0.0043)        & (0.1693)\\   
+   Any Earlier Sale          & -0.0365$^{***}$ & -1.168$^{***}$\\   
+                             & (0.0070)        & (0.2247)\\   
+   Period                    & 0.0059$^{***}$  & 0.0267\\   
+                             & (0.0009)        & (0.0358)\\   
+   Signal                    & -0.1483$^{***}$ & -5.993$^{***}$\\   
+                             & (0.0174)        & (0.5741)\\   
+   Round                     & 0.0004          & 0.0029\\   
+                             & (0.0008)        & (0.0265)\\   
+    \\
+   Observations              & 13,728          & 12,384\\  
+   R$^2$                     & 0.16714         & \\  
+    \\
+   segment fixed effects     & $\checkmark$    & $\checkmark$\\   
+   treatment fixed effects   & $\checkmark$    & $\checkmark$\\   
+   player\_id fixed effects  & $\checkmark$    & $\checkmark$\\   
+   \bottomrule
+\end{tabular}
+\par\endgroup
+
+

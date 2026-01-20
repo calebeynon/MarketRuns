@@ -45,7 +45,8 @@ prepare_data <- function(file_path) {
 
   # Create identifier variables
   df[, player_id := paste(session_id, player, sep = "_")]
-  df[, global_group_id := paste(session_id, group_id, sep = "_")]
+  # Groups are unique within each segment, so include segment in cluster ID
+  df[, global_group_id := paste(session_id, segment, group_id, sep = "_")]
   df[, group_round_id := paste(session_id, segment, group_id, round, sep = "_")]
 
   # Convert to factors
