@@ -42,7 +42,11 @@ def data_with_ids(input_data):
     """Add composite IDs matching R script logic."""
     df = input_data.copy()
     df["player_id"] = df["session_id"] + "_" + df["player"].astype(str)
-    df["global_group_id"] = df["session_id"] + "_" + df["group_id"].astype(str)
+    df["global_group_id"] = (
+        df["session_id"] + "_" +
+        df["segment"].astype(str) + "_" +
+        df["group_id"].astype(str)
+    )
     df["group_round_id"] = (
         df["session_id"] + "_" +
         df["segment"].astype(str) + "_" +
