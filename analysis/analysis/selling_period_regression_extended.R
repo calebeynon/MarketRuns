@@ -38,7 +38,8 @@ main <- function() {
 load_data <- function(file_path) {
   df <- fread(file_path)
   df[, player_id := paste(session_id, player, sep = "_")]
-  df[, global_group_id := paste(session_id, group_id, sep = "_")]
+  # Groups are unique within each segment, so include segment in cluster ID
+  df[, global_group_id := paste(session_id, segment, group_id, sep = "_")]
   df[, group_round_id := paste(session_id, segment, group_id, round, sep = "_")]
   df[, player_group_round_id := paste(player_id, segment, group_id, round, sep = "_")]
   df[, segment := as.factor(segment)]
