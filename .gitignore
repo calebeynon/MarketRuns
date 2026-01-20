@@ -20,5 +20,4 @@ analysis/paper/
 *.pptx
 *.rtf
 
-# Analysis output
-analysis/output/analysis/*.tex
+

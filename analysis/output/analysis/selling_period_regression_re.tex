@@ -1,0 +1,45 @@
+
+\usepackage{booktabs}
+\usepackage{dcolumn}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{l D{.}{.}{5.5} D{.}{.}{5.5}}
+\toprule
+ & \multicolumn{1}{c}{LPM} & \multicolumn{1}{c}{Logit} \\
+\midrule
+Intercept                   & 0.12^{***}  & -1.74^{***} \\
+                            & (0.01)      & (0.29)      \\
+Sale in Prev Period         & 0.10^{***}  & 2.59^{***}  \\
+                            & (0.00)      & (0.14)      \\
+Any Earlier Sale            & -0.04^{***} & -1.12^{***} \\
+                            & (0.01)      & (0.21)      \\
+Period                      & 0.01^{***}  & 0.01        \\
+                            & (0.00)      & (0.03)      \\
+Signal                      & -0.15^{***} & -5.82^{***} \\
+                            & (0.01)      & (0.32)      \\
+Round                       & 0.00        & 0.00        \\
+                            & (0.00)      & (0.02)      \\
+Segment 2                   & -0.02^{***} & -0.64^{***} \\
+                            & (0.01)      & (0.14)      \\
+Segment 3                   & -0.05^{***} & -1.43^{***} \\
+                            & (0.01)      & (0.14)      \\
+Segment 4                   & -0.05^{***} & -1.48^{***} \\
+                            & (0.00)      & (0.13)      \\
+\midrule
+AIC                         & -5085.57    & 3500.04     \\
+BIC                         & -4995.24    & 3582.84     \\
+Log Likelihood              & 2554.78     & -1739.02    \\
+Num. obs.                   & 13728       & 13728       \\
+Num. groups: player\_id     & 96          & 96          \\
+Num. groups: treatment      & 2           & 2           \\
+Var: player\_id (Intercept) & 0.01        & 1.77        \\
+Var: treatment (Intercept)  & 0.00        & 0.00        \\
+Var: Residual               & 0.04        &             \\
+\bottomrule
+\multicolumn{3}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+\end{tabular}
+\caption{Statistical models}
+\label{table:coefficients}
+\end{center}
+\end{table}
