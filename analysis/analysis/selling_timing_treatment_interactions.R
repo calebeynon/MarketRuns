@@ -72,10 +72,11 @@ prepare_data <- function(df) {
   df <- df[already_sold == 0]
   cat("Sample size after filtering (already_sold == 0):", nrow(df), "\n")
 
-  df[, global_group_id := paste(session_id, group_id, sep = "_")]
+  # Cluster at segment-group level (groups reshuffle across segments)
+  df[, global_group_id := paste(session_id, segment, group_id, sep = "_")]
   df[, segment := as.factor(segment)]
-  # Set tr1 as reference so treatment dummy = 1 when treatment 2 is active
-  df[, treatment := relevel(as.factor(treatment), ref = "tr1")]
+  # Set tr2 as reference so interactions show Treatment 2 effect
+  df[, treatment := relevel(as.factor(treatment), ref = "tr2")]
 
   return(df)
 }
@@ -144,16 +145,14 @@ export_table <- function(model, output_path) {
 create_coef_dict <- function() {
   dict <- c(
     "(Intercept)" = "Constant",
-    "treatmenttr2" = "Treatment 2",
+    "treatmenttr1" = "Treatment 1",
     "signal" = "Signal",
     "round" = "Round"
   )
   # Add period dummies (1-14)
   for (p in 1:14) {
     dict[paste0("period::", p)] <- paste0("Period ", p)
-    # Note: fixest creates tr1 interactions when tr1 is reference (quirk)
-    # These show how Treatment 2's period effect differs from Treatment 1
-    dict[paste0("treatmenttr1:period::", p)] <- paste0("Treatment 2 $\\times$ Period ", p)
+    dict[paste0("treatmenttr2:period::", p)] <- paste0("Treatment 2 $\\times$ Period ", p)
   }
   # Add segment dummies
   for (s in 2:4) {

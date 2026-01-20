@@ -54,7 +54,8 @@ prepare_data <- function(file_path) {
   df <- fread(file_path)
   df <- df[already_sold == 0]
 
-  df[, global_group_id := paste(session_id, group_id, sep = "_")]
+  # Cluster at segment-group level (groups reshuffle across segments)
+  df[, global_group_id := paste(session_id, segment, group_id, sep = "_")]
   df[, segment := as.factor(segment)]
   # Set tr2 as reference so interactions show Treatment 2 effect
   df[, treatment := relevel(as.factor(treatment), ref = "tr2")]
