@@ -681,7 +681,10 @@ def parse_experiment(csv_path: str, chat_path: Optional[str] = None) -> MarketRu
                 
                 # Track sold status per round (resets each round)
                 round_sold_status = {}  # round_num -> sold_status
-                
+
+                # Track last oTree period for each round (for payoff extraction)
+                round_to_last_otree_period = {}  # round_num -> max oTree period_num
+
                 # Process each period for this participant
                 for period_num in period_numbers:
                     # Extract data for this period
@@ -711,7 +714,15 @@ def parse_experiment(csv_path: str, chat_path: Optional[str] = None) -> MarketRu
                         
                     round_num = int(round_num)
                     period_in_round = int(period_in_round)
-                    
+
+                    # Track the maximum oTree period for each round
+                    if round_num not in round_to_last_otree_period:
+                        round_to_last_otree_period[round_num] = period_num
+                    else:
+                        round_to_last_otree_period[round_num] = max(
+                            round_to_last_otree_period[round_num], period_num
+                        )
+
                     # Extract player data
                     sold_value = row.get(f'{period_prefix}sold', 0)
                     if pd.isna(sold_value):
@@ -756,9 +767,10 @@ def parse_experiment(csv_path: str, chat_path: Optional[str] = None) -> MarketRu
                     period_obj = round_obj.periods[period_in_round]
                     period_obj.add_player(player_data)
                 
-                # Extract round payoffs (from round_X_payoff columns)
-                for round_num in range(1, 15):  # Assuming up to 14 rounds
-                    payoff_col = f'{segment_name}.1.player.round_{round_num}_payoff'  # Payoffs are in first period
+                # Extract round payoffs from the last period of each round
+                # Payoffs are updated progressively, so only the last period has final values
+                for round_num, last_otree_period in round_to_last_otree_period.items():
+                    payoff_col = f'{segment_name}.{last_otree_period}.player.round_{round_num}_payoff'
                     if payoff_col in row and not pd.isna(row[payoff_col]) and round_num in segment.rounds:
                         segment.rounds[round_num].round_payoffs[label] = float(row[payoff_col])
             
