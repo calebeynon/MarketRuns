@@ -43,9 +43,14 @@ run_regression <- function() {
 # Extract coefficients and compute CIs
 # =====
 extract_coefficients <- function(model) {
-  coefs <- coef(model)[1:3]
-  ses <- se(model)[1:3]
-  df <- 47  # n_clusters - 1
+  # Extract payoff coefficients by name for robustness
+  coef_names <- names(coef(model))
+  payoff_coef_names <- coef_names[startsWith(coef_names, "round_payoff_factor")]
+  coefs <- coef(model)[payoff_coef_names]
+  ses <- se(model)[payoff_coef_names]
+
+  # Extract degrees of freedom dynamically (n_clusters - 1 for cluster-robust SEs)
+  df <- fixest::degrees_freedom(model, type = "t")
 
   plot_data <- data.table(
     payoff = c(4, 6, 8),

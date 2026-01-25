@@ -8,8 +8,17 @@ Tests verify the extended dataset functions that add:
 - round_payoff: Payoff from the LAST period of the round, propagated to all periods
 """
 
+import sys
+from pathlib import Path
+
 import pandas as pd
 import pytest
+
+# Add analysis directory to path for imports
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT / "analysis"))
+
+from derived.build_individual_period_dataset_extended import add_sold_in_round
 
 
 # =====
@@ -117,43 +126,15 @@ def create_multi_round_df(round_configs: list):
 
 
 # =====
-# Functions to test (import from module once implemented)
+# Mock round_payoff function for testing (production uses raw oTree CSV files)
 # =====
-def compute_sold_in_round(df: pd.DataFrame) -> pd.DataFrame:
+def mock_compute_round_payoff(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Add sold_in_round column indicating if player sold at any point in round.
+    Mock implementation for testing round_payoff propagation logic.
 
-    Logic: For each player-round, if sold=1 OR already_sold=1 in ANY period,
-    then sold_in_round=1 for ALL periods in that round.
-    """
-    df = df.copy()
-
-    # Handle empty DataFrame
-    if len(df) == 0:
-        df['sold_in_round'] = pd.Series(dtype=int)
-        return df
-
-    player_round_key = ['session_id', 'segment', 'round', 'group_id', 'player']
-
-    # A player sold in round if they have sold=1 OR already_sold=1 in any period
-    sold_any = df.groupby(player_round_key)[['sold', 'already_sold']].apply(
-        lambda x: ((x['sold'] == 1) | (x['already_sold'] == 1)).any(),
-        include_groups=False
-    ).reset_index(name='sold_in_round')
-
-    sold_any['sold_in_round'] = sold_any['sold_in_round'].astype(int)
-
-    df = df.merge(sold_any, on=player_round_key, how='left')
-
-    return df
-
-
-def compute_round_payoff(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Add round_payoff column with payoff from last period, propagated to all.
-
-    Logic: Find the maximum period_in_round for each player-round,
-    get the price (payoff) from that period, and propagate to all periods.
+    NOTE: Production code reads round_payoff from raw oTree CSV columns
+    (player.round_N_payoff), which requires file system access. This mock
+    uses last-period price as a proxy to test the propagation behavior.
     """
     df = df.copy()
 
@@ -177,7 +158,7 @@ def compute_round_payoff(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # =====
-# Test cases for compute_sold_in_round
+# Test cases for add_sold_in_round
 # =====
 class TestComputeSoldInRound:
     """Tests for sold_in_round computation."""
@@ -185,7 +166,7 @@ class TestComputeSoldInRound:
     def test_no_sales_in_round(self):
         """No one sold - sold_in_round should be 0 for all periods."""
         df = create_mock_period_df(n_players=4, n_periods=3, sales_by_period={})
-        result = compute_sold_in_round(df)
+        result = add_sold_in_round(df)
 
         assert 'sold_in_round' in result.columns
         assert (result['sold_in_round'] == 0).all(), (
@@ -197,7 +178,7 @@ class TestComputeSoldInRound:
         df = create_mock_period_df(
             n_players=4, n_periods=3, sales_by_period={1: ['A']}
         )
-        result = compute_sold_in_round(df)
+        result = add_sold_in_round(df)
 
         # Player A should have sold_in_round=1 for all periods
         player_a = result[result['player'] == 'A']
@@ -216,7 +197,7 @@ class TestComputeSoldInRound:
         df = create_mock_period_df(
             n_players=4, n_periods=4, sales_by_period={4: ['B']}
         )
-        result = compute_sold_in_round(df)
+        result = add_sold_in_round(df)
 
         # Player B should have sold_in_round=1 for all periods including 1, 2, 3
         player_b = result[result['player'] == 'B']
@@ -230,7 +211,7 @@ class TestComputeSoldInRound:
         df = create_mock_period_df(
             n_players=4, n_periods=3, sales_by_period={1: ['C']}
         )
-        result = compute_sold_in_round(df)
+        result = add_sold_in_round(df)
 
         # Check period 2 and 3 for player C where already_sold=1 but sold=0
         player_c_later = result[(result['player'] == 'C') & (result['period'] > 1)]
@@ -249,7 +230,7 @@ class TestComputeSoldInRound:
         df = create_mock_period_df(
             n_players=4, n_periods=3, sales_by_period={1: ['A'], 2: ['B']}
         )
-        result = compute_sold_in_round(df)
+        result = add_sold_in_round(df)
 
         # A and B should have sold_in_round=1
         for player in ['A', 'B']:
@@ -272,7 +253,7 @@ class TestComputeSoldInRound:
             n_periods=4,
             sales_by_period={1: ['A'], 2: ['B'], 3: ['C'], 4: ['D']}
         )
-        result = compute_sold_in_round(df)
+        result = add_sold_in_round(df)
 
         assert (result['sold_in_round'] == 1).all(), (
             "All players sold, all should have sold_in_round=1"
@@ -280,7 +261,7 @@ class TestComputeSoldInRound:
 
 
 # =====
-# Test cases for compute_round_payoff
+# Test cases for mock_compute_round_payoff
 # =====
 class TestComputeRoundPayoff:
     """Tests for round_payoff computation."""
@@ -291,7 +272,7 @@ class TestComputeRoundPayoff:
         df = create_mock_period_df(
             n_players=4, n_periods=3, payoffs_by_period=payoffs
         )
-        result = compute_round_payoff(df)
+        result = mock_compute_round_payoff(df)
 
         assert 'round_payoff' in result.columns
         # All players should have round_payoff=5 (from period 3)
@@ -305,7 +286,7 @@ class TestComputeRoundPayoff:
         df = create_mock_period_df(
             n_players=4, n_periods=4, payoffs_by_period=payoffs
         )
-        result = compute_round_payoff(df)
+        result = mock_compute_round_payoff(df)
 
         # Check each period has the same round_payoff
         for period in [1, 2, 3, 4]:
@@ -321,7 +302,7 @@ class TestComputeRoundPayoff:
             {'round_num': 2, 'n_periods': 3, 'payoffs_by_period': {1: 6, 2: 4, 3: 2}},
         ]
         df = create_multi_round_df(round_configs)
-        result = compute_round_payoff(df)
+        result = mock_compute_round_payoff(df)
 
         # Round 1 should have round_payoff=8 (from period 2)
         round_1 = result[result['round'] == 1]
@@ -338,7 +319,7 @@ class TestComputeRoundPayoff:
     def test_payoff_varies_by_player_not_allowed(self):
         """In our setup, all players have same price per period, verify consistency."""
         df = create_mock_period_df(n_players=4, n_periods=3)
-        result = compute_round_payoff(df)
+        result = mock_compute_round_payoff(df)
 
         # All players should have the same round_payoff
         unique_payoffs = result.groupby('player')['round_payoff'].first().unique()
@@ -351,7 +332,7 @@ class TestComputeRoundPayoff:
         df = create_mock_period_df(
             n_players=4, n_periods=1, payoffs_by_period={1: 15}
         )
-        result = compute_round_payoff(df)
+        result = mock_compute_round_payoff(df)
 
         assert (result['round_payoff'] == 15).all(), (
             "Single period round should have round_payoff from that period"
@@ -369,8 +350,8 @@ class TestOutputStructure:
         df = create_mock_period_df(n_players=4, n_periods=3)
         original_columns = set(df.columns)
 
-        result = compute_sold_in_round(df)
-        result = compute_round_payoff(result)
+        result = add_sold_in_round(df)
+        result = mock_compute_round_payoff(result)
 
         # Should have all original columns
         for col in original_columns:
@@ -380,8 +361,8 @@ class TestOutputStructure:
         """Output has round_payoff and sold_in_round columns."""
         df = create_mock_period_df(n_players=4, n_periods=3)
 
-        result = compute_sold_in_round(df)
-        result = compute_round_payoff(result)
+        result = add_sold_in_round(df)
+        result = mock_compute_round_payoff(result)
 
         assert 'round_payoff' in result.columns, "Missing round_payoff column"
         assert 'sold_in_round' in result.columns, "Missing sold_in_round column"
@@ -391,8 +372,8 @@ class TestOutputStructure:
         df = create_mock_period_df(n_players=4, n_periods=3)
         original_count = len(df)
 
-        result = compute_sold_in_round(df)
-        result = compute_round_payoff(result)
+        result = add_sold_in_round(df)
+        result = mock_compute_round_payoff(result)
 
         assert len(result) == original_count, (
             f"Row count changed: {original_count} -> {len(result)}"
@@ -403,7 +384,7 @@ class TestOutputStructure:
         df = create_mock_period_df(
             n_players=4, n_periods=3, sales_by_period={1: ['A'], 2: ['B']}
         )
-        result = compute_sold_in_round(df)
+        result = add_sold_in_round(df)
 
         unique_vals = set(result['sold_in_round'].unique())
         assert unique_vals.issubset({0, 1}), (
@@ -425,11 +406,11 @@ class TestEdgeCases:
             'sold', 'already_sold', 'prior_group_sales'
         ])
 
-        result = compute_sold_in_round(df)
+        result = add_sold_in_round(df)
         assert len(result) == 0
         assert 'sold_in_round' in result.columns
 
-        result = compute_round_payoff(result)
+        result = mock_compute_round_payoff(result)
         assert len(result) == 0
         assert 'round_payoff' in result.columns
 
@@ -437,34 +418,34 @@ class TestEdgeCases:
         """Handle single player case."""
         df = create_mock_period_df(n_players=1, n_periods=3, sales_by_period={2: ['A']})
 
-        result = compute_sold_in_round(df)
-        result = compute_round_payoff(result)
+        result = add_sold_in_round(df)
+        result = mock_compute_round_payoff(result)
 
         assert len(result) == 3
         assert (result['sold_in_round'] == 1).all()
 
-    def test_multiple_groups(self):
-        """Handle multiple groups correctly."""
+    def test_multiple_sessions(self):
+        """Handle multiple sessions correctly (player labels are unique per session)."""
         df1 = create_mock_period_df(
             n_players=2, n_periods=2, sales_by_period={1: ['A']}
         )
-        df1['group_id'] = 1
+        df1['session_id'] = 'session_1'
 
         df2 = create_mock_period_df(
             n_players=2, n_periods=2, sales_by_period={}
         )
-        df2['group_id'] = 2
+        df2['session_id'] = 'session_2'
 
         df = pd.concat([df1, df2], ignore_index=True)
-        result = compute_sold_in_round(df)
+        result = add_sold_in_round(df)
 
-        # Group 1, Player A should have sold_in_round=1
-        g1_a = result[(result['group_id'] == 1) & (result['player'] == 'A')]
-        assert (g1_a['sold_in_round'] == 1).all()
+        # Session 1, Player A should have sold_in_round=1
+        s1_a = result[(result['session_id'] == 'session_1') & (result['player'] == 'A')]
+        assert (s1_a['sold_in_round'] == 1).all()
 
-        # Group 2, no one sold, should all be 0
-        g2 = result[result['group_id'] == 2]
-        assert (g2['sold_in_round'] == 0).all()
+        # Session 2, no one sold, should all be 0
+        s2 = result[result['session_id'] == 'session_2']
+        assert (s2['sold_in_round'] == 0).all()
 
 
 # %%
