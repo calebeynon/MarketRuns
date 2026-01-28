@@ -1,13 +1,23 @@
 
 \begingroup
-\centering
 \scriptsize
-\begin{tabular}{lcccc}
-   \tabularnewline \midrule \midrule
+\begin{longtable}{lcccc}
+   \midrule \midrule
    Dependent Variable: & \multicolumn{4}{c}{sold}\\
    & (1) & (2) & (3) & (4)\\
    \midrule
    \emph{Variables}\\
+   \endfirsthead
+   \multicolumn{5}{l}{\emph{(continued)}}\\
+   \midrule \midrule
+   Dependent Variable: & \multicolumn{4}{c}{sold}\\
+   & (1) & (2) & (3) & (4)\\
+   \midrule
+   \endhead
+   \midrule
+   \multicolumn{5}{r}{\emph{continued on next page}}\\
+   \endfoot
+   \endlastfoot
    n\_sales\_earlier & -0.0281$^{***}$ & -0.0272$^{***}$ &  & \\
    & (0.0054) & (0.0036) &  & \\
    sale\_prev\_period &  &  & 0.0188$^{*}$ & 0.0198$^{***}$\\
@@ -73,7 +83,7 @@
    Adj. R$^2$ & 0.05290 & 0.05114 & 0.04938 & 0.04783\\
    \midrule \midrule
    \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
-\end{tabular}
-\par\endgroup
+\end{longtable}
+\endgroup
 
 
