@@ -1,0 +1,149 @@
+\ProvidesPackage{NNstyle}
+
+\usepackage{titlesec} % For titleformat
+\usepackage{fancyhdr} % For custom headers/footers
+\usepackage{xcolor} % For color definitions
+\usepackage{soul} % For highlighting commands
+\usepackage{mdframed} % For custom frames
+\usepackage{changepage} % For adjustwidth
+\usepackage{enumitem} % For custom lists
+
+% ------------------ page numbers, headers, etc. -------------------
+
+\titleformat*{\section}{\Large\bfseries}
+\titleformat*{\subsection}{\large\bfseries}
+\titleformat*{\subsubsection}{\bfseries}
+
+\fancyhf{} % clear all header and footers
+\renewcommand{\headrulewidth}{0pt} % remove the header rule
+\fancyfoot[R]{\thepage}
+\pagestyle{fancy}
+
+% -------------- for regression stars --------------
+
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+
+% ------------------ definitions (colors) -------------------
+
+\definecolor{alabama}{RGB}{158,2,50} % define a color
+\definecolor{kpink}{RGB}{255,220,250}
+\definecolor{shell}{RGB}{248,229,206}
+\definecolor{light.grey}{RGB}{213,232,242}
+\definecolor{lighter.blue}{RGB}{227,246,255}
+\definecolor{lightest.blue}{HTML}{F5FCFF}
+\definecolor{lightest.red}{HTML}{FCF0F8}
+\definecolor{lighter.grey}{RGB}{245,245,245}
+\definecolor{kblue}{RGB}{210,237,245}
+\definecolor{kgreen}{RGB}{200,255,198}
+\definecolor{kpurple}{RGB}{202,193,224}
+\definecolor{korange}{RGB}{249,223,147}
+
+\definecolor{shadecolor}{named}{lighter.grey}
+
+\DeclareRobustCommand{\hlb}[1]{{\sethlcolor{kblue}\hl{#1}}}
+\DeclareRobustCommand{\hly}[1]{{\sethlcolor{yellow}\hl{#1}}}
+\DeclareRobustCommand{\hlr}[1]{{\sethlcolor{kpink}\hl{#1}}}
+\DeclareRobustCommand{\hlg}[1]{{\sethlcolor{kgreen}\hl{#1}}}
+\DeclareRobustCommand{\hllg}[1]{{\sethlcolor{lighter.grey}\hl{#1}}}
+
+
+% ------------------ commands ----------------------
+
+\newcommand{\nup}[1]{$^{\text{#1}}$}
+\newcommand{\al}[1]{\textcolor{alabama}{{#1}}}
+\newcommand{\albf}[1]{\textbf{\al{{#1}}}}
+\newcommand{\kline}{\begin{centr} \rule{6.2in}{.5pt} \end{centr}}
+\newcommand{\mline}{\begin{centr} \al{\rule{3.1in}{.5pt}} \end{centr}}
+\newcommand{\kitem}{\item[$-$]}
+\newcommand{\ktopic}[1]{\noindent {\Large \textbf{{#1}}}}
+\newcommand{\Ktopic}[1]{\noindent {\LARGE \textbf{{#1}}}}
+\newcommand{\spc}{\vspace{10mm}}
+\newcommand{\FIG}[1]{../figures/{#1}.png}
+\newcommand{\HERE}{\kline \vspace{5mm} \begin{centr}\albf{Currently editing at this point!!}\\[3mm]\end{centr} \kline}
+\newcommand{\bline}{\vspace{3mm} \kline \vspace{4mm}}
+\newcommand{\knote}[1]{\marginpar{\linespread{1}\raggedright\footnotesize{\al{{#1}}}}}
+
+
+% ------------------ frames (mdframed environments) ------------------
+
+% Note: All 'myframe' and 'oldText' styles use leftline/rightline=false, but some have other differences.
+\newmdenv[backgroundcolor=kblue!35,leftline=false,rightline=false,topline=false,bottomline=false,linewidth=1pt]{myframe}
+\newmdenv[backgroundcolor=kgreen!35,leftline=false,rightline=false,linewidth=1pt,linecolor=black]{myframe2}
+\newmdenv[backgroundcolor=korange!35,leftline=false,rightline=false,linewidth=1pt,linecolor=black]{myframe3}
+\newmdenv[backgroundcolor=kpink!50,leftline=false,rightline=false,linewidth=1pt,linecolor=black]{myframe4}
+\newmdenv[backgroundcolor=lighter.grey,leftline=false,rightline=false,topline=false,bottomline=false,linewidth=1pt]{oldText}
+\newmdenv[backgroundcolor=lightest.red,leftline=false,rightline=false,topline=false,bottomline=false,linewidth=1pt]{prenote}
+
+% ------------------ environments ------------------
+
+\newenvironment{centr}{%
+	\setlength\topsep{0pt}
+	\setlength\parskip{0pt}
+	\begin{center}
+	}{%
+	\end{center}
+}
+
+\newenvironment{kcom}{%
+	\begin{adjustwidth}{4mm}{4mm}
+		\begin{oldText}
+			\vspace{-1mm}
+			%		{\scriptsize \hspace{-4mm} \textbf{General note}}\\[3mm]
+			\vspace{5mm}
+			\footnotesize
+			\setlength{\parindent}{0pt}
+			\setlength\topsep{0pt}
+			\setlength\parskip{0pt}
+		}{%
+			\vspace{-1mm}
+		\end{oldText}
+		\vspace{2mm}
+	\end{adjustwidth}
+}
+
+\newenvironment{kcom2}{%
+	\begin{adjustwidth}{4mm}{4mm}
+		\begin{myframe}
+			\vspace{-1mm}
+			%		{\scriptsize \hspace{-4mm} \textbf{General note}}\\[3mm]
+			\vspace{5mm}
+			\footnotesize
+			\setlength{\parindent}{0pt}
+			\setlength\topsep{0pt}
+			\setlength\parskip{0pt}
+		}{%
+			\vspace{-1mm}
+		\end{myframe}
+		\vspace{2mm}
+	\end{adjustwidth}
+}
+
+\newenvironment{prewrite}{%
+	\begin{adjustwidth}{4mm}{4mm}
+		\begin{prenote}
+			\vspace{-1mm}
+			%		{\scriptsize \hspace{-4mm} \textbf{General note}}\\[3mm]
+			\vspace{5mm}
+			\footnotesize
+			\setlength{\parindent}{0pt}
+			\setlength\topsep{0pt}
+			\setlength\parskip{0pt}
+		}{%
+			\vspace{-1mm}
+		\end{prenote}
+		\vspace{2mm}
+	\end{adjustwidth}
+}
+
+% ----------------- Outline/List Spacing and formatting
+%\setlength{\parindent}{0pt} % noindent by default (commented out in original)
+%\setcounter{secnumdepth}{0} % supress section numbers (commented out in original)
+%\linespread{1.5} % 1.5 spacing = 1.3, double spacing = 1.6 (commented out in original)
+
+% ------------------ Outlines -------------------------
+
+\setenumerate[1]{label=\arabic*.}
+\setenumerate[2]{label=\Alph*.}
+\setenumerate[3]{label=\arabic*.}
+\setenumerate[4]{label=\alph*.}
+\makeatletter

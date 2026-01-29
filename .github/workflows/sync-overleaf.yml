@@ -1,0 +1,64 @@
+name: Sync to Overleaf
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'analysis/paper/**'
+      - 'analysis/output/**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clone Overleaf repo
+        env:
+          OVERLEAF_GIT_TOKEN: ${{ secrets.OVERLEAF_GIT_TOKEN }}
+        run: |
+          git clone https://git:${OVERLEAF_GIT_TOKEN}@git.overleaf.com/683a03b245fd46af8b04ebd2 /tmp/overleaf
+          cd /tmp/overleaf
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Sync paper files to Overleaf
+        run: |
+          # Copy all paper files (excluding .git, Action-managed tables/ and plots/)
+          rsync -av --delete \
+            --exclude='.git/' \
+            --exclude='tables/' \
+            --exclude='plots/' \
+            analysis/paper/ /tmp/overleaf/
+
+          # Create output directories
+          mkdir -p /tmp/overleaf/tables /tmp/overleaf/plots
+
+          # Extract \input{...} references and copy matching tables
+          grep -roh '\\input{[^}]*}' analysis/paper/*.tex | sed 's/\\input{//;s/}//' | sort -u | while read ref; do
+            filename=$(basename "$ref")
+            [[ "$filename" != *.* ]] && filename="${filename}.tex"
+            src="analysis/output/tables/${filename}"
+            if [ -f "$src" ]; then
+              cp "$src" "/tmp/overleaf/tables/"
+              echo "Copied table: $filename"
+            fi
+          done
+
+          # Extract \includegraphics{...} references and copy matching plots
+          grep -roh '\\includegraphics[^{]*{[^}]*}' analysis/paper/*.tex | grep -o '{[^}]*}' | tr -d '{}' | sort -u | while read ref; do
+            filename=$(basename "$ref")
+            src="analysis/output/plots/${filename}"
+            if [ -f "$src" ]; then
+              cp "$src" "/tmp/overleaf/plots/"
+              echo "Copied plot: $filename"
+            fi
+          done
+
+      - name: Push to Overleaf
+        run: |
+          cd /tmp/overleaf
+          git add -A
+          git diff --staged --quiet || git commit -m "Sync from GitHub Actions"
+          git push origin master

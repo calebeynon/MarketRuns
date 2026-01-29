@@ -1,0 +1,189 @@
+\documentclass[11pt,oneside]{article}
+\usepackage[margin=1in]{geometry}
+
+% Standard Packages
+\usepackage{amssymb} 
+\usepackage{amsmath} 
+\usepackage{graphicx} 
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor} 
+\usepackage{colortbl}
+\usepackage{changepage} 
+\usepackage{soul} 
+\usepackage{pdflscape}
+\usepackage{float} 
+\usepackage[font=footnotesize,labelfont=bf]{caption}
+\usepackage{framed}
+\usepackage{lipsum} % For filler text - remove in final document
+\usepackage{enumitem} 
+\usepackage[utf8]{inputenc}
+\usepackage{graphics}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{setspace}
+\usepackage{changepage}
+\usepackage{multicol}
+\usepackage[authoryear]{natbib}	
+\setlength{\bibsep}{1mm}
+\usepackage{multirow} 
+\usepackage{tocloft} 
+\usepackage{dcolumn}
+\usepackage{outlines}
+\usepackage{subcaption} 
+\captionsetup[subfigure]{labelformat=empty}
+\usepackage{tabularray}
+\usepackage{bm}
+% \usepackage{neuralnetwork} % Keep if needed for diagrams
+\usepackage{placeins}
+\usepackage[bookmarks]{hyperref}
+\hypersetup{colorlinks = true, allcolors = {black}}
+\usepackage{bookmark}
+
+%%%%%%%%% NN styling %%%%%%%%%
+\usepackage{NNstyle}
+
+%%%%%%%%% Path resolution (Overleaf: tables/, plots/; Local: ../output/) %%%%%%%%%
+\graphicspath{{plots/}{../output/plots/}}
+\makeatletter
+\def\input@path{{tables/}{../output/tables/}}
+\makeatother
+
+\linespread{1.3} % 1.5 spacing = 1.3, double spacing = 1.6
+
+\begin{document}
+	
+	%%% TITLE/AUTHORS/DATE %%%
+	\begin{titlepage}
+		\begin{singlespace}
+			\begin{centering}
+				%%% TITLE/AUTHORS %%%
+				\title{\vspace{-1.5cm}Your New Paper Title Goes Here\\[5mm]}
+				\author{
+					Author One\footnote{Affiliation, \href{mailto:email1@example.com}{email1@example.com}.}
+					\and
+                    Author Two\footnote{Affiliation, \href{mailto:email2@example.com}{email2@example.com}.}
+					% Add more authors as needed
+				}
+				\date{}
+				\maketitle
+			\end{centering}
+		\end{singlespace}
+		
+		\thispagestyle{empty}
+		\vspace{2mm}
+		\begin{centr}
+			{-- \albf{PRELIMINARY DRAFT} -- \\ \al{PLEASE DO NOT CITE OR DISTRIBUTE}}\\[-1mm]{\small Version: YYYY-MMDD}
+		\end{centr}
+		\vspace{3mm}
+		%%% ABSTRACT %%%
+		\begin{abstract}
+			\begin{singlespace}
+				%		{\linespread{1}
+					\vspace{2mm}
+					\noindent Replace this with your paper's abstract. Describe the context, methods, key findings, and conclusion of your new research here.
+				%		}
+			\end{singlespace}
+			%%% KEYWORDS %%%
+			\vspace{10mm}
+			\noindent \textit{Keywords:} Keyword 1, Keyword 2, Keyword 3
+			
+			%%% JEL CLASSIFICATIONS %%%
+			% \noindent \textit{JEL Classifications:} A00 $\cdot$ B00 $\cdot$ C00
+		\end{abstract}
+	\end{titlepage}
+	
+	\clearpage
+	\pagestyle{plain}
+	\pagenumbering{arabic}
+	
+	\section{Introduction}
+    
+    \lipsum[1] % Placeholder text
+    
+    \section{Literature Review}
+    
+    \lipsum[2] % Placeholder text
+    
+    % Example of using a custom environment:
+    \subsection{Custom Environments}
+    
+    \begin{kcom}
+        This is an example of the \textbf{kcom} environment. It uses the \texttt{oldText} frame style.
+    \end{kcom}
+
+    \begin{kcom2}
+        This is an example of the \textbf{kcom2} environment. It uses the \texttt{myframe} (blue) style.
+    \end{kcom2}
+    
+    \begin{prewrite}
+        This is an example of the \textbf{prewrite} environment. It uses the \texttt{prenote} (lightest red) style.
+    \end{prewrite}
+
+    % Example of using a custom command:
+    \Ktopic{A Major Topic Heading}
+    \kline
+    This is important information \albf{styled with the Alabama color}. 
+    
+    \bline
+    
+    \section{Data and Methodology}
+    
+    \lipsum[3] % Placeholder text
+    
+    \section{Results}
+	\begin{table}
+    	\input{h2_regression_cluster}
+	\end{table}
+	\begin{table}
+		\input{selling_period_regression_dummies}
+	\end{table}
+
+	\begin{table}
+		\input{selling_period_regression_first_sellers}
+		\caption{Subset sample to first sellers only}
+	\end{table}
+
+	\begin{table}
+		\input{selling_period_regression_second_sellers_interaction}
+		\caption{Subset to second sellers only}
+	\end{table}
+
+	\begin{table}
+		\input{selling_period_regression_interactions}
+		\caption{all sellers included. Exclude participant observations after they sell in round.}
+	\end{table}
+
+	\begin{table}
+		\input{selling_timing_treatment_interactions}
+	\end{table}
+
+	\begin{table}
+		\input{holdout_liquidation_regression}
+	\end{table}
+    \section{Conclusions}
+    \lipsum[5]
+    
+    \newpage
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% References
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\singlespacing
+	\nocite{*}
+	
+	{\small
+		\bibliography{NNbib} % Bibliography file
+		\bibliographystyle{apalike}
+	}
+	
+	\newpage
+	
+	\FloatBarrier
+	
+	\appendix
+    
+    \section{Appendix}
+    
+    % Add your tables and figures here
+
+\end{document}

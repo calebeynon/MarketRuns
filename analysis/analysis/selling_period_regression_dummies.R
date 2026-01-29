@@ -8,8 +8,8 @@ library(plm)
 
 # FILE PATHS
 INPUT_PATH <- "datastore/derived/individual_period_dataset.csv"
-OUTPUT_PATH <- "analysis/output/analysis/selling_period_regression_dummies.tex"
-OUTPUT_PATH_APPENDIX <- "analysis/output/analysis/selling_period_regression_dummies_appendix.tex"
+OUTPUT_PATH <- "analysis/output/tables/selling_period_regression_dummies.tex"
+OUTPUT_PATH_APPENDIX <- "analysis/output/tables/selling_period_regression_dummies_appendix.tex"
 
 # =====
 # Main function (FIRST - shows high-level flow)

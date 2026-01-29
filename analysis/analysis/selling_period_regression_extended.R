@@ -8,9 +8,9 @@ library(plm)
 
 # FILE PATHS
 INPUT_PATH <- "datastore/derived/individual_period_dataset.csv"
-OUTPUT_PATH_FIRST <- "analysis/output/analysis/selling_period_regression_first_sellers.tex"
-OUTPUT_PATH_SECOND <- "analysis/output/analysis/selling_period_regression_second_sellers.tex"
-OUTPUT_PATH_INTERACTIONS <- "analysis/output/analysis/selling_period_regression_interactions.tex"
+OUTPUT_PATH_FIRST <- "analysis/output/tables/selling_period_regression_first_sellers.tex"
+OUTPUT_PATH_SECOND <- "analysis/output/tables/selling_period_regression_second_sellers.tex"
+OUTPUT_PATH_INTERACTIONS <- "analysis/output/tables/selling_period_regression_interactions.tex"
 
 # =====
 # Main function (FIRST - shows high-level flow)
@@ -134,7 +134,7 @@ run_second_sellers <- function(df) {
   cat("Table exported to:", OUTPUT_PATH_SECOND, "\n")
 
   export_table_second_sellers_interaction(model1, model2,
-    "analysis/output/analysis/selling_period_regression_second_sellers_interaction.tex")
+    "analysis/output/tables/selling_period_regression_second_sellers_interaction.tex")
   cat("Interaction table exported\n")
 }
 

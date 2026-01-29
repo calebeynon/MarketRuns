@@ -7,7 +7,7 @@ library(fixest)
 
 # FILE PATHS
 INPUT_PATH <- "datastore/derived/individual_period_dataset.csv"
-OUTPUT_PATH <- "analysis/output/analysis/selling_timing_treatment_interactions.tex"
+OUTPUT_PATH <- "analysis/output/tables/selling_timing_treatment_interactions.tex"
 
 # =====
 # Main function (FIRST - shows high-level flow)
