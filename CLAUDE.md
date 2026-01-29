@@ -27,12 +27,12 @@ uv run python <script>     # Run Python scripts
 ### Overleaf Sync
 The paper directory (`analysis/paper/`) syncs to Overleaf via GitHub Action on push to main.
 ```bash
-# Auto-syncs to Overleaf on push to main via .github/workflows/sync-overleaf.yml
+# Push: Automatic on push to main via .github/workflows/sync-overleaf.yml
 # Action parses .tex files for \input and \includegraphics, copies referenced files from output/
 
-# Manual pull from Overleaf (requires interactive auth: username=git, password=token)
-git fetch overleaf
-git subtree pull --prefix=analysis/paper overleaf master --squash
+# Pull from Overleaf (clone approach):
+git clone https://git:TOKEN@git.overleaf.com/683a03b245fd46af8b04ebd2 /tmp/overleaf-pull
+rsync -av --exclude='.git/' --exclude='tables/' --exclude='plots/' /tmp/overleaf-pull/ analysis/paper/
 ```
 
 ## Architecture
