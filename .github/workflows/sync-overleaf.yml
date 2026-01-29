@@ -25,12 +25,16 @@ jobs:
 
       - name: Sync paper files to Overleaf
         run: |
-          # Copy all paper files (excluding .git, Action-managed tables/ and plots/)
+          # Copy all paper files (excluding .git, .gitignore, Action-managed tables/ and plots/)
           rsync -av --delete \
             --exclude='.git/' \
+            --exclude='.gitignore' \
             --exclude='tables/' \
             --exclude='plots/' \
             analysis/paper/ /tmp/overleaf/
+
+          # Create Overleaf-specific .gitignore (only LaTeX artifacts, NOT tables/plots)
+          printf '%s\n' '*.aux' '*.bbl' '*.blg' '*.fdb_latexmk' '*.fls' '*.log' '*.synctex.gz' > /tmp/overleaf/.gitignore
 
           # Create output directories
           mkdir -p /tmp/overleaf/tables /tmp/overleaf/plots
