@@ -1,0 +1,189 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{epsfig}
+\usepackage{setspace}
+\usepackage{dsfont}
+\usepackage[shortlabels]{enumitem}
+\usepackage{url}
+\usepackage{color}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage[authoryear,round]{natbib}
+\usepackage[colorlinks = true, linkcolor = blue, citecolor = blue, citecolor = blue]{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{xcolor}
+\usepackage{comment}
+\usepackage{indentfirst}
+\usepackage{setspace}
+\usepackage{soul}
+\usepackage[normalem]{ulem}
+
+\usetikzlibrary{automata,arrows,positioning,calc}
+\usetikzlibrary{plotmarks}
+
+\addtolength{\voffset}{-1.5cm} \addtolength{\hoffset}{-1cm}
+\addtolength{\textwidth}{2.5cm} \addtolength{\textheight}{2.5cm}
+
+
+\pgfplotsset{compat=1.17}
+\renewcommand{\baselinestretch}{1.5}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Market Runs}
+\date{May 2025}
+
+\begin{document}
+
+\maketitle
+
+I watched the Markets Run Video, and I thought it was very helpful and clear! I really liked the example round and recap at the end.
+
+I think it could be helpful to show a diagram representation at the beginning showing market periods make up a round and rounds make up a segment. This could be incorporated into the representation shown at (0.28). Other than that, I think everything is very clear!
+
+
+
+\section*{Introduction}
+
+Please sit down, remove your hat, and put on the headphone (the one on your right). 
+
+
+
+
+\section*{Welcome}
+
+
+Welcome to our study. At this time, please make sure you have turned off and put away
+all personal electronic devices. This study will take no more than 75 minutes. You will be paid your earnings from the study in addition to the \$7.50 participation
+payment in cash. Your earnings will depend on the decisions you and others make in this study, so it is important that you fully understand these instructions. These earnings will be denominated in experimental currency units (or ECUs for short). At the end of the study, ECUs will be converted into dollars at the exchange rate of 4 ECUs for 1 dollar and will be paid to you privately in cash. If you have a question at any point, please raise your hand.
+
+
+\newpage
+\section*{Page 1}
+You will interact with other participants in this experiment through a virtual environment. Your identity or identifying characteristics will not be shared. You will be referred to by other participants as $$\text{Participant \_\_}$$
+
+
+This study consists of 4 segments. At the beginning of these segments, all participants will be randomly placed in a group of 4. 
+
+
+
+``and you will interact only the participants in the same group.''
+
+
+
+Each group will remain the same throughout a segment. When a new segment begins, all participants will be randomly placed in a new group of 4. In these 4 segments, you will be placed in 4 different groups and will not interact with the same persons in different segments.
+
+
+
+\newpage
+\subsection*{Page 2}
+
+Each segment consists of an uncertain number of \textbf{rounds}. The number of rounds in a segment is determined as follows: 
+\begin{itemize}
+    \item   For each round, the computer has randomly selected a number from 1 to 8, each with an equal chance (1/8 or 12.5\%), for the entire session to determine whether another round of the same segment will follow. 
+
+(happen/happen)
+
+
+    \item 	If the selected number is from 1 to 7, the next round will follow. If the selected number is 8, the segment will end.
+    \item 	We will reveal the selected number to you at the end of each round. So, at the beginning of each round, you only know that there is an 87.5\% chance that another round of the same segment will follow and there is a 12.5\% chance that the segment will end after this round. 
+\end{itemize}
+
+
+ \newpage
+\subsection*{Page 3}
+
+Each round consists of an uncertain number of \textbf{market periods} (or trading period?). Each market period lasts 
+
+
+``4 seconds. ''
+
+
+
+The number of market periods in a round is determined as follows: 
+\begin{itemize}
+    \item   After each market period, the computer has randomly selected a number from 1 to 8, each with an equal chance (1/8 or 12.5\%), for the entire session to determine whether another market period of the same round will follow. 
+
+(happen/happen)
+
+
+    \item 	If the selected number is from 1 to 7, the next market period will immediately follow. If the selected number is 8, the round will end.
+    \item 	Since the next market period follows immediately (if the round continues), we will not reveal the selected number after each market period. We will only inform you after the last market period that the round has ended. At the beginning of market period, you only know that there is an 87.5\% chance that another period of the same round will follow and there is a 12.5\% chance that the round will end immediately after this period. 
+\end{itemize}
+
+
+\newpage
+\subsection*{Page 4}
+
+You will be endowed with an asset at the beginning of each round. This asset has an \textbf{unknown} final value. The value will either be 20 ECUs or the current market price at the end of each round. (probability...)
+
+\vspace{0.2in}
+
+In each market period you will face the following decision task.
+
+\begin{itemize}
+
+    \item Each participant will receive information about the final value of the asset. There will be a percentage displayed in text and graphical form. This is the probability that the asset's final value is 20. This probability will update every round.
+
+
+``Two possibles situations (good or bad) at the end of each round which is after the last market period of the round. All participants may be forced to sell and will not received the asset value. In the good situation, forced sales do not happen and each participant will receive the asset value of 20 ECUs. In the bad situation, forced sales will happen, ''
+
+
+
+``However, each participant has an option to sell before the round ends.''
+
+
+``So we will never say that the final asset value is 20 ECUs od the market price. IT is always 20 ECUs but you will be forced to sell or not. Avoid saying high value.''
+
+``Probablity of high value on screen change to probability of good situation?
+
+
+
+    \item All participants begin each market period \textbf{in} the market. Each participant can freely exit the market during a round by clicking the SELL button.
+
+    \item By clicking the SELL button, you are accepting the current market price for that market period. You will also be \textbf{out} of the market for the \textbf{entirety} of that round. It will not affect your status in future rounds. The market price will be displayed on the screen in text and graphical form.
+
+    \item The current market price is determined by the number of participants currently \textbf{in} the market. The market price according to the number of participants is as follows.\\
+    \begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Number of Participants} & \textbf{Market Price} \\
+        \hline
+        4 & 8 \\
+        3 & 6 \\
+        2 & 4 \\
+        1 & 2 \\
+        \hline
+    \end{tabular}
+    \end{center}
+    Each time someone exits the market, the price will update in the next market period.
+
+    \item If you elect to not hit the SELL button at any point during a round, you will receive the asset's final value. Keep in mind there are two possibilities for this value. If the asset's final value ends up being the current market price and there are multiple participants still \textbf{in} the market, then the price received will be randomized. For example, if there are 3 participants remaining at the end of a market period and the asset's final value is the current market price, one person will receive 6, another 4, and the other 2. This will be completely random.
+\end{itemize}
+
+
+"immediately" after
+
+
+
+\newpage
+\subsection*{Page 5}
+Communication in Segments 3 and 4.
+
+
+
+\newpage
+\subsection*{Page 6}
+Even though you will make decisions in many rounds and the computer will calculate your earnings in ECUs for all of these rounds, the computer will randomly select \underline{\textbf{only 1 round} from each of the four segments} to calculate your cash payment. The computer will use the sum of your earnings from the 4 selected rounds and convert it into dollars at the exchange rate of 4 ECUs for 1 dollar. You will know which rounds are selected for your cash earnings at the end of the study.
+\end{document}

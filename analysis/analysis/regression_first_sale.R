@@ -163,7 +163,7 @@ print_summary_tables <- function(part1, part2, part3) {
 create_latex_tables <- function(part1, part2, part3){
   # main regressions, main part of paper
   etable(part1$model1c,part2$model2c,part3$model3c,
-  file = 'analysis/output/analysis/h2_regression_cluster.tex',
+  file = 'analysis/output/tables/h2_regression_cluster.tex',
   float = FALSE,
   tex = TRUE,
   style.tex = style.tex(fontsize = "scriptsize")

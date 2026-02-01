@@ -1,0 +1,78 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{multirow}
+ 
+\usepackage[utf8]{inputenc} % Input encoding and font encoding 
+\usepackage[margin = 1in]{geometry} % Margins  
+\usepackage{setspace} % Setting the spacing between lines
+\usepackage{amsthm, amsmath, amsfonts, mathtools, amssymb} % Math packages 
+\usepackage{sgame, tikz} % Game theory packages
+\usetikzlibrary{trees, calc} % For extensive form games
+\usepackage{subfig} % Manipulation and reference of small or sub figures and tables
+\usepackage{hyperref} % To create hyperlinks within the document
+\hypersetup{
+    colorlinks=true, % true if you want colored links
+    linktoc=all,     % set to all if you want both sections, subsections, and numbers linked
+    linkcolor=blue,  %choose some color if you want links to stand out
+}
+
+\def\table{\def\figurename{Table}\figure} % necessary to merge the list of tables with the list of figures
+\let\endtable\endfigure % necessary to merge the list of tables with the list of figures
+
+\usepackage{comment}
+
+\renewcommand{\baselinestretch}{1.75}
+%\addtolength{\voffset}{-1cm} \addtolength{\hoffset}{-1cm}
+%\addtolength{\textwidth}{2.5cm} \addtolength{\textheight}{2cm}
+
+%\title{Infinitely Repeated PD and BOS}
+%\author{Paan Jindapon}
+%\date{November 2024}
+
+\begin{document}
+ 
+\section*{Data collection}
+No, no data have been collected for this study yet.
+
+
+\section*{Hypothesis}
+
+We plan to conduct a laboratory experiment to study the effects of emotions and information structure on cooperation in market run games. 
+
+
+There will be four subjects in each group and the group will be fixed throughout a supergame. All subjects will intereact in four supergames and each supergames will have an uncertain number of rounds. In each round, subjects will decide whether or not to sell their asset and choose the timing of sale if they plan to sell their asset.  In the last two supergames subjects will be able to communicate with other group members at the beginning of each round. We plan to investigate each subject's level of cooperation on the timing of sales. We will video record each player's facial expression during the experiment.
+
+We expect that (1)  subjects cooperate on the timing of sales more when they can sell their assets at the same market price, (2) subjects cooperate on the timing of sales more when they can communicate, (3) the detected emotions affect subjects' timing of sales.
+
+\section*{Dependent variable}
+
+The dependent variables of interest are (1) the degree of cooperation measured by the timing of asset selling decisions, (2) the scales of emotions detected by facial emotion recognition in each market period, and (3) the scales of sentiments detected in messages.
+
+
+\section*{Conditions}
+2 conditions. We will adopt a 2-treatment between-subjects design: equal and unequal asset prices. Under the equal-price treatment, if multiple subjects sell their assets in the same market period, they will sell at the same average price. Under the unequal-price treatment, if multiple subjects sell their assets in the same market period, they will sell at different random prices. 
+
+\section*{Analyses}
+
+We will use statistic methods to evaluate the treatment effects. We will use the iMotions software, specifically Affectiva AFFDEX algorithm, to process the recorded videos in order to detect expressed facial emotions and analyze them. We will use the Natural Language Toolkit (NLTK) available in Python, valence aware dictionary and sentiment reasoner (VADER), and commercially available LLMs % (OpenAI, Anthropic, and Google)  
+to detect emotions in chat messages. We will use econometric methods to estimate the effects of other group members' levels of cooperation on subjects' emotions and the effects of detected emotions on levels of cooperation in later periods.
+
+
+\section*{Outliers and Exclusions}
+We will exclude data collected from subjects that do not complete the study.
+
+
+\section*{Sample Size}
+We will collect data from participants at an experimental laboratory at the University of Alabama. For each of the two treatments, we will run 3 sessions with 16 participants in each. Thus, the sample size is expected to be 96.
+
+
+\section*{Other}
+We will ask each participant post-experiment questions about their anxiety, personality, impulsiveness, and willingness to take risk. We will also ask questions about their gender and education.
+
+\section*{Name} 
+Emotions, communication, and cooperation during market runs
+
+\section*{Type of Project}
+Experiment
+
+\end{document} 
