@@ -115,3 +115,8 @@ Key classes: `MarketRunsExperiment`, `Session`, `Segment`, `Round`, `Period`, `P
 - **Never include plot titles** - titles go in the paper/document, not the figure
 - Visualization scripts go in `analysis/` with descriptive names (e.g., `visualize_selling_timing.R`)
 - Output plots saved to `analysis/output/plots/`
+
+## Analysis Output Standards
+
+- **LaTeX tables**: Save to `analysis/output/tables/` (not `analysis/output/analysis/`)
+- **Plots**: Save to `analysis/output/plots/`
