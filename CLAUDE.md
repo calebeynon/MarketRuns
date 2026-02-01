@@ -109,8 +109,14 @@ Key classes: `MarketRunsExperiment`, `Session`, `Segment`, `Round`, `Period`, `P
 - **Raw session data**: `datastore/<session_folder>/` (e.g., `datastore/1_11-7-tr1/`)
 - **Derived datasets**: `datastore/derived/` (created by scripts in `analysis/derived/`)
 
-## Visualization Standards
+## Output Standards
 
+### LaTeX Tables
+- **Output location**: `analysis/output/tables/` (NOT `analysis/output/analysis/`)
+- Use longtable format for multi-page tables
+- Include significance codes and notes in table footer
+
+### Visualization
 - **All visualizations must be created using ggplot2 in R**
 - **Never include plot titles** - titles go in the paper/document, not the figure
 - Visualization scripts go in `analysis/` with descriptive names (e.g., `visualize_selling_timing.R`)
