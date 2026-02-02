@@ -219,10 +219,16 @@ build_single_table <- function(model, var_order, output_path, extra_dict = NULL)
 }
 
 build_table_header <- function() {
-  c("\\begin{tabular}{lr}",
-    "\\toprule",
-    "& (1) \\\\",
-    "\\midrule")
+  c("",
+    "\\begingroup",
+    "\\centering",
+    "\\scriptsize",
+    "\\begin{tabular}{lc}",
+    "   \\tabularnewline \\midrule \\midrule",
+    "   Dependent Variable: & sold\\\\",
+    "   Model:              & (1)\\\\",
+    "   \\midrule",
+    "   \\emph{Variables}\\\\")
 }
 
 append_coefficient_rows <- function(lines, coefs, var_order, full_dict) {
@@ -232,20 +238,32 @@ append_coefficient_rows <- function(lines, coefs, var_order, full_dict) {
     if (nrow(row) == 0) next
     val <- sprintf("%.4f%s", row$est, get_sig_stars(row$pval))
     se <- sprintf("(%.4f)", row$se)
-    lines <- c(lines, sprintf("%s & %s \\\\", label, val), sprintf("& %s \\\\", se))
+    # Pad label to 20 chars for alignment
+    lines <- c(lines,
+               sprintf("   %-20s& %s\\\\", label, val),
+               sprintf("   %-20s& %s\\\\", "", se))
   }
   return(lines)
 }
 
 append_fit_statistics <- function(lines, fit) {
-  c(lines, "\\midrule",
-    sprintf("Observations & %s \\\\", format(fit$n, big.mark = ",")),
-    sprintf("R$^2$ & %.4f \\\\", fit$r2))
+  c(lines,
+    "   \\midrule",
+    "   \\emph{Fit statistics}\\\\",
+    "   Model              & Random Effects\\\\",
+    sprintf("   Observations       & %s\\\\", format(fit$n, big.mark = ",")),
+    sprintf("   R$^2$              & %.5f\\\\", fit$r2))
 }
 
 append_table_footer <- function(lines) {
-  c(lines, "\\bottomrule",
-    "\\end{tabular}")
+  c(lines,
+    "   \\midrule \\midrule",
+    "   \\multicolumn{2}{l}{\\emph{Clustered (player) standard-errors in parentheses}}\\\\",
+    "   \\multicolumn{2}{l}{\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\\\",
+    "\\end{tabular}",
+    "\\par\\endgroup",
+    "",
+    "")
 }
 
 write_table <- function(lines, output_path) {
