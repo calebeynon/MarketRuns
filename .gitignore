@@ -9,8 +9,7 @@ wheels/
 # venv
 .venv
 
-# LaTeX build artifacts
-analysis/paper/
+# LaTeX build artifacts are handled by analysis/paper/.gitignore
 
 # System files
 .DS_Store

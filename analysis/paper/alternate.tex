@@ -1,0 +1,295 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{epsfig}
+\usepackage{setspace}
+\usepackage{dsfont}
+\usepackage[shortlabels]{enumitem}
+\usepackage{url}
+\usepackage{color}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage[authoryear,round]{natbib}
+\usepackage[colorlinks = true, linkcolor = blue, citecolor = blue, citecolor = blue]{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{xcolor}
+\usepackage{comment}
+\usepackage{indentfirst}
+\usepackage{setspace}
+\usepackage{soul}
+\usepackage[normalem]{ulem}
+\usepackage{multirow}
+
+\usetikzlibrary{automata,arrows,positioning,calc}
+\usetikzlibrary{plotmarks}
+
+\addtolength{\voffset}{-1.5cm} \addtolength{\hoffset}{-1cm}
+\addtolength{\textwidth}{2.5cm} \addtolength{\textheight}{2.5cm}
+
+
+\pgfplotsset{compat=1.17}
+\renewcommand{\baselinestretch}{1.5}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Market Runs}
+\date{July 2025}
+
+\begin{document}
+\maketitle
+
+\section*{Welcome}
+Welcome to our study. At this time please turn off and put away any electronic devices. The experiment will not take longer than 90 minutes. You will be paid privately and in cash at the conclusion of this study. Please pay close attention, the information in these instructions is important for your earnings today. Additionally, there will be a quiz to make sure you understand these instructions. If you questions throughout the experiment, please raise your hand.
+
+\newpage
+
+\section*{Page 1}
+During this study, you will interact with other participants. Your identity or identifying characteristics will not be revealed to others at anytime. You will be referred to by other participants as $$\text{Participant \_\_}$$
+CHAT ONLY: You will have the opportunity to communicate with others through a virtual chat environment. Please refrain from using profanity or revealing identifying characteristics. Additionally, please only communicate in English.
+
+\newpage
+\section*{Page 2}
+You will participate in \textbf{n market periods}. Each market period consists of an \textbf{unknown number of rounds}. An integer will be randomly selected ranging from 1 to 8 at the end of each \textbf{round}. If that integer is an 8, that was the final \textbf{round} and the \textbf{market period} will end. Each round will last 4 seconds.
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Market Period} & \textbf{Round} \\
+\hline
+\multirow{4}{*}{\textbf{Market Period 1}} & Round 1 \\
+\cline{2-2}
+& Round 2 \\
+\cline{2-2}
+& Round 3 \\
+\cline{2-2}
+& \multicolumn{1}{c|}{\cellcolor{yellow!30}\textbf{REGROUP}} \\
+\hline
+\multirow{6}{*}{\textbf{Market Period 2}} & Round 1 \\
+\cline{2-2}
+& Round 2 \\
+\cline{2-2}
+& Round 3 \\
+\cline{2-2}
+& Round 4 \\
+\cline{2-2}
+& Round 5 \\
+\cline{2-2}
+& \multicolumn{1}{c|}{\cellcolor{yellow!30}\textbf{REGROUP}} \\
+\hline
+\multirow{3}{*}{\textbf{Market Period 3}} & Round 1 \\
+\cline{2-2}
+& Round 2 \\
+\cline{2-2}
+& \multicolumn{1}{c|}{\cellcolor{yellow!30}\textbf{REGROUP}} \\
+\hline
+\end{tabular}
+\caption{This is an example of a possible study you could be in.}
+\label{tab:market_rounds}
+\end{table}
+
+
+
+
+
+\newpage
+\section*{Page 3}
+You will face a decision task in each market period that will determine your final payoff.
+
+You will be placed in a group with 3 other participants. Each participant in your group is endowed with an asset. You will begin every market period \textbf{in} the market. In each round within that market period, you have the free choice to \textbf{exit} the market by clicking the SELL button.
+
+By clicking the SELL button, you are agreeing to accept the \textbf{current market price}. The \textbf{current market price} is determined by the number of participants in your group that are remaining \textbf{in} the market according to the following table:     
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Participants} & \textbf{Price} \\
+        \hline
+        4 & 8 \\
+        3 & 6 \\
+        2 & 4 \\
+        1 & 2 \\
+        \hline
+    \end{tabular}
+\end{center}  
+
+If you are the only participant to sell your asset in a particular round, you will receive the displayed market price. However, if more than one participant opts to sell their asset, one participant will receive the current market price, the next participant will receive the current market price - 2, and so on. For example, the current market price might be \$8, if two people sell in the same round, one of them will receive \$8 and the other \$6. This selection is completely random.
+
+You \textbf{are not} required to sell your asset at any point. If you choose to not sell your asset during a market period, you will accept the asset's final value. The final value has 2 possibilities.\\TREATMENT 1$$\text{2 x final current market price \textbf{OR} a random selection from the remaining possible market prices}$$TREATMENT 2 $$\text{2 x final current market price \textbf{OR} an average of the remaining possible market prices}$$
+
+\newpage
+
+\section*{Page 4}
+You will have information available to assist you with your decision. In each round, you will see 
+\begin{itemize}
+    \item a current market price
+    \item a graphical display of all previous market prices
+    \item a probability of the final asset value being 2x the final market price
+    \item a graphical display of that probability
+\end{itemize}
+
+At the end of each round, you will be able to see each player who has sold their asset. Players who recently sold their asset will be highlighted in red. If you decided to sell, you will also see the price that you received.
+
+\newpage
+\section*{Page 5}
+At the end of each market period you will be able to see your earnings for that period. 
+At the conclusion of the experiment, one of the market periods will be selected as your final payoff at random.
+
+\newpage
+\section*{Quiz}
+Please answer all questions based on the experimental instructions you just read. Raise your hand if you have any questions.
+
+\vspace{0.5cm}
+
+\textbf{1. How many participants will be in your group?}
+\begin{enumerate}[label=\alph*)]
+    \item 2 participants
+    \item 3 participants 
+    \item 4 participants
+    \item 5 participants
+\end{enumerate}
+% c
+
+\vspace{0.5cm}
+
+\textbf{2. How long does each round last?}
+\begin{enumerate}[label=\alph*)]
+    \item 2 seconds
+    \item 4 seconds
+    \item 6 seconds
+    \item 8 seconds
+\end{enumerate}
+% b
+
+\vspace{0.5cm}
+
+\textbf{3. What number must be randomly selected for a market period to end?}
+\begin{enumerate}[label=\alph*)]
+    \item 1
+    \item 4
+    \item 6
+    \item 8
+\end{enumerate}
+% d
+
+\vspace{0.5cm}
+
+\textbf{4. If all 4 participants are still in the market, what is the current market price?}
+\begin{enumerate}[label=\alph*)]
+    \item \$2
+    \item \$4
+    \item \$6
+    \item \$8
+\end{enumerate}
+% d
+
+\vspace{0.5cm}
+
+\textbf{5. If only 2 participants remain in the market, what is the current market price?}
+\begin{enumerate}[label=\alph*)]
+    \item \$2
+    \item \$4
+    \item \$6
+    \item \$8
+\end{enumerate}
+% b
+
+\vspace{0.5cm}
+
+\textbf{6. Suppose the current market price is \$6 and two participants decide to sell in the same round. What will they receive?}
+\begin{enumerate}[label=\alph*)]
+    \item Both receive \$6
+    \item Both receive \$4
+    \item One receives \$6, the other receives \$4
+    \item One receives \$6, the other receives \$2
+\end{enumerate}
+% c
+
+\vspace{0.5cm}
+
+\textbf{7. Are you required to sell your asset during the market period?}
+\begin{enumerate}[label=\alph*)]
+    \item Yes, you must sell
+    \item No, selling is optional
+\end{enumerate}
+% b
+
+\vspace{0.5cm}
+
+\textbf{8. If you choose not to sell your asset, what determines your final payoff?}
+\begin{enumerate}[label=\alph*)]
+    \item You receive \$0
+    \item You receive the asset's final value
+    \item You receive the average market price
+    \item You receive \$2
+\end{enumerate}
+% b
+
+\vspace{0.5cm}
+
+\textbf{9. What information will you see during each round? (Select all that apply)}
+\begin{enumerate}[label=\alph*)]
+    \item Current market price
+    \item Graphical display of previous market prices
+    \item Probability of final asset value being 2x the final market price
+    \item All of the above
+\end{enumerate}
+% d
+
+\vspace{0.5cm}
+
+\textbf{10. How will your final payment be determined?}
+\begin{enumerate}[label=\alph*)]
+    \item Average of all market periods
+    \item Sum of all market periods
+    \item One randomly selected market period
+    \item Your best performing market period
+\end{enumerate}
+% c
+
+
+\vspace{0.5cm}
+
+\textbf{11. True or False: Your identity will be revealed to other participants.}
+\begin{enumerate}[label=\alph*)]
+    \item True
+    \item False
+\end{enumerate}
+% b
+
+\vspace{0.5cm}
+
+\textbf{12. Scenario Question: You are in a round where 3 participants remain in the market. The current market price is \$6. If you are the only person to sell this round, how much will you receive?}
+
+Answer: \$\_\_\_\_\_\_
+% 6
+
+
+\vspace{0.5cm}
+
+\textbf{13. Scenario Question: It's the final round of a market period. Only 1 participant (you) remains in the market, so the current market price is \$2. If you don't sell, what are the two possible final values for your asset?}
+\begin{enumerate}
+    \item \$4 and \$2
+    \item \$4 only
+    \item \$2 only
+    \item \$0 and \$2
+\end{enumerate}
+% a
+
+
+\end{document}
+
+
+
+
+

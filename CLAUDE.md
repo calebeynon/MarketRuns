@@ -23,6 +23,18 @@ cd nonlivegame_tr2 && otree devserver # Treatment 2
 uv sync                    # Install dependencies
 uv run python <script>     # Run Python scripts
 ```
+
+### Overleaf Sync
+The paper directory (`analysis/paper/`) syncs to Overleaf via GitHub Action on push to main.
+```bash
+# Push: Automatic on push to main via .github/workflows/sync-overleaf.yml
+# Action parses .tex files for \input and \includegraphics, copies referenced files from output/
+
+# Pull from Overleaf (clone approach):
+git clone https://git:TOKEN@git.overleaf.com/683a03b245fd46af8b04ebd2 /tmp/overleaf-pull
+rsync -av --exclude='.git/' --exclude='tables/' --exclude='plots/' /tmp/overleaf-pull/ analysis/paper/
+```
+
 ## Architecture
 
 ### Experiment Directories
@@ -109,7 +121,18 @@ Key classes: `MarketRunsExperiment`, `Session`, `Segment`, `Round`, `Period`, `P
 - **Raw session data**: `datastore/<session_folder>/` (e.g., `datastore/1_11-7-tr1/`)
 - **Derived datasets**: `datastore/derived/` (created by scripts in `analysis/derived/`)
 
-## Output Standards
+## Paper Directory (`analysis/paper/`)
+
+The paper compiles both locally and on Overleaf using path resolution:
+- **Local**: LaTeX resolves `\input{}` from `../output/tables/` and `\includegraphics{}` from `../output/plots/`
+- **Overleaf**: GitHub Action copies referenced files to `tables/` and `plots/` folders
+
+**Rules for .tex files:**
+- Use **bare filenames** in `\input{}` and `\includegraphics{}` (no directory prefix, no `.tex` extension)
+- Example: `\input{h2_regression_cluster}` not `\input{../output/tables/h2_regression_cluster.tex}`
+- Do NOT manually commit files to `analysis/paper/tables/` or `analysis/paper/plots/` — the Action manages these on Overleaf
+
+## Visualization Standards
 
 ### LaTeX Tables
 - **Output location**: `analysis/output/tables/` (NOT `analysis/output/analysis/`)
@@ -121,3 +144,8 @@ Key classes: `MarketRunsExperiment`, `Session`, `Segment`, `Round`, `Period`, `P
 - **Never include plot titles** - titles go in the paper/document, not the figure
 - Visualization scripts go in `analysis/` with descriptive names (e.g., `visualize_selling_timing.R`)
 - Output plots saved to `analysis/output/plots/`
+
+## Analysis Output Standards
+
+- **LaTeX tables**: Save to `analysis/output/tables/` (not `analysis/output/analysis/`)
+- **Plots**: Save to `analysis/output/plots/`

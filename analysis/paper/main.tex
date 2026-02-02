@@ -1,0 +1,585 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{epsfig}
+\usepackage{setspace}
+\usepackage{dsfont}
+\usepackage[shortlabels]{enumitem}
+\usepackage{url}
+\usepackage{color}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage[authoryear,round]{natbib}
+\usepackage[colorlinks = true, linkcolor = blue, citecolor = blue, citecolor = blue]{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{xcolor}
+\usepackage{comment}
+\usepackage{indentfirst}
+\usepackage{setspace}
+\usepackage{soul}
+\usepackage[normalem]{ulem}
+\usepackage{epigraph}
+
+\usetikzlibrary{automata,arrows,positioning,calc}
+\usetikzlibrary{plotmarks}
+
+\addtolength{\voffset}{-1.5cm} \addtolength{\hoffset}{-1cm}
+\addtolength{\textwidth}{2.5cm} \addtolength{\textheight}{2.5cm}
+
+
+\pgfplotsset{compat=1.17}
+\renewcommand{\baselinestretch}{1.5}
+
+%%%%%%%%% Path resolution (Overleaf: tables/, plots/; Local: ../output/) %%%%%%%%%
+\graphicspath{{plots/}{../output/plots/}}
+\makeatletter
+\def\input@path{{tables/}{../output/tables/}}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{The Effects of Emotions and Communication on\\Coordination during Market Runs\thanks{Grant number xxx, IRB number xxx, We thank}}
+
+
+\author{Caleb Eynon\thanks{University of Alabama, Email} 
+~and  Paan Jindapon\thanks{University of Alabama, Email}  }
+
+
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+
+\newpage
+
+
+
+
+
+
+\epigraph{``Quote about emotions''}{\textit{-Warren Buffett}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cite{bracha2012psychological}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Literature}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Theory and Experiment}
+
+\cite{bernardo2004liquidity}
+
+\cite{magnani2020dynamic}
+
+\cite{choi2022market}
+
+
+batch clearing
+
+
+
+\subsection{Bank Runs Experiment}
+
+\cite{diamond1983bank}
+
+\cite{garratt2009bank}
+
+\cite{schotter2009dynamics}
+
+\cite{kiss2014social}
+
+\cite{arifovic2013experimental}
+
+\cite{kiss2018panic}
+
+\cite{chakravarty2014experiment}
+
+\cite{brown2017understanding}
+
+Closest to us:
+
+\cite{dijk2017bank}
+
+\cite{shakina2018coordination}
+
+\subsection{Communication and Cooperation}
+
+
+\cite{shakina2018coordination}
+
+and some more
+
+\cite{brandts201921}
+
+\cite{oprea2014continuous}
+
+\cite{haruvy2017communication}
+
+
+\subsection{Emotions and Cooperation}
+
+
+\cite{dijk2017bank}
+
+and some more
+
+
+\subsection{Psych Survey-Traits}
+
+\cite{nyhus2001role}
+
+\cite{durand2008intimate}
+
+\cite{donnelly2012big}
+
+\cite{brown2014household}
+
+\cite{rustichini2016toward}
+
+\cite{oehler2018investors}
+
+\cite{de2019personality}
+
+\cite{gambetti2019personality}
+
+\cite{tauni2020investor}
+
+\cite{gutsche2023determinants}
+
+
+
+\subsection{Psych Survey-Anxiety and Compulsiveness}
+
+\cite{barratt1959anxiety}
+
+\cite{fowles1987application}
+
+\cite{whiteside2001five}
+
+\cite{verplanken2001individual}
+
+\cite{stanford2009fifty}
+
+\cite{gathergood2012self}
+
+\cite{shapiro2012measuring}
+
+\cite{gambetti2012effect}
+
+\cite{ottaviani2011impulsivity}
+
+\cite{friederich2024crypto}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Design of the Experiment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Experiment: \cite{magnani2020dynamic} and \cite{choi2022market}
+
+
+
+Our post-study survey questions consist of the six-item form of the state scale of the Spielberger State-Trait Anxiety Inventory developed by \cite{marteau1992development}, the ten-item form of the Big-Five Personality Inventory developed by \cite{gosling2003very}, and  the eight-item form of the Barratt Impulsiveness Scale developed by \cite{steinberg2013new}. To measure risk aversion, we use the technique adapted from the design in \cite{gneezy1997experiment}. Using a ${1}/{2}$ probability of success instead of ${1}/{3}$ avoids the problem of subjective over weighting of low-probability events.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Personality Traits and First Sellers}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{first_seller_trait_violins.pdf}
+  \caption{Distribution of personality traits by first seller status}
+  \label{fig:first_seller_trait_violins}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{first_seller_trait_boxplots.pdf}
+  \caption{Personality trait comparisons between first sellers and non-first sellers}
+  \label{fig:first_seller_trait_boxplots}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{first_seller_rate_by_quartile.pdf}
+  \caption{First seller rate by trait quartile}
+  \label{fig:first_seller_rate_by_quartile}
+\end{figure}
+
+\begin{table}[H]
+  \centering
+  \caption{Personality trait comparisons between first sellers and non-first sellers}
+  \label{tab:first_seller_trait_comparisons}
+  \input{first_seller_trait_comparisons}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Linear probability model predicting first seller status}
+  \label{tab:first_seller_lpm_regression}
+  \input{first_seller_lpm_regression}
+\end{table}
+
+\subsection{Treatment Effects}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{treatment_period_interactions.pdf}
+  \caption{Treatment and period interaction effects on selling behavior}
+  \label{fig:treatment_period_interactions}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{holdout_payoff_coefficients.png}
+  \caption{Holdout payoff regression coefficients}
+  \label{fig:holdout_payoff_coefficients}
+\end{figure}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discussion and Conclusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+
+\bibliographystyle{aea}
+\bibliography{refs}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\section*{Appendix A. Instructions}
+
+
+
+Welcome to our study. At this time, please make sure you have turned off and put away
+all personal electronic devices. This study will take no more than 75 minutes. You will be paid your earnings from the study in addition to the \$7.50 participation
+payment in cash. Your earnings will depend on the decisions you and others make in this study, so it is important that you fully understand these instructions. These earnings will be denominated in experimental currency units (or ECUs for short). At the end of the study, ECUs will be converted into dollars at the exchange rate of 4 ECUs for 1 dollar and will be paid to you privately in cash. If you have a question at any point, please raise your hand.
+
+
+\newpage
+\section*{Part 1}
+
+You will interact with other participants in this experiment through a virtual environment. Your identity or identifying characteristics will not be shared. You will be referred to by other participants as $$\text{Participant \_\_}$$
+
+
+Part 1 of this study consists of 4 segments. At the beginning of these segments, all participants will be randomly placed in a group of 4. Each group will remain the same throughout a segment. When a new segment begins, all participants will be randomly placed in a new group of 4. In these 4 segments, you will be placed in 4 different groups and will not interact with the same persons in different segments.
+
+\vspace{0.2in}
+\begin{center}
+--------------------------------------------
+\end{center}
+\vspace{0.2in}
+
+Each segment consists of an uncertain number of \textbf{rounds}. The number of rounds in a segment is determined as follows: 
+\begin{itemize}
+    \item   For each round, the computer has randomly selected a number from 1 to 8, each with an equal chance (1/8 or 12.5\%), for the entire session to determine whether another round of the same segment will follow. 
+    \item 	If the selected number is from 1 to 7, the next round will follow. If the selected number is 8, the segment will end.
+    \item 	We will reveal the selected number to you at the end of each round. So, at the beginning of each round, you only know that there is an 87.5\% chance that another round of the same segment will follow and there is a 12.5\% chance that the segment will end after this round. 
+\end{itemize}
+
+
+\newpage
+
+Each round consists of an uncertain number of \textbf{market periods}. Each market period lasts 10 seconds. The number of market periods in a round is determined as follows: 
+\begin{itemize}
+    \item   After each market period, the computer has randomly selected a number from 1 to 8, each with an equal chance (1/8 or 12.5\%), for the entire session to determine whether another market period of the same round will follow. 
+    \item 	If the selected number is from 1 to 7, the next market period will immediately follow. If the selected number is 8, the round will end.
+    \item 	Since the next market period follows immediately (if the round continues), we will not reveal the selected number after each market period. We will only inform you after the last market period that the round has ended. At the beginning of market period, you only know that there is an 87.5\% chance that another period of the same round will follow and there is a 12.5\% chance that the round will end immediately after this period. 
+\end{itemize}
+
+
+\vspace{0.2in}
+\begin{center}
+--------------------------------------------
+\end{center}
+\vspace{0.2in}
+
+
+You will be endowed with an asset at the beginning of each round. This asset has an \textbf{unknown} final value. The value will either be 20 ECUs or the current market price at the end of each round.
+
+\vspace{0.2in}
+
+In each market period you will face the following decision task.
+
+\begin{itemize}
+
+    \item Each participant will receive information about the final value of the asset. There will be a percentage displayed in text and graphical form. This is the probability that the asset's final value is 20. This probability will update every round.
+
+    \item All participants begin each market period \textbf{in} the market. Each participant can freely exit the market during a round by clicking the SELL button.
+
+    \item By clicking the SELL button, you are accepting the current market price for that market period. You will also be \textbf{out} of the market for the \textbf{entirety} of that market period. It will not affect your status in future market periods. The market price will be displayed on the screen in text and graphical form.
+
+    \item The current market price is determined by the number of participants currently \textbf{in} the market. The market price according to the number of participants is as follows.\\
+    \begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Number of Participants} & \textbf{Market Price} \\
+        \hline
+        4 & 8 \\
+        3 & 6 \\
+        2 & 4 \\
+        1 & 2 \\
+        \hline
+    \end{tabular}
+    \end{center}
+    Each time someone exits the market, the price will update in the next round.
+
+    \item If you elect to not hit the SELL button at any point during a market period, you will receive the asset's final value. Keep in mind there are two possibilities for this value. If the asset's final value ends up being the current market price and there are multiple participants still \textbf{in} the market, then the price received will be randomized. For example, if there are 3 participants remaining at the end of a market period and the asset's final value is the current market price, one person will receive 6, another 4, and the other 2. This will be completely random.
+
+    \item At the end of each round, you will be notified of the earnings of everyone in your group.  Even though you will make decisions in many rounds and the computer will calculate your earnings in ECUs for all of these rounds, the computer will randomly select \underline{\textbf{only 1 round} from each of the four segments} to calculate your cash payment. The computer will use the sum of your earnings from the 4 selected rounds and convert it into dollars at the exchange rate of 4 ECUs for 1 dollar. You will know which rounds are selected for your cash earnings at the end of the study.
+    
+\end{itemize}
+
+
+
+
+At the beginning of Segments 3 and 4, you will be able to chat with other participants in your group through a chat box.  Your messages with be broadcast to the entire group and you will be able to see all messages from other participants. You may chat about any topic, but please refrain from using profanity or any language other than English. Additionally, do not reveal any personal identifying information in order to protect anonymity. 
+
+
+\vspace{0.2in}
+\begin{center}
+--------------------------------------------
+\end{center}
+\vspace{0.2in}
+
+
+Now that you've seen the instructions, please answer a short quiz to ensure your understanding before we proceed to the experiment.
+
+\begin{enumerate}
+    \item  How many participants are in a group?
+    \item  If you hold your asset to the end of the market period, you receive uncertain earnings. (T/F)
+    \item  The market period has an uncertain amount of time. (T/F)
+    \item  If you click the SELL button you receive  uncertain earnings. (T/F)
+    \item  If multiple people hold their assets to the end of the period, and the final value is the market price, their earnings will be equal (T/F).
+    \item  If multiple people hold their assets to the end of the period, and the final value is 20, their earnings will be equal (T/F).
+    \item  The market price decreases each time any participant decides to sell. (T/F)
+\end{enumerate}
+
+
+
+
+
+\begin{comment}
+
+\begin{figure}[h]
+ \centering
+  \includegraphics[width=\linewidth]{images/price and belief.png}
+  \caption{An example of how the price and probability might look}
+  \label{fig:price and belief}
+\end{figure}
+
+
+
+\newpage
+\section*{Page 5 (Chat Only)}
+You will be able to chat with other participants in your group through a chat box. You will be able to chat for the entirety of the market period, including the 10 second sell delay. Your messages with be broadcast to the entire group and you will be able to see all messages from other participants. You may chat about any topic, but please refrain from using profanity or any language other than English. Additionally, do not reveal any personal identifying information in order to protect anonymity. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{images/chat and table.png}
+  \caption{An example of how you will view the chat box and table of participants}
+  \label{fig:chat and table}
+\end{figure}
+
+\newpage
+\section*{Page 6}
+Now that you've seen the instructions, please answer a short quiz to ensure your understanding before we proceed to the experiment.
+
+\begin{itemize}
+    \item [1.] How many participants are in a group?
+    \item [2.] How long is the delay before you are permitted to sell your asset?
+    \item [3.] If you hold your asset to the end of the market period, you receive an unknown payoff. (T/F)
+    \item [4.] The market period has an unknown amount of time. (T/F)
+    \item [5.] If you click the SELL button you receive an unknown payoff. (T/F)
+    \item [6.] If multiple people hold their assets to the end of the period, and the final value is the market price, they're payoffs will be equal (T/F).
+    \item [7.] If multiple people hold their assets to the end of the period, and the final value is 20, they're payoffs will be equal (T/F).
+    \item [8.] The market price decreases each time any participant decides to sell. (T/F)
+    
+\end{itemize}
+\end{comment}
+
+\newpage
+\section*{Part 2}
+
+In this part of the study, you will not interact with other participants. Your earnings from this part will only depend on your own decisions. Part 2 of this study consists of 5 sections. We provide the instructions for each section below.
+
+
+
+\vspace{0.1in}
+\begin{center}
+--------------------------------------------
+\end{center}
+
+
+
+\subsection*{Section 1}
+
+
+Read each statement and choose one of the response options (Not at all/Somewhat/ Moderately/Very much) to indicate how you feel right now. You will earn 5 ECUs after completing this section.
+
+I feel:
+\begin{enumerate}
+\item calm.
+  \item relaxed.
+  \item  content.
+  \item  tense.
+  \item  upset.
+  \item  worried.
+\end{enumerate}
+
+\newpage
+
+\subsection*{Section 2}
+
+Please choose a number for each statement to indicate the extent to which you agree or disagree with that statement (Disagree strongly/Disagree moderately/Disagree a little/Neither agree nor disagree/Agree a little/Agree moderately/Agree strongly). You should rate the extent to which the pair of traits applies to you, even if one characteristic applies more strongly than the other. You will earn 5 ECUs after completing this section.
+
+
+
+I see myself as:
+\begin{enumerate}
+\item Extraverted, enthusiastic.
+  \item  Critical, quarrelsome.
+  \item  Dependable, self-disciplined.
+  \item  Anxious, easily upset.
+  \item  Open to new experiences, complex.
+  \item  Reserved, quiet.
+  \item  Sympathetic, warm.
+  \item  Disorganized, careless.
+  \item  Calm, emotionally stable.
+  \item  Conventional, uncreative.
+\end{enumerate}
+
+\newpage
+
+\subsection*{Section 3}
+
+Please choose a number for each statement to indicate the extent to which you agree or disagree with that statement (Disagree strongly/Disagree moderately/Disagree a little/Neither agree nor disagree/Agree a little/Agree moderately/Agree strongly). You will earn 5 ECUs after completing this section.
+
+
+\begin{enumerate}
+  \item  I plan tasks carefully.  
+  \item I do things without thinking. 
+  \item I don’t pay attention. 
+  \item I am self-controlled. 
+  \item I concentrate easily.  
+  \item I am a careful thinker. 
+  \item I say things without thinking.  
+  \item I act on the spur of the moment.
+\end{enumerate}
+
+
+\newpage
+
+
+\subsection*{Section 4}
+
+Please answer the following demographic survey questions. You will earn 5 ECUs after completing this section.
+
+
+\begin{enumerate}
+  \item Your age: .....
+  \item Your gender: Male/Female/Prefer not to say 
+  \item Your classification: Freshman/Sophomore/Junior/Senior
+  \item Your major(s): .....
+\end{enumerate}
+
+
+\newpage
+
+
+\subsection*{Section 5}
+
+This is the final section of Part 2. In this section, you will be asked to choose a portion of 20 ECUs that you earned from completing Sections 1 to 4 to invest in a risky option.  The amount that you can invest in the risky option is any whole number from 0 to 20. The rest of the earnings (those you do not invest) will be kept in your balance.
+
+
+\begin{itemize}
+
+ \item  There is a 50\% probability that the investment will fail and a 50\% probability that the investment will succeed. If the investment fails, you will lose the amount you invested. If the investment succeeds, you will receive 2.5 times the amount invested. 
+
+ \item  How do you know whether the risky investment succeeds? You will be asked to choose Heads or Tails. At the end of the study, we will flip a coin. Your investment succeeds if the outcome of the coin flip matches your choice. 
+
+ \item You will learn the outcome of this section at the end of the study.  Please remember that your investment in this section is taken from your earnings from completing the previous four sections.  If you decide to invest a positive amount in the risky option, your total earnings from Part 2 will be lower than 20 ECUs if the investment fails, and larger than 20 ECUs if the investment succeeds.
+
+ \item You may use the slide bar below to enter the investment amount. The program will calculate your potential earnings in the two scenarios: when the investment fails and when the investment succeeds. You can edit the amount of your investment until you click the “confirm” button. 
+
+ 
+\end{itemize}
+
+
+
+
+\end{document}

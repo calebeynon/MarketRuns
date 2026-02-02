@@ -7,7 +7,7 @@ library(fixest)
 
 # FILE PATHS
 INPUT_PATH <- "datastore/derived/individual_period_dataset.csv"
-OUTPUT_PATH <- "analysis/output/analysis/selling_period_regression.tex"
+OUTPUT_PATH <- "analysis/output/tables/selling_period_regression.tex"
 PREPARED_DATA_PATH <- "datastore/derived/selling_period_regression_data.csv"
 
 # =====

@@ -18,7 +18,7 @@ library(fixest)
 # File paths
 # =====
 INPUT_DATA <- "datastore/derived/holdout_next_round_analysis.csv"
-OUTPUT_TEX <- "analysis/output/analysis/holdout_liquidation_regression.tex"
+OUTPUT_TEX <- "analysis/output/tables/holdout_liquidation_regression.tex"
 
 # =====
 # Main
