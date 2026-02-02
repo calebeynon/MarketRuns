@@ -126,7 +126,9 @@ run_full_sample_table <- function(df) {
                  "signal", "period", "round",
                  "segment2", "segment3", "segment4", "treatmenttr2", "(Intercept)")
 
-  build_single_table(model, var_order, OUTPUT_FULL, extra_dict = int_dict)
+  build_single_table(model, var_order, OUTPUT_FULL, extra_dict = int_dict,
+                     use_longtable = TRUE,
+                     caption = "Emotions and traits predicting selling period (full sample)")
 }
 
 # =====
@@ -205,15 +207,24 @@ get_sig_stars <- function(pval) {
   return("")
 }
 
-build_single_table <- function(model, var_order, output_path, extra_dict = NULL) {
+build_single_table <- function(model, var_order, output_path, extra_dict = NULL,
+                               use_longtable = FALSE, caption = NULL) {
   full_dict <- c(VAR_DICT, extra_dict)
   coefs <- extract_coefs(model)
   fit <- extract_fit(model)
 
-  lines <- build_table_header()
+  if (use_longtable) {
+    lines <- build_longtable_header(caption)
+  } else {
+    lines <- build_table_header()
+  }
   lines <- append_coefficient_rows(lines, coefs, var_order, full_dict)
   lines <- append_fit_statistics(lines, fit)
-  lines <- append_table_footer(lines)
+  if (use_longtable) {
+    lines <- append_longtable_footer(lines)
+  } else {
+    lines <- append_table_footer(lines)
+  }
 
   write_table(lines, output_path)
 }
@@ -262,6 +273,44 @@ append_table_footer <- function(lines) {
     "   \\multicolumn{2}{l}{\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\\\",
     "\\end{tabular}",
     "\\par\\endgroup",
+    "",
+    "")
+}
+
+# =====
+# Longtable builders (for multi-page tables)
+# =====
+build_longtable_header <- function(caption) {
+  c("",
+    "\\begingroup",
+    "\\scriptsize",
+    "\\begin{longtable}{lc}",
+    sprintf("\\caption{%s} \\\\", caption),
+    "   \\midrule \\midrule",
+    "   Dependent Variable: & sold\\\\",
+    "   Model:              & (1)\\\\",
+    "   \\midrule",
+    "   \\emph{Variables}\\\\",
+    "\\endfirsthead",
+    "\\multicolumn{2}{l}{\\emph{(continued)}}\\\\",
+    "   \\midrule \\midrule",
+    "   Dependent Variable: & sold\\\\",
+    "   Model:              & (1)\\\\",
+    "   \\midrule",
+    "\\endhead",
+    "   \\midrule",
+    "   \\multicolumn{2}{r}{\\emph{continued on next page}}\\\\",
+    "\\endfoot",
+    "\\endlastfoot")
+}
+
+append_longtable_footer <- function(lines) {
+  c(lines,
+    "   \\midrule \\midrule",
+    "   \\multicolumn{2}{l}{\\emph{Clustered (player) standard-errors in parentheses}}\\\\",
+    "   \\multicolumn{2}{l}{\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\\\",
+    "\\end{longtable}",
+    "\\endgroup",
     "",
     "")
 }
