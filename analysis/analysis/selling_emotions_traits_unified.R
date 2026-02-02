@@ -219,24 +219,10 @@ build_single_table <- function(model, var_order, output_path, extra_dict = NULL)
 }
 
 build_table_header <- function() {
-  c("", "\\begingroup", "\\scriptsize",
-    "\\begin{longtable}{lr}",
-    "   \\midrule \\midrule",
-    "   Dependent Variable: & sold\\\\",
-    "   & (1)\\\\",
-    "   \\midrule",
-    "   \\emph{Variables}\\\\",
-    "   \\endfirsthead",
-    "   \\multicolumn{2}{l}{\\emph{(continued)}}\\\\",
-    "   \\midrule \\midrule",
-    "   Dependent Variable: & sold\\\\",
-    "   & (1)\\\\",
-    "   \\midrule",
-    "   \\endhead",
-    "   \\midrule",
-    "   \\multicolumn{2}{r}{\\emph{continued on next page}}\\\\",
-    "   \\endfoot",
-    "   \\endlastfoot")
+  c("\\begin{tabular}{lr}",
+    "\\toprule",
+    "& (1) \\\\",
+    "\\midrule")
 }
 
 append_coefficient_rows <- function(lines, coefs, var_order, full_dict) {
@@ -246,25 +232,20 @@ append_coefficient_rows <- function(lines, coefs, var_order, full_dict) {
     if (nrow(row) == 0) next
     val <- sprintf("%.4f%s", row$est, get_sig_stars(row$pval))
     se <- sprintf("(%.4f)", row$se)
-    lines <- c(lines, sprintf("   %s & %s\\\\", label, val), sprintf("   & %s\\\\", se))
+    lines <- c(lines, sprintf("%s & %s \\\\", label, val), sprintf("& %s \\\\", se))
   }
   return(lines)
 }
 
 append_fit_statistics <- function(lines, fit) {
-  c(lines, "   \\midrule", "   \\emph{Fit statistics}\\\\",
-    "   Model & Random Effects\\\\",
-    sprintf("   Observations & %s\\\\", format(fit$n, big.mark = ",")),
-    sprintf("   R$^2$ & %.5f\\\\", fit$r2))
+  c(lines, "\\midrule",
+    sprintf("Observations & %s \\\\", format(fit$n, big.mark = ",")),
+    sprintf("R$^2$ & %.4f \\\\", fit$r2))
 }
 
 append_table_footer <- function(lines) {
-  note <- paste("Other AFFDEX emotions, other BFI-10 traits, age, and gender",
-                "also included as controls.")
-  c(lines, "   \\midrule \\midrule",
-    "   \\multicolumn{2}{l}{\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\\\",
-    sprintf("   \\multicolumn{2}{p{0.7\\linewidth}}{\\emph{Note: %s}}\\\\", note),
-    "\\end{longtable}", "\\endgroup", "", "")
+  c(lines, "\\bottomrule",
+    "\\end{tabular}")
 }
 
 write_table <- function(lines, output_path) {
