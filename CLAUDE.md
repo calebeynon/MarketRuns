@@ -134,6 +134,12 @@ The paper compiles both locally and on Overleaf using path resolution:
 
 ## Visualization Standards
 
+### LaTeX Tables
+- **Output location**: `analysis/output/tables/` (NOT `analysis/output/analysis/`)
+- Use longtable format for multi-page tables
+- Include significance codes and notes in table footer
+
+### Visualization
 - **All visualizations must be created using ggplot2 in R**
 - **Never include plot titles** - titles go in the paper/document, not the figure
 - Visualization scripts go in `analysis/` with descriptive names (e.g., `visualize_selling_timing.R`)
