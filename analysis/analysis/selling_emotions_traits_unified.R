@@ -220,7 +220,7 @@ build_single_table <- function(model, var_order, output_path, extra_dict = NULL)
 
 build_table_header <- function() {
   c("", "\\begingroup", "\\scriptsize",
-    "\\begin{longtable}{lc}",
+    "\\begin{longtable}{lr}",
     "   \\midrule \\midrule",
     "   Dependent Variable: & sold\\\\",
     "   & (1)\\\\",
