@@ -1,0 +1,55 @@
+
+\begingroup
+\centering
+\scriptsize
+\begin{tabular}{lc}
+   \tabularnewline \midrule \midrule
+   Dependent Variable:                                                           & sold\_next\_round\\    
+   Model:                                                                        & (1)\\  
+   \midrule
+   \emph{Variables}\\
+   round\_payoff\_factor4                                                        & -0.1470$^{*}$\\   
+                                                                                 & (0.0810)\\   
+   round\_payoff\_factor6                                                        & -0.3619$^{***}$\\   
+                                                                                 & (0.1210)\\   
+   round\_payoff\_factor8                                                        & -0.3266$^{**}$\\   
+                                                                                 & (0.1543)\\   
+   anger\_results                                                                & -0.0485$^{***}$\\   
+                                                                                 & (0.0118)\\   
+   prior\_sales                                                                  & 0.0115$^{*}$\\   
+                                                                                 & (0.0059)\\   
+   round\_payoff\_factor4 $\times$ anger\_results                                & 0.0296\\   
+                                                                                 & (0.0431)\\   
+   round\_payoff\_factor6 $\times$ anger\_results                                & -0.0073\\   
+                                                                                 & (0.0384)\\   
+   round\_payoff\_factor8 $\times$ anger\_results                                & 0.0391$^{***}$\\   
+                                                                                 & (0.0113)\\   
+   round\_payoff\_factor4 $\times$ chat\_available                               & 0.1468$^{*}$\\   
+                                                                                 & (0.0864)\\   
+   round\_payoff\_factor6 $\times$ chat\_available                               & 0.3434$^{**}$\\   
+                                                                                 & (0.1280)\\   
+   round\_payoff\_factor8 $\times$ chat\_available                               & 0.3066$^{*}$\\   
+                                                                                 & (0.1609)\\   
+   anger\_results $\times$ chat\_available                                       & 0.0569$^{***}$\\   
+                                                                                 & (0.0136)\\   
+   round\_payoff\_factor4 $\times$ anger\_results $\times$ chat\_available       & -0.0388\\   
+                                                                                 & (0.0441)\\   
+   round\_payoff\_factor6 $\times$ anger\_results $\times$ chat\_available       & 0.1876$^{***}$\\   
+                                                                                 & (0.0526)\\   
+   round\_payoff\_factor8 $\times$ anger\_results $\times$ chat\_available       & -0.0440$^{***}$\\   
+                                                                                 & (0.0131)\\   
+   \midrule
+   \emph{Fixed-effects}\\
+   global\_group\_id-global\_round                                               & Yes\\  
+   \midrule
+   \emph{Fit statistics}\\
+   Observations                                                                  & 415\\  
+   R$^2$                                                                         & 0.48889\\  
+   Within R$^2$                                                                  & 0.14530\\  
+   \midrule \midrule
+   \multicolumn{2}{l}{\emph{Clustered (global\_group\_id) standard-errors in parentheses}}\\
+   \multicolumn{2}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+\par\endgroup
+
+
