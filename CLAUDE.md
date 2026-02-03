@@ -104,6 +104,37 @@ Key classes: `MarketRunsExperiment`, `Session`, `Segment`, `Round`, `Period`, `P
 - **State**: Binary (0 or 1), determines liquidation value
 - **Bayesian updating**: Signal history updated via `set_signal()` function
 
+### iMotions Data Integration
+
+**CRITICAL: Period Offset Between iMotions and oTree**
+
+The iMotions annotation format is `s{segment}r{round}m{period}{phase}` (e.g., `s1r5m3MarketPeriod`).
+
+**There is a -1 offset for the period number:**
+
+| iMotions `m` value | oTree `period_in_round` |
+|--------------------|-------------------------|
+| m2 | 1 |
+| m3 | 2 |
+| m4 | 3 |
+| m5 | 4 |
+
+**Formula:** `oTree_period = iMotions_m - 1`
+
+**Why this happens:** In `generate_annotations_unfiltered_v2.py`, the `market_period_counter` starts at 1 and is pre-incremented BEFORE recording the first MarketPeriod. So the first actual market period gets `m2`, not `m1`. The `m1` value represents the state before any market period begins.
+
+**When merging iMotions emotions with oTree data:**
+```python
+# Parse annotation like "s1r5m3MarketPeriod"
+# iMotions m=3 corresponds to oTree period_in_round=2
+otree_period = imotions_m_value - 1
+```
+
+**iMotions Data Coverage:**
+- Rounds 1-10 only (rounds 11-14 were not annotated)
+- ~25 Hz sampling rate (~100,000 rows per participant)
+- Skip first 24 rows when reading (metadata headers)
+
 ## Data Paths
 
 - **Raw session data**: `datastore/<session_folder>/` (e.g., `datastore/1_11-7-tr1/`)
