@@ -1,0 +1,45 @@
+
+\begingroup
+\centering
+\scriptsize
+\begin{tabular}{lcc}
+   \tabularnewline \midrule \midrule
+   Dependent Variable: & \multicolumn{2}{c}{sold}\\
+                                          & Fear (max)             & Anger (max) \\   
+   Model:                                 & (1)                    & (2)\\  
+   \midrule
+   \emph{Variables}\\
+   sale\_prev\_period                     & 0.0468$^{***}$         & 0.0454$^{***}$\\   
+                                          & (0.0121)               & (0.0117)\\   
+   fear\_max                              & -0.0002$^{**}$         &   \\   
+                                          & ($9.6\times 10^{-5}$)  &   \\   
+   sale\_prev\_period $\times$ emotion    & -0.0004                & -0.0002\\   
+                                          & (0.0004)               & (0.0003)\\   
+   signal                                 & -0.1815$^{***}$        & -0.1818$^{***}$\\   
+                                          & (0.0171)               & (0.0171)\\   
+   prior\_group\_sales                    & -0.0264$^{***}$        & -0.0263$^{***}$\\   
+                                          & (0.0048)               & (0.0048)\\   
+   period                                 & 0.0017                 & 0.0017\\   
+                                          & (0.0011)               & (0.0011)\\   
+   round                                  & -0.0025$^{**}$         & -0.0025$^{**}$\\   
+                                          & (0.0011)               & (0.0011)\\   
+   anger\_max                             &                        & -0.0004$^{***}$\\   
+                                          &                        & (0.0001)\\   
+   \midrule
+   \emph{Fixed-effects}\\
+   player\_id                             & Yes                    & Yes\\  
+   segment                                & Yes                    & Yes\\  
+   \midrule
+   \emph{Fit statistics}\\
+   Observations                           & 13,713                 & 13,713\\  
+   R$^2$                                  & 0.12174                & 0.12181\\  
+   \midrule \midrule
+   \multicolumn{3}{l}{\emph{Clustered (global\_group\_id) standard-errors in parentheses}}\\
+   \multicolumn{3}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+ 
+\par \raggedright 
+Dependent variable: sold. Player and segment FE. Clustered SEs by group.
+\par\endgroup
+
+

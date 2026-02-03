@@ -1,0 +1,39 @@
+
+\begingroup
+\centering
+\scriptsize
+\begin{tabular}{lcc}
+   \tabularnewline \midrule \midrule
+   Dependent Variables:  & fear\_max     & anger\_max\\   
+                         & Fear (max)    & Anger (max) \\   
+   Model:                & (1)           & (2)\\  
+   \midrule
+   \emph{Variables}\\
+   sale\_prev\_period    & 0.0558        & 0.2354\\   
+                         & (0.4520)      & (0.3537)\\   
+   signal                & 0.7835        & -0.0604\\   
+                         & (0.8050)      & (0.4297)\\   
+   prior\_group\_sales   & -0.1195       & 0.1522\\   
+                         & (0.2364)      & (0.1570)\\   
+   period                & -0.1094$^{*}$ & -0.1191$^{***}$\\   
+                         & (0.0612)      & (0.0374)\\   
+   round                 & 0.2185$^{**}$ & 0.1273$^{**}$\\   
+                         & (0.0838)      & (0.0610)\\   
+   \midrule
+   \emph{Fixed-effects}\\
+   player\_id            & Yes           & Yes\\  
+   segment               & Yes           & Yes\\  
+   \midrule
+   \emph{Fit statistics}\\
+   Observations          & 13,713        & 13,713\\  
+   R$^2$                 & 0.22475       & 0.10132\\  
+   \midrule \midrule
+   \multicolumn{3}{l}{\emph{Clustered (global\_group\_id) standard-errors in parentheses}}\\
+   \multicolumn{3}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+ 
+\par \raggedright 
+Player and segment fixed effects. Clustered SEs by group.
+\par\endgroup
+
+
