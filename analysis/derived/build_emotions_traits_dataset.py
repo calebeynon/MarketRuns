@@ -79,6 +79,11 @@ def merge_datasets(
     )
 
     # Merge emotions (period-level)
+    # NOTE: The `period` values in emotions_df are already aligned to oTree period
+    # numbering. The offset (iMotions m{N} -> oTree period N-1) is applied upstream
+    # in `build_imotions_period_emotions.py::parse_market_period_annotation()`.
+    # This ensures the merge keys (session_id, segment, round, period, player)
+    # match correctly between oTree selling data and iMotions emotion data.
     emotion_cols = [
         "session_id", "segment", "round", "period", "player",
         "anger_mean", "contempt_mean", "disgust_mean", "fear_mean",
