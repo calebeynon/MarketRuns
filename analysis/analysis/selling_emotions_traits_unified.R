@@ -140,12 +140,12 @@ run_first_sellers_table <- function(df) {
   cat("First sellers sample:", nrow(df_first), "rows\n")
 
   all_controls <- paste(c(ALL_EMOTIONS, ALL_TRAITS, "age", "gender_female"), collapse = " + ")
-  formula_str <- paste("sold ~", all_controls, "+ signal + round + segment + treatment")
+  formula_str <- paste("sold ~", all_controls, "+ signal + period + round + segment + treatment")
 
   pdata <- pdata.frame(as.data.frame(df_first), index = c("player_id", "time_id"))
   model <- plm(as.formula(formula_str), data = pdata, model = "random")
 
-  var_order <- c(SHOW_EMOTIONS, SHOW_TRAITS, "signal", "round",
+  var_order <- c(SHOW_EMOTIONS, SHOW_TRAITS, "signal", "period", "round",
                  "segment2", "segment3", "segment4", "treatmenttr2", "(Intercept)")
 
   build_single_table(model, var_order, OUTPUT_FIRST)
@@ -163,12 +163,12 @@ run_second_sellers_table <- function(df) {
 
   all_controls <- paste(c(ALL_EMOTIONS, ALL_TRAITS, "age", "gender_female"), collapse = " + ")
   formula_str <- paste("sold ~ dummy_prev_period +", all_controls,
-                       "+ signal + round + segment + treatment")
+                       "+ signal + period + round + segment + treatment")
 
   pdata <- pdata.frame(as.data.frame(df_second), index = c("player_id", "time_id"))
   model <- plm(as.formula(formula_str), data = pdata, model = "random")
 
-  var_order <- c("dummy_prev_period", SHOW_EMOTIONS, SHOW_TRAITS, "signal", "round",
+  var_order <- c("dummy_prev_period", SHOW_EMOTIONS, SHOW_TRAITS, "signal", "period", "round",
                  "segment2", "segment3", "segment4", "treatmenttr2", "(Intercept)")
 
   build_single_table(model, var_order, OUTPUT_SECOND)

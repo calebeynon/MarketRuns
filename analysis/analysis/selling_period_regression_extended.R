@@ -42,6 +42,8 @@ load_data <- function(file_path) {
   df[, global_group_id := paste(session_id, segment, group_id, sep = "_")]
   df[, group_round_id := paste(session_id, segment, group_id, round, sep = "_")]
   df[, player_group_round_id := paste(player_id, segment, group_id, round, sep = "_")]
+  # Unique observation ID for panel structure (allows period as regressor)
+  df[, obs_id := .I]
   df[, segment := as.factor(segment)]
   df[, treatment := as.factor(treatment)]
   return(df)
@@ -67,9 +69,10 @@ run_first_sellers <- function(df) {
   cat("  - Observations where sold=0:", nrow(df_first) - n_sales, "\n")
 
   # Random effects model - no prior sales dummies since they're first
-  pdata <- pdata.frame(as.data.frame(df_first), index = c("player_id", "period"))
+  # Use obs_id as time index to allow period as regressor
+  pdata <- pdata.frame(as.data.frame(df_first), index = c("player_id", "obs_id"))
   model <- plm(
-    sold ~ signal + round + segment + treatment,
+    sold ~ signal + period + round + segment + treatment,
     data = pdata,
     model = "random"
   )
@@ -110,16 +113,17 @@ run_second_sellers <- function(df) {
   cat("Interaction term (prev_period x treatment2):", sum(df_second$prev_x_treat), "\n")
 
   # Random effects model 1: without interaction
-  pdata <- pdata.frame(as.data.frame(df_second), index = c("player_id", "period"))
+  # Use obs_id as time index to allow period as regressor
+  pdata <- pdata.frame(as.data.frame(df_second), index = c("player_id", "obs_id"))
   model1 <- plm(
-    sold ~ dummy_prev_period + signal + round + segment + treatment,
+    sold ~ dummy_prev_period + signal + period + round + segment + treatment,
     data = pdata,
     model = "random"
   )
 
   # Random effects model 2: with interaction
   model2 <- plm(
-    sold ~ dummy_prev_period + treatment + prev_x_treat + signal + round + segment,
+    sold ~ dummy_prev_period + treatment + prev_x_treat + signal + period + round + segment,
     data = pdata,
     model = "random"
   )
@@ -180,11 +184,12 @@ run_interaction_model <- function(df) {
   print_interaction_summary(df_int)
 
   # Random effects model
-  pdata <- pdata.frame(as.data.frame(df_int), index = c("player_id", "period"))
+  # Use obs_id as time index to allow period as regressor
+  pdata <- pdata.frame(as.data.frame(df_int), index = c("player_id", "obs_id"))
   model <- plm(
     sold ~ dummy_1_cum + dummy_2_cum + dummy_3_cum +
       int_1_1 + int_2_1 + int_2_2 + int_3_1 + int_3_2 + int_3_3 +
-      signal + round + segment + treatment,
+      signal + period + round + segment + treatment,
     data = pdata,
     model = "random"
   )
@@ -315,10 +320,10 @@ export_table_second_sellers_interaction <- function(model1, model2, output_path)
 
   # Variable order for second sellers interaction table
   vars <- c("(Intercept)", "dummy_prev_period", "treatmenttr2", "prev_x_treat",
-            "signal", "round", "segment2", "segment3", "segment4")
+            "signal", "period", "round", "segment2", "segment3", "segment4")
   labels <- c("Constant", "dummy\\_prev\\_period", "treatment\\_2",
               "prev\\_period $\\times$ treatment\\_2",
-              "signal", "round", "segment\\_2", "segment\\_3", "segment\\_4")
+              "signal", "period", "round", "segment\\_2", "segment\\_3", "segment\\_4")
 
   for (i in seq_along(vars)) {
     v <- vars[i]
@@ -388,7 +393,7 @@ format_coef_rows_interactions <- function(coefs) {
   # Define display order for interaction model
   var_order <- c("(Intercept)", "dummy_1_cum", "dummy_2_cum", "dummy_3_cum",
                  "int_1_1", "int_2_1", "int_2_2", "int_3_1", "int_3_2", "int_3_3",
-                 "signal", "round", "segment2", "segment3", "segment4", "treatmenttr2")
+                 "signal", "period", "round", "segment2", "segment3", "segment4", "treatmenttr2")
 
   for (var in var_order) {
     if (var %in% rownames(coefs)) {
@@ -419,6 +424,7 @@ format_var_name <- function(var) {
     "int_3_2" = "cum3 $\\times$ prev2",
     "int_3_3" = "cum3 $\\times$ prev3",
     "signal" = "signal",
+    "period" = "period",
     "round" = "round",
     "segment2" = "segment\\_2",
     "segment3" = "segment\\_3",
