@@ -146,6 +146,8 @@ s{segment}r{round}m{period}{phase}
 | `m{period}` | Period within round | m1-m15 (varies by round) |
 | `{phase}` | Current activity phase | See phase table below |
 
+> **WARNING: m1 is NOT period 1!** The `m{N}` value does NOT directly correspond to oTree period numbers. Due to pre-increment logic in the annotation generator, `m1` represents non-period phases (like SegmentIntro), and `m2` is actually oTree period 1. See the Period Offset Mapping section below for details.
+
 ### Segment Mapping
 
 | Annotation Segment | oTree App | Has Chat |
@@ -170,6 +172,36 @@ s{segment}r{round}m{period}{phase}
 | `ChatWait` | Waiting for chat to end | After chat |
 | `NewRule` | New rule introduction | When rules change |
 | `NewRuleWait` | Waiting after rule intro | After NewRule |
+
+### Period Offset Mapping
+
+The `m{N}` value in annotations uses a **+1 offset** from oTree period numbers due to how `generate_annotations_unfiltered_v2.py` generates annotations:
+
+1. The market period counter starts at 1
+2. The counter is **pre-incremented** before recording each `MarketPeriod` event
+3. Therefore, the first `MarketPeriod` (oTree period 1) receives `m2`
+
+**Mapping Formula:**
+
+```
+iMotions m-value = oTree period + 1
+oTree period = iMotions m-value - 1
+```
+
+**Mapping Table:**
+
+| iMotions m-value | oTree Period | Phase |
+|------------------|--------------|-------|
+| m1 | N/A | SegmentIntro, SegmentIntroWait (before any MarketPeriod) |
+| m2 | 1 | First MarketPeriod in round |
+| m3 | 2 | Second MarketPeriod in round |
+| m4 | 3 | Third MarketPeriod in round |
+| ... | ... | ... |
+| m{N} | N-1 | Nth MarketPeriod in round |
+
+**Example:** To find facial data for oTree period 5 in round 3 of segment 2:
+- Calculate m-value: `5 + 1 = 6`
+- Build annotation: `s2r3m6MarketPeriod`
 
 ### Special Non-Period Annotations
 
@@ -263,19 +295,70 @@ def load_imotions_data(session, participant_letter):
 
     return df
 
-def filter_by_experiment_phase(df, segment, round_num, period, phase):
-    """Filter data to specific experiment phase."""
-    annotation = f"s{segment}r{round_num}m{period}{phase}"
+def otree_period_to_m_value(otree_period):
+    """Convert oTree period number to iMotions m-value.
+
+    The annotation generator pre-increments the period counter,
+    so m2 = oTree period 1, m3 = oTree period 2, etc.
+    """
+    return otree_period + 1
+
+def filter_by_experiment_phase(df, segment, round_num, otree_period, phase):
+    """Filter data to specific experiment phase.
+
+    Args:
+        df: DataFrame with iMotions data
+        segment: Segment number (1-4)
+        round_num: Round number within segment (1-14)
+        otree_period: oTree period number (1-based, will be converted to m-value)
+        phase: Phase name (e.g., 'MarketPeriod', 'Results')
+
+    Returns:
+        Filtered DataFrame for the specified phase
+
+    Note: This function automatically applies the +1 offset to convert
+    oTree periods to iMotions m-values.
+    """
+    m_value = otree_period_to_m_value(otree_period)
+    annotation = f"s{segment}r{round_num}m{m_value}{phase}"
     return df[df['Respondent Annotations active'] == annotation]
 
-def get_market_period_emotions(df, segment, round_num, period):
-    """Get emotion data during a market period."""
-    filtered = filter_by_experiment_phase(df, segment, round_num, period, 'MarketPeriod')
+def get_market_period_emotions(df, segment, round_num, otree_period):
+    """Get emotion data during a market period.
+
+    Args:
+        df: DataFrame with iMotions data
+        segment: Segment number (1-4)
+        round_num: Round number within segment (1-14)
+        otree_period: oTree period number (1-based)
+
+    Returns:
+        DataFrame with timestamp and emotion columns for the specified period
+    """
+    filtered = filter_by_experiment_phase(df, segment, round_num, otree_period, 'MarketPeriod')
 
     emotion_cols = ['Anger', 'Contempt', 'Disgust', 'Fear', 'Joy',
                     'Sadness', 'Surprise', 'Engagement', 'Valence']
 
     return filtered[['Timestamp'] + emotion_cols]
+```
+
+### Direct Annotation Construction (Advanced)
+
+If you need to build annotations manually without the helper functions:
+
+```python
+def build_annotation(segment, round_num, otree_period, phase):
+    """Build annotation string from oTree coordinates.
+
+    IMPORTANT: Always add 1 to oTree period to get the m-value.
+
+    Examples:
+        build_annotation(1, 3, 5, 'MarketPeriod')  -> 's1r3m6MarketPeriod'
+        build_annotation(2, 1, 1, 'MarketPeriod')  -> 's2r1m2MarketPeriod'
+    """
+    m_value = otree_period + 1  # Apply the offset
+    return f"s{segment}r{round_num}m{m_value}{phase}"
 ```
 
 ## Data Quality Considerations
