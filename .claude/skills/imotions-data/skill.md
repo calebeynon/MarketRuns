@@ -78,27 +78,7 @@ Column name: `Respondent Annotations active`
 
 ## Annotation Encoding
 
-Pattern: `s{segment}r{round}m{N}{phase}`
-
-### CRITICAL: Period Offset Warning
-
-**iMotions annotation `m{N}` maps to oTree period `N-1`.**
-
-This offset exists because `generate_annotations_unfiltered_v2.py` pre-increments the counter before recording the first MarketPeriod annotation.
-
-| Annotation m-value | oTree Period |
-|--------------------|--------------|
-| m2 | period 1 |
-| m3 | period 2 |
-| m4 | period 3 |
-| m5 | period 4 |
-| ... | ... |
-
-**Conversion formula:**
-- Annotation to oTree: `otree_period = m_value - 1`
-- oTree to annotation: `m_value = otree_period + 1`
-
-All code templates below accept **oTree period** and convert internally.
+Pattern: `s{segment}r{round}m{period}{phase}`
 
 ### Segment Mapping
 
@@ -163,24 +143,20 @@ def load_imotions(session: int, participant_letter: str) -> pd.DataFrame:
 
 ```python
 def filter_by_phase(df: pd.DataFrame, segment: int, round_num: int,
-                    otree_period: int, phase: str = 'MarketPeriod') -> pd.DataFrame:
+                    period: int, phase: str = 'MarketPeriod') -> pd.DataFrame:
     """Filter to specific experiment phase.
-
-    IMPORTANT: iMotions annotation m{N} maps to oTree period N-1.
-    This function accepts oTree period and converts internally.
 
     Args:
         df: iMotions DataFrame
         segment: Segment number (1-4)
         round_num: Round number (1-14)
-        otree_period: oTree period number (1-indexed)
+        period: Period number within round
         phase: Phase name (default: 'MarketPeriod')
 
     Returns:
         Filtered DataFrame
     """
-    m_value = otree_period + 1  # Convert oTree period to annotation m-value
-    annotation = f's{segment}r{round_num}m{m_value}{phase}'
+    annotation = f's{segment}r{round_num}m{period}{phase}'
     return df[df['Respondent Annotations active'] == annotation]
 ```
 
@@ -188,19 +164,12 @@ def filter_by_phase(df: pd.DataFrame, segment: int, round_num: int,
 
 ```python
 def get_market_emotions(df: pd.DataFrame, segment: int, round_num: int,
-                        otree_period: int) -> pd.DataFrame:
+                        period: int) -> pd.DataFrame:
     """Get emotion metrics during a market period.
 
-    Args:
-        df: iMotions DataFrame
-        segment: Segment number (1-4)
-        round_num: Round number (1-14)
-        otree_period: oTree period number (1-indexed)
-
-    Returns:
-        DataFrame with Timestamp and emotion columns.
+    Returns DataFrame with Timestamp and emotion columns.
     """
-    filtered = filter_by_phase(df, segment, round_num, otree_period, 'MarketPeriod')
+    filtered = filter_by_phase(df, segment, round_num, period, 'MarketPeriod')
 
     emotion_cols = ['Anger', 'Contempt', 'Disgust', 'Fear', 'Joy',
                     'Sadness', 'Surprise', 'Engagement', 'Valence']
@@ -212,19 +181,12 @@ def get_market_emotions(df: pd.DataFrame, segment: int, round_num: int,
 
 ```python
 def aggregate_period_emotions(df: pd.DataFrame, segment: int, round_num: int,
-                              otree_period: int) -> dict:
+                              period: int) -> dict:
     """Compute summary statistics for emotions during a market period.
 
-    Args:
-        df: iMotions DataFrame
-        segment: Segment number (1-4)
-        round_num: Round number (1-14)
-        otree_period: oTree period number (1-indexed)
-
-    Returns:
-        Dict with mean, std, max for each emotion, or None if no data.
+    Returns dict with mean, std, min, max for each emotion.
     """
-    emotions = get_market_emotions(df, segment, round_num, otree_period)
+    emotions = get_market_emotions(df, segment, round_num, period)
 
     if emotions.empty:
         return None
@@ -278,22 +240,16 @@ Match the letter ID to `participant.label` in oTree data for the same session.
 
 ```python
 # Example: Get emotions before and after a sell decision
-def get_sell_emotions(imotions_df, segment, round_num, otree_period,
+def get_sell_emotions(imotions_df, segment, round_num, period,
                       sell_timestamp_ms, window_ms=5000):
     """Get emotions around a sell event.
 
     Args:
-        imotions_df: iMotions DataFrame
-        segment: Segment number (1-4)
-        round_num: Round number (1-14)
-        otree_period: oTree period number (1-indexed)
         sell_timestamp_ms: Sell time in ms (relative to iMotions start)
         window_ms: Time window before/after sell
-
-    Note: filter_by_phase handles the oTree->annotation period conversion.
     """
     market_data = filter_by_phase(imotions_df, segment, round_num,
-                                  otree_period, 'MarketPeriod')
+                                  period, 'MarketPeriod')
 
     pre_sell = market_data[
         (market_data['Timestamp'] >= sell_timestamp_ms - window_ms) &
