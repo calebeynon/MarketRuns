@@ -6,21 +6,11 @@ Date: 2026-01-28
 Reads raw iMotions CSV exports (one per participant per session), filters to
 MarketPeriod annotations, and aggregates emotion columns to period-level means.
 
-IMOTIONS PERIOD OFFSET:
-    iMotions annotations use `m{N}` which maps to oTree period `N-1`. This offset
-    exists because `generate_annotations_unfiltered_v2.py` pre-increments the
-    period counter BEFORE recording each MarketPeriod annotation. As a result:
-        - m2 -> period 1
-        - m3 -> period 2
-        - etc.
-    The offset is applied in `parse_market_period_annotation()` so that downstream
-    datasets use oTree-aligned period values.
-
 OUTPUT VARIABLES:
     session_id: Session identifier (e.g., "1_11-7-tr1")
     segment: Segment number (1-4)
     round: Round number within segment (1-14)
-    period: Period within round (1+, varies) — aligned to oTree periods
+    period: Period within round (1+, varies)
     player: Participant label (A-R, excluding I and O)
     anger_mean, contempt_mean, disgust_mean, fear_mean, joy_mean,
     sadness_mean, surprise_mean, engagement_mean, valence_mean: Period-level
@@ -152,7 +142,8 @@ def parse_market_period_annotation(annotation) -> tuple | None:
     """
     Parse a MarketPeriod annotation string into (segment, round, period).
 
-    Returns None for non-MarketPeriod annotations.
+    The annotation counter m{N} increments before recording, so oTree
+    period = N - 1. Returns None for non-MarketPeriod annotations.
     """
     if pd.isna(annotation):
         return None
@@ -164,17 +155,7 @@ def parse_market_period_annotation(annotation) -> tuple | None:
     segment = int(match.group(1))
     round_num = int(match.group(2))
     m_value = int(match.group(3))
-
-    # OFFSET EXPLANATION:
-    # The iMotions annotation generator (`generate_annotations_unfiltered_v2.py`)
-    # pre-increments the period counter before recording MarketPeriod annotations.
-    # This means annotation m{N} corresponds to oTree period N-1:
-    #   - m2 -> period 1 (first period in round)
-    #   - m3 -> period 2
-    #   - m4 -> period 3
-    # We apply this offset here so all downstream datasets (imotions_period_emotions.csv,
-    # emotions_traits_selling_dataset.csv) align with oTree period numbering.
-    period = m_value - 1
+    period = m_value - 1  # Offset: annotation m{N} -> oTree period N-1
 
     return (segment, round_num, period)
 
