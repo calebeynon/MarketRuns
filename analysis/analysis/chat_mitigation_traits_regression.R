@@ -82,7 +82,7 @@ run_model_traits_re <- function(df) {
   cat("\n[1/4] Model 1: Traits + Controls (Random Effects)...\n")
   pdata <- pdata.frame(as.data.frame(df), index = c("player_id", "period"))
   plm(sold ~ impulsivity_z + neuroticism_z + state_anxiety + fear_z + anger_z +
-        sadness_z + signal + prior_group_sales + round + chat_segment + treatment,
+        sadness_z + signal + prior_group_sales + round + period + chat_segment + treatment,
       data = pdata, model = "random")
 }
 
@@ -92,7 +92,7 @@ run_model_trait_interactions <- function(df) {
   plm(sold ~ impulsivity_z + neuroticism_z + state_anxiety +
         impulsivity_z:chat_segment + neuroticism_z:chat_segment +
         state_anxiety:chat_segment + fear_z + anger_z + sadness_z +
-        signal + prior_group_sales + round + chat_segment + treatment,
+        signal + prior_group_sales + round + period + chat_segment + treatment,
       data = pdata, model = "random")
 }
 
@@ -102,7 +102,7 @@ run_model_combined <- function(df) {
   plm(sold ~ fear_z + anger_z + sadness_z + impulsivity_z + neuroticism_z +
         fear_z:chat_segment + anger_z:chat_segment + sadness_z:chat_segment +
         impulsivity_z:chat_segment + neuroticism_z:chat_segment +
-        signal + prior_group_sales + round + chat_segment + treatment,
+        signal + prior_group_sales + round + period + chat_segment + treatment,
       data = pdata, model = "random")
 }
 
@@ -110,7 +110,7 @@ run_model_fe_interactions <- function(df) {
   cat("[4/4] Model 4: Trait x Chat with Player FE...\n")
   feols(sold ~ impulsivity_z:chat_segment + neuroticism_z:chat_segment +
           state_anxiety:chat_segment + fear_z + anger_z + sadness_z +
-          signal + prior_group_sales + round + chat_segment | player_id,
+          signal + prior_group_sales + round + period + chat_segment | player_id,
         cluster = ~player_id, data = df)
 }
 
@@ -175,12 +175,12 @@ get_var_labels <- function() {
              "anger_z", "sadness_z", "impulsivity_z:chat_segment",
              "neuroticism_z:chat_segment", "state_anxiety:chat_segment",
              "fear_z:chat_segment", "anger_z:chat_segment", "sadness_z:chat_segment",
-             "signal", "prior_group_sales", "round", "chat_segment"),
+             "signal", "prior_group_sales", "round", "period", "chat_segment"),
     label = c("Impulsivity (z)", "Neuroticism (z)", "State Anxiety", "Fear (z)",
               "Anger (z)", "Sadness (z)", "Impulsivity $\\times$ Chat",
               "Neuroticism $\\times$ Chat", "State Anxiety $\\times$ Chat",
               "Fear $\\times$ Chat", "Anger $\\times$ Chat", "Sadness $\\times$ Chat",
-              "Signal", "Prior Group Sales", "Round", "Chat Segment")
+              "Signal", "Prior Group Sales", "Round", "Period", "Chat Segment")
   )
 }
 
@@ -224,7 +224,7 @@ export_fe_table <- function(model, output_path) {
             "state_anxiety:chat_segment" = "State Anxiety $\\times$ Chat",
             "fear_z" = "Fear (z)", "anger_z" = "Anger (z)", "sadness_z" = "Sadness (z)",
             "signal" = "Signal", "prior_group_sales" = "Prior Group Sales",
-            "round" = "Round", "chat_segment" = "Chat Segment")
+            "round" = "Round", "period" = "Period", "chat_segment" = "Chat Segment")
   etable(model, headers = "FE Interactions", dict = dict, fitstat = c("n", "r2", "ar2"),
          file = output_path, float = FALSE, tex = TRUE,
          style.tex = style.tex(fontsize = "scriptsize"))

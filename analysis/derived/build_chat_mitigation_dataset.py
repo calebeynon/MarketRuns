@@ -1,13 +1,12 @@
 """
 Purpose: Merge datasets for chat mitigation regression analysis
 Author: Claude Code
-Date: 2026-02-02
+Date: 2026-02-03
 
 Creates an analysis-ready player-period level dataset by merging:
 - Individual period trading data (base)
-- iMotions period-level emotions
+- iMotions period-level emotions (extended, with mean/max)
 - Personality traits from survey
-- Chat activity counts
 
 OUTPUT VARIABLES:
     # Identifiers
@@ -30,13 +29,10 @@ OUTPUT VARIABLES:
 
     # Time-varying emotions
     fear_mean, fear_max, anger_mean, anger_max, sadness_mean, sadness_max,
-    joy_mean, valence_mean, engagement_mean, n_samples
+    joy_mean, valence_mean, engagement_mean, n_frames
 
     # Standardized emotions
     fear_z, anger_z, sadness_z
-
-    # Chat activity
-    messages_sent_segment, messages_received_segment, total_group_messages
 
     # Time-invariant traits
     state_anxiety, extraversion, agreeableness, conscientiousness,
@@ -65,17 +61,10 @@ DATASTORE = PROJECT_ROOT / "datastore"
 DERIVED_DIR = DATASTORE / "derived"
 
 INPUT_INDIVIDUAL_PERIOD = DERIVED_DIR / "individual_period_dataset.csv"
-INPUT_EMOTIONS = DERIVED_DIR / "period_emotions_dataset.csv"
-INPUT_TRAITS = DERIVED_DIR / "personality_traits_dataset.csv"
-INPUT_CHAT = DERIVED_DIR / "chat_activity_dataset.csv"
+INPUT_EMOTIONS = DERIVED_DIR / "imotions_period_emotions_extended.csv"  # Has mean/max/p95
+INPUT_TRAITS = DERIVED_DIR / "survey_traits.csv"
 
 OUTPUT_PATH = DERIVED_DIR / "chat_mitigation_dataset.csv"
-
-# Session ID mapping: integer -> string (for emotions dataset)
-SESSION_ID_MAP = {
-    1: "1_11-7-tr1", 2: "2_11-10-tr2", 3: "3_11-11-tr2",
-    4: "4_11-12-tr1", 5: "5_11-14-tr2", 6: "6_11-18-tr1",
-}
 
 # Output column order (defined as constant to keep reorder_columns short)
 COLUMN_ORDER = [
@@ -83,8 +72,7 @@ COLUMN_ORDER = [
     'player_id', 'global_group_id', 'treatment', 'sold', 'already_sold',
     'chat_segment', 'fear_mean', 'fear_max', 'anger_mean', 'anger_max',
     'sadness_mean', 'sadness_max', 'joy_mean', 'valence_mean',
-    'engagement_mean', 'n_samples', 'fear_z', 'anger_z', 'sadness_z',
-    'messages_sent_segment', 'messages_received_segment', 'total_group_messages',
+    'engagement_mean', 'n_frames', 'fear_z', 'anger_z', 'sadness_z',
     'state_anxiety', 'extraversion', 'agreeableness', 'conscientiousness',
     'neuroticism', 'openness', 'impulsivity', 'neuroticism_z', 'impulsivity_z',
     'signal', 'state', 'price', 'prior_group_sales'
@@ -96,8 +84,8 @@ COLUMN_ORDER = [
 # =====
 def main():
     """Build the chat mitigation analysis dataset."""
-    base_df, emotions_df, traits_df, chat_df = load_all_datasets()
-    merged_df = merge_all_datasets(base_df, emotions_df, traits_df, chat_df)
+    base_df, emotions_df, traits_df = load_all_datasets()
+    merged_df = merge_all_datasets(base_df, emotions_df, traits_df)
     final_df = create_analysis_variables(merged_df)
     final_df = filter_to_imotions_coverage(final_df)
     final_df = final_df[COLUMN_ORDER]
@@ -113,8 +101,7 @@ def load_all_datasets() -> tuple:
     base_df = load_base_data()
     emotions_df = load_emotions_data()
     traits_df = load_traits_data()
-    chat_df = load_chat_data()
-    return base_df, emotions_df, traits_df, chat_df
+    return base_df, emotions_df, traits_df
 
 
 # =====
@@ -128,9 +115,8 @@ def load_base_data() -> pd.DataFrame:
 
 
 def load_emotions_data() -> pd.DataFrame:
-    """Load emotions data and convert session_id to string format."""
+    """Load extended emotions data (already has string session_id)."""
     df = pd.read_csv(INPUT_EMOTIONS)
-    df['session_id'] = df['session_id'].map(SESSION_ID_MAP)
     print(f"  Emotions data: {len(df)} rows")
     return df
 
@@ -142,26 +128,17 @@ def load_traits_data() -> pd.DataFrame:
     return df
 
 
-def load_chat_data() -> pd.DataFrame:
-    """Load chat activity data."""
-    df = pd.read_csv(INPUT_CHAT)
-    print(f"  Chat data: {len(df)} rows")
-    return df
-
-
 # =====
 # Merge functions
 # =====
 def merge_all_datasets(
     base_df: pd.DataFrame,
     emotions_df: pd.DataFrame,
-    traits_df: pd.DataFrame,
-    chat_df: pd.DataFrame
+    traits_df: pd.DataFrame
 ) -> pd.DataFrame:
     """Perform all dataset merges."""
     merged = merge_emotions(base_df, emotions_df)
     merged = merge_traits(merged, traits_df)
-    merged = merge_chat(merged, chat_df)
     return merged
 
 
@@ -171,7 +148,7 @@ def merge_emotions(base_df: pd.DataFrame, emotions_df: pd.DataFrame) -> pd.DataF
         'session_id', 'segment', 'round', 'period', 'player',
         'fear_mean', 'fear_max', 'anger_mean', 'anger_max',
         'sadness_mean', 'sadness_max', 'joy_mean', 'valence_mean',
-        'engagement_mean', 'n_samples'
+        'engagement_mean', 'n_frames'
     ]
     emotions_subset = emotions_df[emotion_cols]
 
@@ -213,24 +190,6 @@ def check_missing_traits(df: pd.DataFrame):
         print(f"  WARNING: {len(missing)} players missing trait data:")
         for _, row in missing.iterrows():
             print(f"    - {row['session_id']} / {row['player']}")
-
-
-def merge_chat(merged_df: pd.DataFrame, chat_df: pd.DataFrame) -> pd.DataFrame:
-    """Left join chat activity on period-level keys."""
-    chat_cols = [
-        'session_id', 'segment', 'round', 'period', 'player', 'group_id',
-        'messages_sent_segment', 'messages_received_segment', 'total_group_messages'
-    ]
-    chat_subset = chat_df[chat_cols]
-
-    merge_keys = ['session_id', 'segment', 'round', 'period', 'player', 'group_id']
-    merged = merged_df.merge(chat_subset, on=merge_keys, how='left')
-
-    matched = merged['messages_sent_segment'].notna().sum()
-    unmatched = merged['messages_sent_segment'].isna().sum()
-    print(f"  Chat merge: {matched} matched, {unmatched} unmatched")
-
-    return merged
 
 
 # =====
@@ -339,8 +298,7 @@ def print_missing_data_summary(df: pd.DataFrame):
     print("\nMissing data by variable:")
     missing_vars = [
         'fear_mean', 'anger_mean', 'sadness_mean',
-        'neuroticism', 'impulsivity',
-        'messages_sent_segment'
+        'neuroticism', 'impulsivity'
     ]
     for var in missing_vars:
         n_missing = df[var].isna().sum()

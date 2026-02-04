@@ -124,37 +124,36 @@ run_all_models <- function(df) {
   models$m1_baseline <- run_model_baseline(df)
   models$m2_interactions <- run_model_interactions(df)
   models$m3_max_emotions <- run_model_max_emotions(df)
-  models$m4_chat_activity <- run_model_chat_activity(df)
   return(models)
 }
 
 run_model_baseline <- function(df) {
-  cat("\n[1/4] Model 1: Baseline (emotions + controls, no interactions)...\n")
+  cat("\n[1/3] Model 1: Baseline (emotions + controls, no interactions)...\n")
   feols(
     sold ~ fear_z + anger_z + sadness_z +
-      signal + prior_group_sales + round + chat_segment | player_id,
+      signal + prior_group_sales + round + period + chat_segment | player_id,
     cluster = ~player_id, data = df
   )
 }
 
 run_model_interactions <- function(df) {
-  cat("[2/4] Model 2: Emotion x Chat interactions (MAIN SPECIFICATION)...\n")
+  cat("[2/3] Model 2: Emotion x Chat interactions (MAIN SPECIFICATION)...\n")
   feols(
     sold ~ fear_z + anger_z + sadness_z +
       fear_z:chat_segment + anger_z:chat_segment + sadness_z:chat_segment +
-      signal + prior_group_sales + round + chat_segment | player_id,
+      signal + prior_group_sales + round + period + chat_segment | player_id,
     cluster = ~player_id, data = df
   )
 }
 
 run_model_max_emotions <- function(df) {
-  cat("[3/4] Model 3: Max emotions (robustness)...\n")
+  cat("[3/3] Model 3: Max emotions (robustness)...\n")
   df <- standardize_max_emotions(df)
   feols(
     sold ~ fear_max_z + anger_max_z + sadness_max_z +
       fear_max_z:chat_segment + anger_max_z:chat_segment +
       sadness_max_z:chat_segment +
-      signal + prior_group_sales + round + chat_segment | player_id,
+      signal + prior_group_sales + round + period + chat_segment | player_id,
     cluster = ~player_id, data = df
   )
 }
@@ -164,17 +163,6 @@ standardize_max_emotions <- function(df) {
   df[, anger_max_z := scale(anger_max)[, 1]]
   df[, sadness_max_z := scale(sadness_max)[, 1]]
   return(df)
-}
-
-run_model_chat_activity <- function(df) {
-  cat("[4/4] Model 4: With chat activity controls...\n")
-  feols(
-    sold ~ fear_z + anger_z + sadness_z +
-      fear_z:chat_segment + anger_z:chat_segment + sadness_z:chat_segment +
-      messages_sent_segment + messages_received_segment +
-      signal + prior_group_sales + round + chat_segment | player_id,
-    cluster = ~player_id, data = df
-  )
 }
 
 # =====
@@ -189,8 +177,6 @@ print_model_results <- function(models) {
   print_interaction_interpretation(models$m2_interactions)
   print_model_separator("Model 3: Max emotions (robustness)")
   print(summary(models$m3_max_emotions))
-  print_model_separator("Model 4: With chat activity controls")
-  print(summary(models$m4_chat_activity))
 }
 
 print_model_separator <- function(title) {
@@ -233,9 +219,8 @@ export_latex_table <- function(models, output_path) {
   ensure_output_dir(output_path)
   cat("\nExporting LaTeX table to:", output_path, "\n")
   etable(
-    models$m1_baseline, models$m2_interactions,
-    models$m3_max_emotions, models$m4_chat_activity,
-    headers = c("Baseline", "Interactions", "Max Emotions", "Chat Activity"),
+    models$m1_baseline, models$m2_interactions, models$m3_max_emotions,
+    headers = c("Baseline", "Interactions", "Max Emotions"),
     dict = get_var_dict(),
     fitstat = c("n", "r2", "ar2"),
     file = output_path, float = FALSE, tex = TRUE,
@@ -260,9 +245,7 @@ get_var_dict <- function() {
     "anger_max_z:chat_segment" = "Anger max (z) $\\times$ Chat",
     "sadness_max_z:chat_segment" = "Sadness max (z) $\\times$ Chat",
     "signal" = "Signal", "prior_group_sales" = "Prior group sales",
-    "round" = "Round", "chat_segment" = "Chat segment",
-    "messages_sent_segment" = "Messages sent",
-    "messages_received_segment" = "Messages received"
+    "round" = "Round", "period" = "Period", "chat_segment" = "Chat segment"
   )
 }
 

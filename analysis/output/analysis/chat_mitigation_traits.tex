@@ -1,0 +1,56 @@
+
+\begingroup
+\centering
+\scriptsize
+\begin{tabular}{lccc}
+   \tabularnewline \midrule \midrule
+   \multicolumn{4}{c}{Personality Traits and Chat Mitigation}\\
+   \midrule
+   Dependent Variable: & \multicolumn{3}{c}{sold}\\
+   Model: & (1) Traits & (2) Interactions & (3) Combined\\
+   \midrule
+   Impulsivity (z)              & -0.0016 & 0.0053$^{**}$ & 0.0058$^{**}$\\
+                                & (0.0019) & (0.0027) & (0.0027)\\
+   Neuroticism (z)              & 0.0024 & 0.0036 & 0.0070$^{***}$\\
+                                & (0.0019) & (0.0028) & (0.0027)\\
+   State Anxiety                & 0.0191$^{***}$ & 0.0233$^{***}$ & \\
+                                & (0.0034) & (0.0049) & \\
+   Fear (z)                     & -0.0019 & -0.0019 & -0.0013\\
+                                & (0.0018) & (0.0018) & (0.0024)\\
+   Anger (z)                    & -0.0046$^{***}$ & -0.0047$^{***}$ & -0.0056$^{**}$\\
+                                & (0.0018) & (0.0018) & (0.0025)\\
+   Sadness (z)                  & 0.0021 & 0.0020 & 8e-04\\
+                                & (0.0018) & (0.0018) & (0.0025)\\
+   Impulsivity $\times$ Chat    &  & -0.0131$^{***}$ & -0.0134$^{***}$\\
+                                &  & (0.0037) & (0.0037)\\
+   Neuroticism $\times$ Chat    &  & -0.0020 & -0.0029\\
+                                &  & (0.0038) & (0.0037)\\
+   State Anxiety $\times$ Chat  &  & -0.0079 & \\
+                                &  & (0.0068) & \\
+   Fear $\times$ Chat           &  &  & -0.0030\\
+                                &  &  & (0.0035)\\
+   Anger $\times$ Chat          &  &  & 0.0018\\
+                                &  &  & (0.0036)\\
+   Sadness $\times$ Chat        &  &  & 0.0031\\
+                                &  &  & (0.0037)\\
+   Signal                       & -0.1736$^{***}$ & -0.1735$^{***}$ & -0.1726$^{***}$\\
+                                & (0.0081) & (0.0081) & (0.0081)\\
+   Prior Group Sales            & -0.0158$^{***}$ & -0.0157$^{***}$ & -0.0156$^{***}$\\
+                                & (0.0032) & (0.0032) & (0.0032)\\
+   Round                        & -0.0019$^{***}$ & -0.0019$^{***}$ & -0.0019$^{***}$\\
+                                & (7e-04) & (7e-04) & (7e-04)\\
+   Period                       &  &  & \\
+                                &  &  & \\
+   Chat Segment                 & -0.0418$^{***}$ & -0.0289$^{**}$ & -0.0419$^{***}$\\
+                                & (0.0038) & (0.0120) & (0.0038)\\
+   \midrule
+   \emph{Fit statistics}\\
+   Observations & 13,590 & 13,590 & 13,590\\
+   R$^2$ & 0.0482 & 0.0494 & 0.0473\\
+   \midrule \midrule
+   \multicolumn{4}{l}{\emph{Random effects; SE in parentheses}}\\
+   \multicolumn{4}{l}{\emph{Signif.: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+\par\endgroup
+
+
