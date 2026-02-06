@@ -21,6 +21,7 @@
 \usepackage{caption}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{array}
 \usepackage{float}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -220,12 +221,7 @@ Our post-study survey questions consist of the six-item form of the state scale 
 
 \subsection{Personality Traits and First Sellers}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\linewidth]{first_seller_trait_violins.pdf}
-  \caption{Distribution of personality traits by first seller status}
-  \label{fig:first_seller_trait_violins}
-\end{figure}
+
 
 \begin{figure}[H]
   \centering
@@ -234,12 +230,7 @@ Our post-study survey questions consist of the six-item form of the state scale 
   \label{fig:first_seller_trait_boxplots}
 \end{figure}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\linewidth]{first_seller_rate_by_quartile.pdf}
-  \caption{First seller rate by trait quartile}
-  \label{fig:first_seller_rate_by_quartile}
-\end{figure}
+
 
 \begin{table}[H]
   \centering
@@ -248,31 +239,11 @@ Our post-study survey questions consist of the six-item form of the state scale 
   \input{first_seller_trait_comparisons}
 \end{table}
 
-\begin{table}[H]
-  \centering
-  \caption{Linear probability model predicting first seller status}
-  \label{tab:first_seller_lpm_regression}
-  \input{first_seller_lpm_regression}
-\end{table}
 
-\subsection{Emotions and Traits on Selling Behavior}
 
-% Full sample uses longtable (multi-page) - no table wrapper needed
-\input{selling_emotions_traits_full}
-
-\begin{table}[H]
-  \centering
-  \caption{Emotions and traits predicting selling period (first sellers)}
-  \label{tab:selling_emotions_traits_first}
-  \input{selling_emotions_traits_first}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Emotions and traits predicting selling period (second sellers)}
-  \label{tab:selling_emotions_traits_second}
-  \input{selling_emotions_traits_second}
-\end{table}
+\clearpage
+% Unified table uses longtable (multi-page) - no table wrapper needed
+\input{unified_selling_regression}
 
 \subsection{Treatment Effects}
 
@@ -341,7 +312,13 @@ Our post-study survey questions consist of the six-item form of the state scale 
 
 \newpage
 
-\section*{Appendix A. Instructions}
+\section*{Appendix A. Full Regression Results}
+
+\input{unified_selling_regression_full}
+
+\newpage
+
+\section*{Appendix B. Instructions}
 
 
 
