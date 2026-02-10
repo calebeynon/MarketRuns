@@ -6,6 +6,17 @@ on:
     paths:
       - 'analysis/paper/**'
       - 'analysis/output/**'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force sync even if Overleaf has unmerged edits'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
 
 jobs:
   sync:
@@ -23,7 +34,96 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
+      - name: Check for unmerged Overleaf edits
+        id: guard
+        run: |
+          cd /tmp/overleaf
+
+          # Find the most recent commit by GitHub Actions
+          last_sync=$(git log --all --author="GitHub Actions" --format="%H" -1 || true)
+
+          if [ -z "$last_sync" ]; then
+            echo "No prior sync commit found — treating all commits as human edits"
+            human_commits=$(git log --format="%h %s (%an, %ai)" --all)
+          else
+            # Find commits after the last sync that are NOT by GitHub Actions
+            # --invert-grep only inverts --grep, not --author, so filter via tab-delimited author column
+            human_commits=$(git log --format="%aN	%h %s (%an, %ai)" "${last_sync}..HEAD" \
+              | grep -v "^GitHub Actions	" \
+              | cut -f2- || true)
+          fi
+
+          if [ -n "$human_commits" ]; then
+            echo "::warning::Overleaf has unmerged human edits"
+            echo "$human_commits"
+            echo "has_edits=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "commits<<EOF"
+              echo "$human_commits"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "No unmerged Overleaf edits detected"
+            echo "has_edits=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Determine if it's safe to proceed
+          force="${{ inputs.force }}"
+          if [ "$force" = "true" ] || [ -z "$human_commits" ]; then
+            echo "safe=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "safe=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create issue for unmerged Overleaf edits
+        if: steps.guard.outputs.has_edits == 'true' && inputs.force != true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMITS: ${{ steps.guard.outputs.commits }}
+        run: |
+          # Check for existing open issue with overleaf-sync label
+          existing=$(gh issue list --label "overleaf-sync" --state open --json number --jq '.[0].number' -R "${{ github.repository }}" || true)
+
+          if [ -n "$existing" ]; then
+            echo "Open issue #${existing} already exists — skipping creation"
+            exit 0
+          fi
+
+          cat > /tmp/issue_body.md <<'EOF'
+          ## Overleaf has unmerged edits
+
+          The sync workflow detected human commits on Overleaf that have not been merged into this repo. The sync was **blocked** to prevent overwriting those edits.
+
+          ### Commits on Overleaf since last sync
+
+          ```
+          EOF
+          echo "$COMMITS" >> /tmp/issue_body.md
+          cat >> /tmp/issue_body.md <<'EOF'
+          ```
+
+          ### How to merge
+
+          ```bash
+          git fetch overleaf master
+          git subtree pull --prefix=analysis/paper overleaf master --squash
+          rm -rf analysis/paper/tables analysis/paper/plots  # Action-managed dirs
+          git push origin main
+          ```
+
+          After merging, close this issue. The next push to `main` will sync normally.
+
+          > To force-sync without merging, run the workflow manually with **force = true**.
+          EOF
+
+          gh issue create \
+            --title "Overleaf has unmerged edits — sync blocked" \
+            --body-file /tmp/issue_body.md \
+            --label "overleaf-sync" \
+            -R "${{ github.repository }}"
+
       - name: Sync paper files to Overleaf
+        if: steps.guard.outputs.safe == 'true'
         run: |
           # Copy all paper files (excluding .git, .gitignore, Action-managed tables/ and plots/)
           rsync -av --delete \
@@ -61,8 +161,15 @@ jobs:
           done
 
       - name: Push to Overleaf
+        if: steps.guard.outputs.safe == 'true'
         run: |
           cd /tmp/overleaf
           git add -A
           git diff --staged --quiet || git commit -m "Sync from GitHub Actions"
           git push origin master
+
+      - name: Fail if guard blocked sync
+        if: steps.guard.outputs.safe == 'false'
+        run: |
+          echo "::error::Sync blocked — Overleaf has unmerged human edits. See the GitHub issue for merge instructions."
+          exit 1
