@@ -221,16 +221,12 @@ Our post-study survey questions consist of the six-item form of the state scale 
 
 \subsection{Personality Traits and First Sellers}
 
-
-
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\linewidth]{first_seller_trait_boxplots.pdf}
   \caption{Personality trait comparisons between first sellers and non-first sellers}
   \label{fig:first_seller_trait_boxplots}
 \end{figure}
-
-
 
 \begin{table}[H]
   \centering
@@ -239,20 +235,28 @@ Our post-study survey questions consist of the six-item form of the state scale 
   \input{first_seller_trait_comparisons}
 \end{table}
 
-
+\subsection{Determinants of Selling Behavior}
 
 \clearpage
-% Unified table uses longtable (multi-page) - no table wrapper needed
+% Unified selling regression (longtable, spans ~1 page)
 \input{unified_selling_regression}
 
-\subsection{Treatment Effects}
-
-\begin{figure}[H]
+% Ordinal logit + holdout tables side by side
+\begin{table}[H]
+\begin{minipage}[t]{0.58\textwidth}
   \centering
-  \includegraphics[width=0.8\linewidth]{treatment_period_interactions.pdf}
-  \caption{Treatment and period interaction effects on selling behavior}
-  \label{fig:treatment_period_interactions}
-\end{figure}
+  \captionof{table}{Ordinal logit: selling position within group-round}
+  \label{tab:ordinal_logit_selling_position}
+  \input{ordinal_logit_selling_position}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.38\textwidth}
+  \centering
+  \captionof{table}{Effect of holdout liquidation payoff on next-round selling}
+  \label{tab:holdout_liquidation_regression}
+  \input{holdout_liquidation_regression}
+\end{minipage}
+\end{table}
 
 \begin{figure}[H]
   \centering
@@ -261,9 +265,15 @@ Our post-study survey questions consist of the six-item form of the state scale 
   \label{fig:holdout_payoff_coefficients}
 \end{figure}
 
+\clearpage
+\subsection{Treatment Effects}
 
-
-
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{treatment_period_interactions.pdf}
+  \caption{Treatment and period interaction effects on selling behavior}
+  \label{fig:treatment_period_interactions}
+\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -324,7 +334,18 @@ Our post-study survey questions consist of the six-item form of the state scale 
 
 \newpage
 
-\section*{Appendix C. Instructions}
+\section*{Appendix C. Treatment-Period Interaction Regression}
+
+\begin{table}[H]
+  \centering
+  \caption{Selling probability with treatment-period interactions}
+  \label{tab:selling_timing_treatment_interactions}
+  \input{selling_timing_treatment_interactions}
+\end{table}
+
+\newpage
+
+\section*{Appendix D. Instructions}
 
 
 
