@@ -4,12 +4,17 @@ Author: Claude Code
 Date: 2026-02-09
 """
 
+import numpy as np
 import pandas as pd
 import pytest
 from pathlib import Path
+from unittest.mock import patch
 from analysis.derived.build_ordinal_selling_position import (
     compute_selling_ranks,
+    create_derived_variables,
     determine_emotion_periods,
+    merge_emotions,
+    P95_COLS,
 )
 
 
@@ -308,6 +313,269 @@ def test_raw_tie_at_period_1_s1_seg1_g1_r6():
     df = pd.read_csv(OUTPUT_CSV)
     ranks = _get_derived_ranks(df, "1_11-7-tr1", 1, 1, 6)
     assert ranks == {"A": 1, "N": 1, "E": 4, "J": 4}
+
+
+# =====
+# create_derived_variables tests
+# =====
+def test_gender_female_encodes_female_as_1():
+    """Female gender is encoded as 1."""
+    df = pd.DataFrame({
+        "session_id": ["s1", "s1"],
+        "player": ["A", "B"],
+        "gender": ["Female", "Female"],
+    })
+    result = create_derived_variables(df)
+    assert (result["gender_female"] == 1).all()
+
+
+def test_gender_female_encodes_male_as_0():
+    """Male gender is encoded as 0."""
+    df = pd.DataFrame({
+        "session_id": ["s1"],
+        "player": ["E"],
+        "gender": ["Male"],
+    })
+    result = create_derived_variables(df)
+    assert result.iloc[0]["gender_female"] == 0
+
+
+def test_gender_female_encodes_prefer_not_to_say_as_0():
+    """'Prefer not to say' is encoded as 0 (non-Female)."""
+    df = pd.DataFrame({
+        "session_id": ["s1"],
+        "player": ["X"],
+        "gender": ["Prefer not to say"],
+    })
+    result = create_derived_variables(df)
+    assert result.iloc[0]["gender_female"] == 0
+
+
+def test_gender_female_mixed_values():
+    """Verified against production data: Female=1, Male=0."""
+    df = pd.DataFrame({
+        "session_id": ["1_11-7-tr1"] * 3,
+        "player": ["A", "E", "B"],
+        "gender": ["Female", "Male", "Female"],
+    })
+    result = create_derived_variables(df)
+    expected = {"A": 1, "E": 0, "B": 1}
+    for player, val in expected.items():
+        actual = result.loc[result["player"] == player, "gender_female"].iloc[0]
+        assert actual == val, f"Player {player}: expected {val}, got {actual}"
+
+
+def test_player_id_construction():
+    """player_id is '{session_id}_{player}'."""
+    df = pd.DataFrame({
+        "session_id": ["1_11-7-tr1", "2_11-10-tr2"],
+        "player": ["A", "G"],
+        "gender": ["Female", "Male"],
+    })
+    result = create_derived_variables(df)
+    assert result.iloc[0]["player_id"] == "1_11-7-tr1_A"
+    assert result.iloc[1]["player_id"] == "2_11-10-tr2_G"
+
+
+def test_player_id_matches_production_format():
+    """Regression: player_id format verified against ordinal_selling_position.csv."""
+    df = pd.DataFrame({
+        "session_id": ["1_11-7-tr1"],
+        "player": ["N"],
+        "gender": ["Female"],
+    })
+    result = create_derived_variables(df)
+    assert result.iloc[0]["player_id"] == "1_11-7-tr1_N"
+
+
+def test_create_derived_variables_does_not_mutate_input():
+    """Input DataFrame should not be modified."""
+    df = pd.DataFrame({
+        "session_id": ["s1"],
+        "player": ["A"],
+        "gender": ["Female"],
+    })
+    original_cols = list(df.columns)
+    create_derived_variables(df)
+    assert list(df.columns) == original_cols
+
+
+# =====
+# merge_emotions tests
+# =====
+def _make_merge_emotions_inputs(df_rows, emotions_rows):
+    """Build a player DataFrame and emotions DataFrame for merge tests.
+
+    Args:
+        df_rows: list of dicts with player-level fields + emotion_period
+        emotions_rows: list of dicts with emotion-level fields + p95 values
+    """
+    df = pd.DataFrame(df_rows)
+    emotions = pd.DataFrame(emotions_rows)
+    return df, emotions
+
+
+@patch("analysis.derived.build_ordinal_selling_position.pd.read_csv")
+def test_merge_emotions_with_nan_values(mock_read_csv):
+    """Emotions with NaN p95 values are preserved after merge."""
+    df = pd.DataFrame({
+        "session_id": ["s1"], "segment": [1], "round": [1],
+        "emotion_period": [2], "player": ["A"],
+    })
+    emotions = pd.DataFrame({
+        "session_id": ["s1"], "segment": [1], "round": [1],
+        "period": [2], "player": ["A"],
+        **{col: [np.nan] for col in P95_COLS},
+    })
+    mock_read_csv.return_value = emotions
+    result = merge_emotions(df)
+
+    assert len(result) == 1, "Should retain the row even with NaN emotions"
+    for col in P95_COLS:
+        assert pd.isna(result.iloc[0][col]), f"{col} should be NaN"
+
+
+@patch("analysis.derived.build_ordinal_selling_position.pd.read_csv")
+def test_merge_emotions_no_matching_rows_gives_nan(mock_read_csv):
+    """Player with no matching emotion rows gets NaN for all p95 columns."""
+    df = pd.DataFrame({
+        "session_id": ["s1"], "segment": [1], "round": [1],
+        "emotion_period": [3], "player": ["A"],
+    })
+    # Emotions exist for a different player only
+    emotions = pd.DataFrame({
+        "session_id": ["s1"], "segment": [1], "round": [1],
+        "period": [3], "player": ["B"],
+        **{col: [0.5] for col in P95_COLS},
+    })
+    mock_read_csv.return_value = emotions
+    result = merge_emotions(df)
+
+    # Left join: player A is kept, but all p95 cols are NaN
+    assert len(result) == 1
+    assert result.iloc[0]["player"] == "A"
+    for col in P95_COLS:
+        assert pd.isna(result.iloc[0][col]), (
+            f"{col} should be NaN when no emotion match"
+        )
+
+
+@patch("analysis.derived.build_ordinal_selling_position.pd.read_csv")
+def test_merge_emotions_partial_coverage(mock_read_csv):
+    """One player has emotions, another does not -> mixed NaN."""
+    df = pd.DataFrame({
+        "session_id": ["s1", "s1"], "segment": [1, 1],
+        "round": [1, 1], "emotion_period": [2, 2],
+        "player": ["A", "B"],
+    })
+    emotions = pd.DataFrame({
+        "session_id": ["s1"], "segment": [1], "round": [1],
+        "period": [2], "player": ["A"],
+        **{col: [0.42] for col in P95_COLS},
+    })
+    mock_read_csv.return_value = emotions
+    result = merge_emotions(df)
+
+    assert len(result) == 2
+    # Player A has emotions
+    row_a = result.loc[result["player"] == "A"].iloc[0]
+    assert row_a["anger_p95"] == pytest.approx(0.42)
+    # Player B has NaN emotions
+    row_b = result.loc[result["player"] == "B"].iloc[0]
+    for col in P95_COLS:
+        assert pd.isna(row_b[col]), f"Player B {col} should be NaN"
+
+
+# =====
+# Multi-group-round rank independence tests
+# =====
+def test_ranks_independent_across_groups_same_round():
+    """Ranks are computed independently per group within the same round."""
+    df = pd.DataFrame({
+        "session_id": ["s1"] * 8,
+        "segment": [1] * 8,
+        "group_id": [1, 1, 1, 1, 2, 2, 2, 2],
+        "round": [1] * 8,
+        "player": ["A", "B", "C", "D", "E", "F", "G", "H"],
+        "sell_period": [3, 1, float("nan"), 2, 1, 1, 3, float("nan")],
+        "did_sell": [1, 1, 0, 1, 1, 1, 1, 0],
+    })
+    result = compute_selling_ranks(df)
+
+    # Group 1: B(p1)->1, D(p2)->2, A(p3)->3, C(hold)->4
+    g1 = result[result["group_id"] == 1]
+    g1_ranks = dict(zip(g1["player"], g1["sell_rank"]))
+    assert g1_ranks == {"A": 3, "B": 1, "C": 4, "D": 2}
+
+    # Group 2: E,F(p1)->tied 1, G(p3)->3, H(hold)->4
+    g2 = result[result["group_id"] == 2]
+    g2_ranks = dict(zip(g2["player"], g2["sell_rank"]))
+    assert g2_ranks == {"E": 1, "F": 1, "G": 3, "H": 4}
+
+
+def test_ranks_independent_across_rounds_same_group():
+    """Ranks are computed independently per round within the same group."""
+    df = pd.DataFrame({
+        "session_id": ["s1"] * 8,
+        "segment": [1] * 8,
+        "group_id": [1] * 8,
+        "round": [1, 1, 1, 1, 2, 2, 2, 2],
+        "player": ["A", "B", "C", "D", "A", "B", "C", "D"],
+        "sell_period": [1, 2, 3, float("nan"), 5, float("nan"), 1, 1],
+        "did_sell": [1, 1, 1, 0, 1, 0, 1, 1],
+    })
+    result = compute_selling_ranks(df)
+
+    # Round 1: A(p1)->1, B(p2)->2, C(p3)->3, D(hold)->4
+    r1 = result[result["round"] == 1]
+    r1_ranks = dict(zip(r1["player"], r1["sell_rank"]))
+    assert r1_ranks == {"A": 1, "B": 2, "C": 3, "D": 4}
+
+    # Round 2: C,D(p1)->tied 1, A(p5)->3, B(hold)->4
+    r2 = result[result["round"] == 2]
+    r2_ranks = dict(zip(r2["player"], r2["sell_rank"]))
+    assert r2_ranks == {"A": 3, "B": 4, "C": 1, "D": 1}
+
+
+def test_ranks_independent_across_groups_and_rounds():
+    """Ranks computed independently across 2 groups x 2 rounds."""
+    df = pd.DataFrame({
+        "session_id": ["s1"] * 8,
+        "segment": [1] * 8,
+        "group_id": [1, 1, 2, 2, 1, 1, 2, 2],
+        "round": [1, 1, 1, 1, 2, 2, 2, 2],
+        "player": ["A", "B", "C", "D", "A", "B", "C", "D"],
+        "sell_period": [
+            1, float("nan"),   # g1r1: A sells p1, B holds
+            3, 3,              # g2r1: C,D tie at p3
+            float("nan"), 2,   # g1r2: A holds, B sells p2
+            1, 5,              # g2r2: C p1, D p5
+        ],
+        "did_sell": [1, 0, 1, 1, 0, 1, 1, 1],
+    })
+    result = compute_selling_ranks(df)
+
+    def _get_ranks(gid, rnd):
+        sub = result[(result["group_id"] == gid) & (result["round"] == rnd)]
+        return dict(zip(sub["player"], sub["sell_rank"]))
+
+    assert _get_ranks(1, 1) == {"A": 1, "B": 4}
+    assert _get_ranks(2, 1) == {"C": 1, "D": 1}
+    assert _get_ranks(1, 2) == {"A": 4, "B": 1}
+    assert _get_ranks(2, 2) == {"C": 1, "D": 2}
+
+
+@pytest.mark.skipif(not OUTPUT_CSV.exists(), reason="Output CSV not yet built")
+def test_real_data_ranks_independent_across_groups_s1_seg1_r3():
+    """Verified: session 1, seg 1, round 3 ranks differ across groups."""
+    df = pd.read_csv(OUTPUT_CSV)
+    g1 = _get_derived_ranks(df, "1_11-7-tr1", 1, 1, 3)
+    g2 = _get_derived_ranks(df, "1_11-7-tr1", 1, 2, 3)
+
+    # Group 1: A=1, N=2, J=3, E=hold (verified above)
+    assert g1 == {"A": 1, "N": 2, "J": 3, "E": 4}
+    # Group 2: F,K tie at p2, B+P hold (from real data inspection)
+    assert g2 == {"B": 4, "F": 1, "K": 1, "P": 4}
 
 
 # %%
