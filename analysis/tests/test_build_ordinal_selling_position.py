@@ -248,6 +248,68 @@ def test_non_seller_rank_always_4():
     )
 
 
+# =====
+# Ground-truth tests against actual raw data
+# =====
+def _get_derived_ranks(df, session_id, segment, group_id, rnd):
+    """Extract sell_rank dict {player: rank} for a specific group-round."""
+    sub = df[
+        (df["session_id"] == session_id)
+        & (df["segment"] == segment)
+        & (df["group_id"] == group_id)
+        & (df["round"] == rnd)
+    ]
+    return dict(zip(sub["player"], sub["sell_rank"]))
+
+
+@pytest.mark.skipif(not OUTPUT_CSV.exists(), reason="Output CSV not yet built")
+def test_raw_no_sellers_s1_seg1_g1_r1():
+    """Session 1, seg 1, group 1, round 1: nobody sold -> all rank 4."""
+    df = pd.read_csv(OUTPUT_CSV)
+    ranks = _get_derived_ranks(df, "1_11-7-tr1", 1, 1, 1)
+    assert ranks == {"A": 4, "E": 4, "J": 4, "N": 4}
+
+
+@pytest.mark.skipif(not OUTPUT_CSV.exists(), reason="Output CSV not yet built")
+def test_raw_one_seller_s1_seg1_g1_r5():
+    """Session 1, seg 1, group 1, round 5: N sells period 1."""
+    df = pd.read_csv(OUTPUT_CSV)
+    ranks = _get_derived_ranks(df, "1_11-7-tr1", 1, 1, 5)
+    assert ranks == {"A": 4, "E": 4, "J": 4, "N": 1}
+
+
+@pytest.mark.skipif(not OUTPUT_CSV.exists(), reason="Output CSV not yet built")
+def test_raw_three_sellers_s1_seg1_g1_r3():
+    """Session 1, seg 1, group 1, round 3: A=p1, N=p2, J=p8, E=hold."""
+    df = pd.read_csv(OUTPUT_CSV)
+    ranks = _get_derived_ranks(df, "1_11-7-tr1", 1, 1, 3)
+    assert ranks == {"A": 1, "N": 2, "J": 3, "E": 4}
+
+
+@pytest.mark.skipif(not OUTPUT_CSV.exists(), reason="Output CSV not yet built")
+def test_raw_four_sellers_no_ties_s2_seg1_g3_r7():
+    """Session 2, seg 1, group 3, round 7: L=p1, G=p4, Q=p7, C=p9."""
+    df = pd.read_csv(OUTPUT_CSV)
+    ranks = _get_derived_ranks(df, "2_11-10-tr2", 1, 3, 7)
+    assert ranks == {"L": 1, "G": 2, "Q": 3, "C": 4}
+
+
+@pytest.mark.skipif(not OUTPUT_CSV.exists(), reason="Output CSV not yet built")
+def test_raw_tie_at_period_2_s1_seg1_g1_r2():
+    """Session 1, seg 1, group 1, round 2: A=p1, J=p2, N=p2, E=hold."""
+    df = pd.read_csv(OUTPUT_CSV)
+    ranks = _get_derived_ranks(df, "1_11-7-tr1", 1, 1, 2)
+    assert ranks == {"A": 1, "J": 2, "N": 2, "E": 4}
+
+
+@pytest.mark.skipif(not OUTPUT_CSV.exists(), reason="Output CSV not yet built")
+def test_raw_tie_at_period_1_s1_seg1_g1_r6():
+    """Session 1, seg 1, group 1, round 6: A=p1, N=p1, E=hold, J=hold."""
+    df = pd.read_csv(OUTPUT_CSV)
+    ranks = _get_derived_ranks(df, "1_11-7-tr1", 1, 1, 6)
+    assert ranks == {"A": 1, "N": 1, "E": 4, "J": 4}
+
+
 # %%
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
