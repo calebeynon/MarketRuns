@@ -193,25 +193,18 @@ build_two_model_table <- function(model1, model2, ame1, ame2, output_path) {
 
 header_column_block <- function() {
   c("   \\midrule \\midrule",
-    "   Dependent Variable: & \\multicolumn{2}{c}{Selling Position (ordinal)}\\\\",
-    "   \\cmidrule(lr){2-3}",
-    "                       & (1) Full Sample & (2) Sellers Only\\\\",
+    "   & (1) Full & (2) Sellers\\\\",
+    "   & Sample & Only\\\\",
     "   \\midrule")
 }
 
 build_header <- function() {
   col_block <- header_column_block()
-  c("", "\\begingroup", "\\centering", "\\scriptsize",
-    "\\begin{longtable}{lcc}",
-    "\\caption{Ordinal logit: selling position within group-round} \\\\",
-    col_block,
-    "\\endfirsthead",
-    "\\multicolumn{3}{l}{\\emph{(continued)}}\\\\",
-    col_block,
-    "\\endhead",
-    "   \\midrule",
-    "   \\multicolumn{3}{r}{\\emph{continued on next page}}\\\\",
-    "\\endfoot", "\\endlastfoot")
+  c("", "\\begingroup", "\\centering", "\\tiny",
+    "\\renewcommand{\\arraystretch}{0.75}",
+    "\\setlength{\\tabcolsep}{2pt}",
+    "\\begin{tabular}{@{}lcc@{}}",
+    col_block)
 }
 
 append_var_rows <- function(lines, dt1, dt2, vars = SHOW_VARS) {
@@ -220,8 +213,8 @@ append_var_rows <- function(lines, dt1, dt2, vars = SHOW_VARS) {
     c1 <- format_coef_cell(dt1, v)
     c2 <- format_coef_cell(dt2, v)
     lines <- c(lines,
-      sprintf("   %-25s& %s & %s\\\\", label, c1[1], c2[1]),
-      sprintf("   %-25s& %s & %s\\\\", "", c1[2], c2[2]))
+      sprintf("   %-20s& %s & %s\\\\", label, c1[1], c2[1]),
+      sprintf("   %-20s& %s & %s\\\\", "", c1[2], c2[2]))
   }
   return(lines)
 }
@@ -233,8 +226,8 @@ append_threshold_rows <- function(lines, alpha1, alpha2) {
     c1 <- format_coef_cell(alpha1, tname)
     c2 <- format_coef_cell(alpha2, tname)
     lines <- c(lines,
-      sprintf("   %-25s& %s & %s\\\\", label, c1[1], c2[1]),
-      sprintf("   %-25s& %s & %s\\\\", "", c1[2], c2[2]))
+      sprintf("   %-20s& %s & %s\\\\", label, c1[1], c2[1]),
+      sprintf("   %-20s& %s & %s\\\\", "", c1[2], c2[2]))
   }
   return(lines)
 }
@@ -247,12 +240,12 @@ append_ame_rows <- function(lines, ame1, ame2) {
 
 append_fit_rows <- function(lines, f1, f2) {
   c(lines, "   \\midrule", "   \\emph{Fit statistics}\\\\",
-    "   Model              & Ordinal Logit & Mixed Ordinal Logit\\\\",
-    sprintf("   Observations       & %s & %s\\\\",
+    "   Model         & CLM & CLMM\\\\",
+    sprintf("   Observations  & %s & %s\\\\",
             format(f1$n, big.mark = ","), format(f2$n, big.mark = ",")),
-    sprintf("   Log-likelihood     & %.2f & %.2f\\\\",
+    sprintf("   Log-lik.      & %.1f & %.1f\\\\",
             as.numeric(f1$loglik), as.numeric(f2$loglik)),
-    sprintf("   AIC                & %.2f & %.2f\\\\", f1$aic, f2$aic))
+    sprintf("   AIC           & %.1f & %.1f\\\\", f1$aic, f2$aic))
 }
 
 append_footer <- function(lines) {
@@ -263,12 +256,10 @@ append_footer <- function(lines) {
     "segment dummies, round. Model 1 excludes random effects; ",
     "Model 2 includes player random effects.")
   c(lines, "   \\midrule \\midrule",
-    sprintf("   \\multicolumn{3}{p{12cm}}{\\emph{%s}}\\\\", controls_note),
-    "   \\multicolumn{3}{l}{\\emph{Panel B AMEs computed from ordinal logit specification (no RE)}}\\\\",
-    "   \\multicolumn{3}{l}{\\emph{Standardized coefficients (z-scored predictors)}}\\\\",
-    "   \\multicolumn{3}{l}{\\emph{Standard errors in parentheses}}\\\\",
-    "   \\multicolumn{3}{l}{\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\\\",
-    "\\end{longtable}", "\\endgroup", "", "")
+    sprintf("   \\multicolumn{3}{@{}p{\\linewidth}@{}}{\\emph{%s}}\\\\", controls_note),
+    "   \\multicolumn{3}{@{}l@{}}{\\emph{Standardized coefficients (z-scored)}}\\\\",
+    "   \\multicolumn{3}{@{}l@{}}{\\emph{***: 0.01, **: 0.05, *: 0.1}}\\\\",
+    "\\end{tabular}", "\\endgroup", "", "")
 }
 
 write_table <- function(lines, output_path) {

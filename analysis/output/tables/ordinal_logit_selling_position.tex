@@ -1,70 +1,56 @@
 
 \begingroup
 \centering
-\scriptsize
-\begin{longtable}{lcc}
-\caption{Ordinal logit: selling position within group-round} \\
+\tiny
+\renewcommand{\arraystretch}{0.75}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}lcc@{}}
    \midrule \midrule
-   Dependent Variable: & \multicolumn{2}{c}{Selling Position (ordinal)}\\
-   \cmidrule(lr){2-3}
-                       & (1) Full Sample & (2) Sellers Only\\
+   & (1) Full & (2) Sellers\\
+   & Sample & Only\\
    \midrule
-\endfirsthead
-\multicolumn{3}{l}{\emph{(continued)}}\\
-   \midrule \midrule
-   Dependent Variable: & \multicolumn{2}{c}{Selling Position (ordinal)}\\
-   \cmidrule(lr){2-3}
-                       & (1) Full Sample & (2) Sellers Only\\
-   \midrule
-\endhead
-   \midrule
-   \multicolumn{3}{r}{\emph{continued on next page}}\\
-\endfoot
-\endlastfoot
    \emph{Panel A: Log-odds coefficients}\\
-   State anxiety            & -0.2769$^{***}$ & -0.2478$^{*}$\\
-                            & (0.0496) & (0.1304)\\
-   Impulsivity              & -0.1131$^{**}$ & 0.2516\\
-                            & (0.0573) & (0.1554)\\
-   Conscientiousness        & -0.4679$^{***}$ & -0.3725$^{**}$\\
-                            & (0.0699) & (0.1693)\\
-   Fear (p95)               & 0.1099 & -0.5172\\
-                            & (0.1728) & (0.3890)\\
-   Anger (p95)              & 0.1147 & 0.1022\\
-                            & (0.0893) & (0.2779)\\
+   State anxiety       & -0.2769$^{***}$ & -0.2478$^{*}$\\
+                       & (0.0496) & (0.1304)\\
+   Impulsivity         & -0.1131$^{**}$ & 0.2516\\
+                       & (0.0573) & (0.1554)\\
+   Conscientiousness   & -0.4679$^{***}$ & -0.3725$^{**}$\\
+                       & (0.0699) & (0.1693)\\
+   Fear (p95)          & 0.1099 & -0.5172\\
+                       & (0.1728) & (0.3890)\\
+   Anger (p95)         & 0.1147 & 0.1022\\
+                       & (0.0893) & (0.2779)\\
    \midrule
    \emph{Threshold parameters}\\
-   1$|$2                    & -1.2904$^{***}$ & 1.2461$^{***}$\\
-                            & (0.0996) & (0.2363)\\
-   2$|$3                    & -0.9260$^{***}$ & 3.2338$^{***}$\\
-                            & (0.0974) & (0.2804)\\
-   3$|$4                    & -0.8402$^{***}$ & 6.3888$^{***}$\\
-                            & (0.0970) & (0.7456)\\
+   1$|$2               & -1.2904$^{***}$ & 1.2461$^{***}$\\
+                       & (0.0996) & (0.2363)\\
+   2$|$3               & -0.9260$^{***}$ & 3.2338$^{***}$\\
+                       & (0.0974) & (0.2804)\\
+   3$|$4               & -0.8402$^{***}$ & 6.3888$^{***}$\\
+                       & (0.0970) & (0.7456)\\
    \midrule
    \emph{Panel B: Average Marginal Effects on P(selling first)}\\
-   State anxiety            & 0.0362$^{***}$ & 0.0461$^{**}$\\
-                            & (0.0065) & (0.0194)\\
-   Impulsivity              & 0.0148$^{**}$ & -0.0378$^{*}$\\
-                            & (0.0075) & (0.0224)\\
-   Conscientiousness        & 0.0611$^{***}$ & 0.0753$^{***}$\\
-                            & (0.0091) & (0.0237)\\
-   Fear (p95)               & -0.0144 & 0.1099\\
-                            & (0.0226) & (0.0730)\\
-   Anger (p95)              & -0.0150 & -0.0110\\
-                            & (0.0117) & (0.0508)\\
+   State anxiety       & 0.0362$^{***}$ & 0.0461$^{**}$\\
+                       & (0.0065) & (0.0194)\\
+   Impulsivity         & 0.0148$^{**}$ & -0.0378$^{*}$\\
+                       & (0.0075) & (0.0224)\\
+   Conscientiousness   & 0.0611$^{***}$ & 0.0753$^{***}$\\
+                       & (0.0091) & (0.0237)\\
+   Fear (p95)          & -0.0144 & 0.1099\\
+                       & (0.0226) & (0.0730)\\
+   Anger (p95)         & -0.0150 & -0.0110\\
+                       & (0.0117) & (0.0508)\\
    \midrule
    \emph{Fit statistics}\\
-   Model              & Ordinal Logit & Mixed Ordinal Logit\\
-   Observations       & 2,845 & 659\\
-   Log-likelihood     & -1934.34 & -473.86\\
-   AIC                & 3918.68 & 999.73\\
+   Model         & CLM & CLMM\\
+   Observations  & 2,845 & 659\\
+   Log-lik.      & -1934.3 & -473.9\\
+   AIC           & 3918.7 & 999.7\\
    \midrule \midrule
-   \multicolumn{3}{p{12cm}}{\emph{Controls: extraversion, agreeableness, neuroticism, openness, contempt (p95), disgust (p95), joy (p95), sadness (p95), surprise (p95), engagement (p95), valence (p95), age, gender, segment dummies, round. Model 1 excludes random effects; Model 2 includes player random effects.}}\\
-   \multicolumn{3}{l}{\emph{Panel B AMEs computed from ordinal logit specification (no RE)}}\\
-   \multicolumn{3}{l}{\emph{Standardized coefficients (z-scored predictors)}}\\
-   \multicolumn{3}{l}{\emph{Standard errors in parentheses}}\\
-   \multicolumn{3}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
-\end{longtable}
+   \multicolumn{3}{@{}p{\linewidth}@{}}{\emph{Controls: extraversion, agreeableness, neuroticism, openness, contempt (p95), disgust (p95), joy (p95), sadness (p95), surprise (p95), engagement (p95), valence (p95), age, gender, segment dummies, round. Model 1 excludes random effects; Model 2 includes player random effects.}}\\
+   \multicolumn{3}{@{}l@{}}{\emph{Standardized coefficients (z-scored)}}\\
+   \multicolumn{3}{@{}l@{}}{\emph{***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
 \endgroup
 
 

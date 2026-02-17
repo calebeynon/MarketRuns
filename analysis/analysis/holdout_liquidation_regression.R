@@ -130,7 +130,14 @@ export_latex_table <- function(model) {
     file = OUTPUT_TEX,
     float = FALSE,
     tex = TRUE,
-    style.tex = style.tex(fontsize = "scriptsize")
+    style.tex = style.tex(
+      fontsize = "tiny",
+      arraystretch = 0.75
+    ),
+    postprocess.tex = function(x) {
+      x <- sub("\\\\begingroup", "\\\\begingroup\n\\\\setlength{\\\\tabcolsep}{2pt}", x)
+      sub("\\{lc\\}", "{@{}lc@{}}", x)
+    }
   )
   cat("\nLaTeX table exported to:", OUTPUT_TEX, "\n")
 }
