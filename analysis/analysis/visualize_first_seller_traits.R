@@ -4,6 +4,7 @@
 
 library(data.table)
 library(ggplot2)
+library(cowplot)
 
 # =====
 # File paths
@@ -25,6 +26,10 @@ KEY_TRAITS <- c("impulsivity", "neuroticism")
 
 # Colorblind-friendly palette for first seller status
 CB_PALETTE <- c("No" = "#0072B2", "Yes" = "#D55E00")
+
+# BFI traits use a 1-7 scale; state anxiety uses a 1-4 scale
+BFI_TRAITS <- c("Extraversion", "Agreeableness", "Conscientiousness",
+                "Neuroticism", "Openness", "Impulsivity")
 
 # =====
 # Main function
@@ -86,22 +91,38 @@ reshape_to_long <- function(df) {
 }
 
 # =====
-# Plot 1: Faceted box plots by trait
+# Plot 1: Faceted box plots by trait (split by scale)
 # =====
 create_boxplots <- function(df) {
   df_long <- reshape_to_long(df)
+  bfi_data <- df_long[trait_label %in% BFI_TRAITS]
+  anxiety_data <- df_long[trait_label == "State Anxiety"]
 
-  ggplot(df_long, aes(x = first_seller_label, y = score, fill = first_seller_label)) +
+  p_top <- build_boxplot_panel(bfi_data, c(1, 7), 1:7, ncol = 3, show_legend = TRUE)
+  p_bottom <- build_boxplot_panel(anxiety_data, c(1, 4), 1:4, ncol = 1, show_legend = FALSE)
+
+  cowplot::plot_grid(p_top, p_bottom, ncol = 1, rel_heights = c(2, 1))
+}
+
+# =====
+# Helper: Build a single boxplot panel with fixed y-axis
+# =====
+build_boxplot_panel <- function(data, limits, breaks, ncol, show_legend) {
+  legend_pos <- if (show_legend) "bottom" else "none"
+
+  p <- ggplot(data, aes(x = first_seller_label, y = score, fill = first_seller_label)) +
     geom_boxplot(alpha = 0.7, outlier.size = 1) +
-    facet_wrap(~trait_label, scales = "free_y", ncol = 4) +
     scale_fill_manual(values = CB_PALETTE, name = "First Seller") +
+    scale_y_continuous(limits = limits, breaks = breaks) +
     labs(x = "First Seller", y = "Trait Score") +
     theme_minimal() +
     theme(
       panel.grid.minor = element_blank(),
       strip.text = element_text(size = 10, face = "bold"),
-      legend.position = "bottom"
+      legend.position = legend_pos
     )
+
+  p + facet_wrap(~trait_label, ncol = ncol)
 }
 
 # =====
