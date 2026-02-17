@@ -114,30 +114,29 @@ create_combined_table <- function(summary_stats, t_test_results) {
     "extraversion", "agreeableness", "conscientiousness",
     "neuroticism", "openness", "impulsivity", "state_anxiety"
   )
+  fs_stats <- summary_stats %>% filter(is_first_seller == 1)
+  nfs_stats <- summary_stats %>% filter(is_first_seller == 0)
 
-  # Extract stats for first sellers (is_first_seller == 1)
-  first_seller_stats <- summary_stats %>% filter(is_first_seller == 1)
-  non_first_seller_stats <- summary_stats %>% filter(is_first_seller == 0)
-
-  combined <- map_dfr(traits, function(trait) {
-    fs_mean <- first_seller_stats[[paste0(trait, "_mean")]]
-    fs_sd <- first_seller_stats[[paste0(trait, "_sd")]]
-    nfs_mean <- non_first_seller_stats[[paste0(trait, "_mean")]]
-    nfs_sd <- non_first_seller_stats[[paste0(trait, "_sd")]]
-
-    t_test <- t_test_results %>% filter(trait == !!trait)
-
-    tibble(
-      trait = format_trait_name(trait),
-      first_seller_mean_sd = format_mean_sd(fs_mean, fs_sd),
-      non_first_seller_mean_sd = format_mean_sd(nfs_mean, nfs_sd),
-      difference = round(t_test$difference, 3),
-      t_stat = round(t_test$t_stat, 2),
-      p_value = format_p_value(t_test$p_value)
-    )
+  map_dfr(traits, function(trait) {
+    build_trait_row(trait_name = trait, fs_stats, nfs_stats, t_test_results)
   })
+}
 
-  return(combined)
+build_trait_row <- function(trait_name, fs_stats, nfs_stats, t_test_results) {
+  t_test <- t_test_results %>% filter(trait == trait_name)
+  tibble(
+    trait = format_trait_name(trait_name),
+    first_seller_mean_sd = format_mean_sd(
+      fs_stats[[paste0(trait_name, "_mean")]],
+      fs_stats[[paste0(trait_name, "_sd")]]
+    ),
+    non_first_seller_mean_sd = format_mean_sd(
+      nfs_stats[[paste0(trait_name, "_mean")]],
+      nfs_stats[[paste0(trait_name, "_sd")]]
+    ),
+    difference = round(t_test$difference, 3),
+    stars = format_significance(t_test$p_value)
+  )
 }
 
 format_trait_name <- function(trait) {
@@ -150,10 +149,11 @@ format_mean_sd <- function(mean_val, sd_val) {
   sprintf("%.2f (%.2f)", mean_val, sd_val)
 }
 
-format_p_value <- function(p) {
-  if (p < 0.001) return("<0.001")
-  if (p < 0.01) return(sprintf("%.3f", p))
-  sprintf("%.2f", p)
+format_significance <- function(p) {
+  if (p < 0.01) return("***")
+  if (p < 0.05) return("**")
+  if (p < 0.1) return("*")
+  return("")
 }
 
 # =====
@@ -181,43 +181,29 @@ write_latex_table <- function(combined_table) {
 }
 
 generate_latex_content <- function(combined_table) {
-  latex <- c(
-    "\\begingroup",
-    "\\centering",
-    "\\small",
-    "\\begin{tabular}{lcccrr}",
-    "\\toprule",
-    paste0(
-      "Trait & First Sellers & Non-First Sellers & ",
-      "Difference & $t$-stat & $p$-value \\\\"
-    ),
+  header <- c(
+    "\\begingroup", "\\centering", "\\small",
+    "\\begin{tabular}{lccr}", "\\toprule",
+    "Trait & First Sellers & Non-First Sellers & Difference \\\\",
     "\\midrule"
   )
-
-  # Add data rows
-  for (i in seq_len(nrow(combined_table))) {
-    row <- combined_table[i, ]
-    latex <- c(latex, sprintf(
-      "%s & %s & %s & %.3f & %.2f & %s \\\\",
-      row$trait,
-      row$first_seller_mean_sd,
-      row$non_first_seller_mean_sd,
-      row$difference,
-      row$t_stat,
-      row$p_value
-    ))
-  }
-
-  latex <- c(
-    latex,
-    "\\bottomrule",
-    "\\end{tabular}",
-    "\\par\\endgroup",
-    "",
-    "% Note: Mean (SD) shown for each group. Two-sample t-tests used for comparisons."
+  rows <- format_latex_rows(combined_table)
+  footer <- c(
+    "\\bottomrule", "\\end{tabular}", "\\par", "\\vspace{2pt}",
+    "{\\footnotesize \\textit{Note:} Mean (SD). Two-sample $t$-tests.}\\\\",
+    "{\\footnotesize ***: $p<0.01$, **: $p<0.05$, *: $p<0.1$}",
+    "\\endgroup"
   )
+  paste(c(header, rows, footer), collapse = "\n")
+}
 
-  return(paste(latex, collapse = "\n"))
+format_latex_rows <- function(combined_table) {
+  vapply(seq_len(nrow(combined_table)), function(i) {
+    row <- combined_table[i, ]
+    sprintf("%s & %s & %s & %.3f%s \\\\",
+      row$trait, row$first_seller_mean_sd,
+      row$non_first_seller_mean_sd, row$difference, row$stars)
+  }, character(1))
 }
 
 # =====
