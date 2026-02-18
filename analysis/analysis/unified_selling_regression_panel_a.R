@@ -37,6 +37,7 @@ run_panel_a_m1 <- function(df) {
   )
   plm(
     sold ~ dummy_1_cum + dummy_2_cum + dummy_3_cum +
+      int_1_1 + int_2_1 + int_2_2 + int_3_1 + int_3_2 + int_3_3 +
       signal + period + round + segment + treatment,
     data = pdata,
     model = "random"
@@ -50,6 +51,7 @@ run_panel_a_m2 <- function(df) {
   cat("[Panel A M2] Cascade + Emotions with individual FE...\n")
   feols(
     sold ~ dummy_1_cum + dummy_2_cum + dummy_3_cum +
+      int_1_1 + int_2_1 + int_2_2 + int_3_1 + int_3_2 + int_3_3 +
       fear_mean + anger_mean + contempt_mean + disgust_mean +
       joy_mean + sadness_mean + surprise_mean + engagement_mean +
       valence_mean +
@@ -70,6 +72,7 @@ run_panel_a_m3 <- function(df) {
   )
   plm(
     sold ~ dummy_1_cum + dummy_2_cum + dummy_3_cum +
+      int_1_1 + int_2_1 + int_2_2 + int_3_1 + int_3_2 + int_3_3 +
       state_anxiety + impulsivity + conscientiousness +
       extraversion + agreeableness + neuroticism + openness +
       age + gender_female +
