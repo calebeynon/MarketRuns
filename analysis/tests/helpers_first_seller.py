@@ -156,8 +156,8 @@ def welch_t_test(fs_vals, nfs_vals):
     """Run Welch's t-test and return diff, p-value, CI bounds."""
     result = stats.ttest_ind(fs_vals, nfs_vals, equal_var=False)
     diff = fs_vals.mean() - nfs_vals.mean()
-    s1_n = fs_vals.var() / len(fs_vals)
-    s2_n = nfs_vals.var() / len(nfs_vals)
+    s1_n = fs_vals.var(ddof=1) / len(fs_vals)
+    s2_n = nfs_vals.var(ddof=1) / len(nfs_vals)
     se = np.sqrt(s1_n + s2_n)
     df = (s1_n + s2_n) ** 2 / (
         s1_n ** 2 / (len(fs_vals) - 1) + s2_n ** 2 / (len(nfs_vals) - 1)
