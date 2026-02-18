@@ -25,15 +25,26 @@ build_landscape_table <- function(panel_a, panel_b, panel_c) {
 # =====
 build_twocol_wrapper <- function(tbl, left, right_b, right_c) {
   c("",
-    "\\begin{table}[H]",
+    build_table_header(tbl),
+    build_minipages(left, right_b, right_c),
+    "",
+    build_twocol_footer(),
+    "\\end{table}", "", "")
+}
+
+build_table_header <- function(tbl) {
+  c("\\begin{table}[H]",
     "\\singlespacing",
     "\\scriptsize",
     "\\setlength{\\tabcolsep}{2pt}",
     "\\renewcommand{\\arraystretch}{0.85}",
     sprintf("\\caption{%s}", tbl$caption),
     sprintf("\\label{tab:%s}", tbl$label),
-    "\\centering",
-    "\\begin{minipage}[t]{0.54\\linewidth}",
+    "\\centering")
+}
+
+build_minipages <- function(left, right_b, right_c) {
+  c("\\begin{minipage}[t]{0.54\\linewidth}",
     left,
     "\\end{minipage}%",
     "\\hfill",
@@ -41,10 +52,7 @@ build_twocol_wrapper <- function(tbl, left, right_b, right_c) {
     right_b,
     "\\vspace{0.5em}",
     right_c,
-    "\\end{minipage}",
-    "",
-    build_twocol_footer(),
-    "\\end{table}", "", "")
+    "\\end{minipage}")
 }
 
 # =====
