@@ -54,16 +54,16 @@ main <- function() {
 # =====
 write_demographics_table <- function(panel, survey) {
   rows <- c(
-    build_demo_row("$N$ (subjects)", survey, count_subjects),
+    build_demo_row("$N$ (subjects)", panel, count_subjects),
     build_demo_row("$N$ (sessions)", panel, count_sessions),
-    build_demo_row("Age", survey, summarise_age),
-    build_demo_row("Female (\\%)", survey, pct_female)
+    build_demo_row("Age$^\\dagger$", survey, summarise_age),
+    build_demo_row("Female (\\%)$^\\dagger$", survey, pct_female)
   )
   latex <- wrap_demographics_latex(rows)
   write_table(latex, "summary_demographics.tex")
 }
 
-count_subjects <- function(data) as.character(nrow(data))
+count_subjects <- function(data) as.character(nrow(distinct(data, session_id, player)))
 count_sessions <- function(data) as.character(n_distinct(data$session_id))
 summarise_age <- function(data) format_mean_sd(mean(data$age), sd(data$age))
 
@@ -86,6 +86,8 @@ wrap_demographics_latex <- function(rows) {
     "\\midrule",
     rows,
     "\\bottomrule", "\\end{tabular}",
+    "\\par", "\\vspace{2pt}",
+    "{\\footnotesize $^\\dagger$Based on 95 survey respondents; one survey response was lost due to data corruption.}",
     "\\endgroup"
   ) %>% paste(collapse = "\n")
 }
@@ -119,7 +121,8 @@ wrap_traits_latex <- function(rows) {
     rows,
     "\\bottomrule", "\\end{tabular}", "\\par", "\\vspace{2pt}",
     "{\\footnotesize \\textit{Note:} Mean (SD). Diff column: Treatment 1 $-$ Treatment 2 with two-sample $t$-test.}\\\\",
-    "{\\footnotesize ***: $p<0.01$, **: $p<0.05$, *: $p<0.1$}",
+    "{\\footnotesize ***: $p<0.01$, **: $p<0.05$, *: $p<0.1$}\\\\",
+    "{\\footnotesize Based on 95 survey respondents; one survey response was lost due to data corruption.}",
     "\\endgroup"
   ) %>% paste(collapse = "\n")
 }

@@ -91,12 +91,19 @@ def parse_mean_sd(cell):
 # Demographics table tests
 # =====
 class TestDemographicsTable:
-    def test_subject_counts(self, survey, demographics_tex):
+    def test_subject_counts(self, panel, demographics_tex):
         rows = parse_table_rows(demographics_tex)
         n_row = [r for r in rows if "subjects" in r[0]][0]
-        assert n_row[1] == str(len(survey))
-        assert n_row[2] == str(len(survey[survey.treatment == "tr1"]))
-        assert n_row[3] == str(len(survey[survey.treatment == "tr2"]))
+        expected_total = panel.drop_duplicates(subset=["session_id", "player"]).shape[0]
+        expected_tr1 = panel[panel.treatment == "tr1"].drop_duplicates(
+            subset=["session_id", "player"]
+        ).shape[0]
+        expected_tr2 = panel[panel.treatment == "tr2"].drop_duplicates(
+            subset=["session_id", "player"]
+        ).shape[0]
+        assert n_row[1] == str(expected_total)
+        assert n_row[2] == str(expected_tr1)
+        assert n_row[3] == str(expected_tr2)
 
     def test_session_counts(self, panel, demographics_tex):
         rows = parse_table_rows(demographics_tex)
