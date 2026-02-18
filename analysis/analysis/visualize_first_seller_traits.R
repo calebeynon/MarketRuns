@@ -1,212 +1,179 @@
-# Purpose: Create descriptive visualizations of trait distributions by first seller status
-# Author: Claude Code
-# Date: 2026-02-01
+# Purpose: CI difference and robustness plots for first seller personality traits
+# Author: Caleb Eynon w/ Claude Code
+# Date: 2026-02-17
 
 library(data.table)
 library(ggplot2)
-library(cowplot)
 
 # =====
 # File paths
 # =====
-INPUT_PATH <- "datastore/derived/first_seller_analysis_data.csv"
+ROUND_DATA_PATH <- "datastore/derived/first_seller_round_data.csv"
+SURVEY_TRAITS_PATH <- "datastore/derived/survey_traits.csv"
 OUTPUT_DIR <- "analysis/output/plots"
-OUTPUT_BOXPLOTS <- file.path(OUTPUT_DIR, "first_seller_trait_boxplots.pdf")
-OUTPUT_VIOLINS <- file.path(OUTPUT_DIR, "first_seller_trait_violins.pdf")
-OUTPUT_QUARTILE <- file.path(OUTPUT_DIR, "first_seller_rate_by_quartile.pdf")
+OUTPUT_CI_DIFF <- file.path(OUTPUT_DIR, "first_seller_trait_ci_diff.pdf")
+OUTPUT_ROBUSTNESS <- file.path(OUTPUT_DIR, "first_seller_trait_robustness.pdf")
 
-# Traits to visualize
 TRAITS <- c(
   "extraversion", "agreeableness", "conscientiousness",
   "neuroticism", "openness", "impulsivity", "state_anxiety"
 )
 
-# Key traits for quartile analysis (hypothesis-driven)
-KEY_TRAITS <- c("impulsivity", "neuroticism")
-
-# Colorblind-friendly palette for first seller status
-CB_PALETTE <- c("No" = "#0072B2", "Yes" = "#D55E00")
-
-# BFI traits use a 1-7 scale; state anxiety uses a 1-4 scale
-BFI_TRAITS <- c("Extraversion", "Agreeableness", "Conscientiousness",
-                "Neuroticism", "Openness", "Impulsivity")
+GROUP_PALETTE <- c(
+  "0 times" = "#0072B2", "1-2 times" = "#E69F00", "3+ times" = "#D55E00"
+)
 
 # =====
 # Main function
 # =====
 main <- function() {
   ensure_output_dir()
-  df <- load_and_prepare_data()
+  round_data <- load_round_data()
+  survey <- load_survey_traits()
+  individual <- build_individual_data(round_data, survey)
 
-  cat("Creating box plots...\n")
-  p_box <- create_boxplots(df)
-  save_plot(p_box, OUTPUT_BOXPLOTS, width = 10, height = 8)
+  cat("Creating CI difference plot...\n")
+  diff_dt <- compute_trait_differences(individual)
+  p_diff <- create_ci_diff_plot(diff_dt)
+  save_plot(p_diff, OUTPUT_CI_DIFF, width = 7, height = 5)
 
-  cat("Creating violin plots...\n")
-  p_violin <- create_violins(df)
-  save_plot(p_violin, OUTPUT_VIOLINS, width = 10, height = 8)
-
-  cat("Creating quartile bar chart...\n")
-  p_quartile <- create_quartile_plot(df)
-  save_plot(p_quartile, OUTPUT_QUARTILE, width = 8, height = 5)
+  cat("Creating robustness plot...\n")
+  group_dt <- compute_group_means(individual)
+  p_robust <- create_robustness_plot(group_dt)
+  save_plot(p_robust, OUTPUT_ROBUSTNESS, width = 10, height = 6)
 
   cat("All plots saved to:", OUTPUT_DIR, "\n")
 }
 
 # =====
-# Data loading and preparation
+# Data loading
 # =====
-load_and_prepare_data <- function() {
-  df <- fread(INPUT_PATH)
+load_round_data <- function() {
+  dt <- fread(ROUND_DATA_PATH)
+  cat("Loaded", nrow(dt), "round-level rows\n")
+  return(dt)
+}
 
-  # Create readable first seller label
-  df[, first_seller_label := ifelse(is_first_seller == 1, "Yes", "No")]
-  df[, first_seller_label := factor(first_seller_label, levels = c("No", "Yes"))]
-
-  cat("Loaded", nrow(df), "observations\n")
-  cat("First sellers:", sum(df$is_first_seller), "\n")
-  return(df)
+load_survey_traits <- function() {
+  dt <- fread(SURVEY_TRAITS_PATH)
+  cat("Loaded", nrow(dt), "survey responses\n")
+  return(dt)
 }
 
 # =====
-# Reshape data to long format for faceted plots
+# Build individual-level dataset
 # =====
-reshape_to_long <- function(df) {
-  id_cols <- c("session_id", "segment", "group_id", "round", "player",
-               "is_first_seller", "first_seller_label")
+build_individual_data <- function(round_data, survey) {
+  counts <- round_data[,
+    .(times_first_seller = sum(is_first_seller)),
+    by = .(session_id, player)
+  ]
+  merged <- merge(counts, survey, by = c("session_id", "player"))
+  merged[, is_ever_first_seller := (times_first_seller >= 1)]
+  merged[, fs_group := cut_fs_group(times_first_seller)]
+  cat("Individual-level N:", nrow(merged), "\n")
+  return(merged)
+}
 
-  df_long <- melt(
-    df,
-    id.vars = id_cols,
-    measure.vars = TRAITS,
-    variable.name = "trait",
-    value.name = "score"
+cut_fs_group <- function(x) {
+  factor(
+    ifelse(x == 0, "0 times", ifelse(x <= 2, "1-2 times", "3+ times")),
+    levels = c("0 times", "1-2 times", "3+ times")
   )
-
-  # Clean trait names for display
-  df_long[, trait_label := gsub("_", " ", trait)]
-  df_long[, trait_label := tools::toTitleCase(trait_label)]
-
-  return(df_long)
 }
 
 # =====
-# Plot 1: Faceted box plots by trait (split by scale)
+# Compute trait differences (ever first seller vs. never)
 # =====
-create_boxplots <- function(df) {
-  df_long <- reshape_to_long(df)
-  bfi_data <- df_long[trait_label %in% BFI_TRAITS]
-  anxiety_data <- df_long[trait_label == "State Anxiety"]
+compute_trait_differences <- function(individual) {
+  results <- rbindlist(lapply(TRAITS, function(trait) {
+    compute_single_diff(individual, trait)
+  }))
+  return(results)
+}
 
-  p_top <- build_boxplot_panel(bfi_data, c(1, 7), 1:7, ncol = 3, show_legend = TRUE)
-  p_bottom <- build_boxplot_panel(anxiety_data, c(1, 4), 1:4, ncol = 1, show_legend = FALSE)
+compute_single_diff <- function(dt, trait) {
+  fs_vals <- dt[is_ever_first_seller == TRUE, get(trait)]
+  nfs_vals <- dt[is_ever_first_seller == FALSE, get(trait)]
+  tt <- t.test(fs_vals, nfs_vals)
+  data.table(
+    trait = format_trait_label(trait),
+    estimate = tt$estimate[1] - tt$estimate[2],
+    ci_lower = tt$conf.int[1],
+    ci_upper = tt$conf.int[2]
+  )
+}
 
-  cowplot::plot_grid(p_top, p_bottom, ncol = 1, rel_heights = c(2, 1))
+format_trait_label <- function(trait) {
+  tools::toTitleCase(gsub("_", " ", trait))
 }
 
 # =====
-# Helper: Build a single boxplot panel with fixed y-axis
+# CI difference plot (Plot 1)
 # =====
-build_boxplot_panel <- function(data, limits, breaks, ncol, show_legend) {
-  legend_pos <- if (show_legend) "bottom" else "none"
+create_ci_diff_plot <- function(diff_dt) {
+  diff_dt[, trait := factor(trait, levels = rev(diff_dt$trait))]
 
-  p <- ggplot(data, aes(x = first_seller_label, y = score, fill = first_seller_label)) +
-    geom_boxplot(alpha = 0.7, outlier.size = 1) +
-    scale_fill_manual(values = CB_PALETTE, name = "First Seller") +
-    scale_y_continuous(limits = limits, breaks = breaks) +
-    labs(x = "First Seller", y = "Trait Score") +
+  ggplot(diff_dt, aes(x = estimate, y = trait)) +
+    geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+    geom_errorbarh(
+      aes(xmin = ci_lower, xmax = ci_upper),
+      height = 0.25, linewidth = 0.5
+    ) +
+    geom_point(size = 2.5, shape = 16) +
+    labs(x = NULL, y = NULL) +
+    theme_minimal() +
+    theme(panel.grid.minor = element_blank())
+}
+
+# =====
+# Compute group-level means and CIs for robustness plot
+# =====
+compute_group_means <- function(individual) {
+  results <- rbindlist(lapply(TRAITS, function(trait) {
+    compute_trait_group_ci(individual, trait)
+  }))
+  return(results)
+}
+
+compute_trait_group_ci <- function(dt, trait) {
+  rbindlist(lapply(levels(dt$fs_group), function(grp) {
+    vals <- dt[fs_group == grp, get(trait)]
+    ci_from_values(vals, trait, grp)
+  }))
+}
+
+ci_from_values <- function(vals, trait, group) {
+  n <- length(vals)
+  m <- mean(vals)
+  se <- sd(vals) / sqrt(n)
+  crit <- qt(0.975, n - 1)
+  data.table(
+    trait_label = format_trait_label(trait),
+    fs_group = factor(group, levels = c("0 times", "1-2 times", "3+ times")),
+    mean_score = m,
+    ci_lower = m - crit * se,
+    ci_upper = m + crit * se
+  )
+}
+
+# =====
+# Robustness 3-group plot (Plot 2)
+# =====
+create_robustness_plot <- function(group_dt) {
+  ggplot(group_dt, aes(x = mean_score, y = fs_group, color = fs_group)) +
+    geom_pointrange(
+      aes(xmin = ci_lower, xmax = ci_upper),
+      size = 0.5, fatten = 3
+    ) +
+    facet_wrap(~trait_label) +
+    scale_color_manual(values = GROUP_PALETTE, name = "Times First Seller") +
+    labs(x = "Mean Score", y = NULL) +
     theme_minimal() +
     theme(
       panel.grid.minor = element_blank(),
-      strip.text = element_text(size = 10, face = "bold"),
-      legend.position = legend_pos
-    )
-
-  p + facet_wrap(~trait_label, ncol = ncol)
-}
-
-# =====
-# Plot 2: Faceted violin plots by trait
-# =====
-create_violins <- function(df) {
-  df_long <- reshape_to_long(df)
-
-  ggplot(df_long, aes(x = first_seller_label, y = score, fill = first_seller_label)) +
-    geom_violin(alpha = 0.7, draw_quantiles = c(0.25, 0.5, 0.75)) +
-    facet_wrap(~trait_label, scales = "free_y", ncol = 4) +
-    scale_fill_manual(values = CB_PALETTE, name = "First Seller") +
-    labs(x = "First Seller", y = "Trait Score") +
-    theme_minimal() +
-    theme(
-      panel.grid.minor = element_blank(),
-      strip.text = element_text(size = 10, face = "bold"),
       legend.position = "bottom"
     )
-}
-
-# =====
-# Plot 3: First seller rate by trait quartile
-# =====
-create_quartile_plot <- function(df) {
-  quartile_data <- compute_quartile_rates(df)
-
-  ggplot(quartile_data, aes(x = quartile, y = first_seller_rate, fill = trait_label)) +
-    geom_bar(stat = "identity", position = "dodge", alpha = 0.8) +
-    geom_text(
-      aes(label = sprintf("%.1f%%", first_seller_rate * 100)),
-      position = position_dodge(width = 0.9),
-      vjust = -0.5,
-      size = 3
-    ) +
-    scale_fill_manual(
-      values = c("Impulsivity" = "#E69F00", "Neuroticism" = "#009E73"),
-      name = "Trait"
-    ) +
-    scale_y_continuous(
-      labels = scales::percent_format(),
-      limits = c(0, max(quartile_data$first_seller_rate) * 1.15)
-    ) +
-    labs(x = "Trait Quartile", y = "First Seller Rate") +
-    theme_minimal() +
-    theme(
-      panel.grid.minor = element_blank(),
-      legend.position = "bottom"
-    )
-}
-
-# =====
-# Compute first seller rates by quartile for key traits
-# =====
-compute_quartile_rates <- function(df) {
-  results <- lapply(KEY_TRAITS, function(trait) {
-    compute_single_trait_quartiles(df, trait)
-  })
-  rbindlist(results)
-}
-
-compute_single_trait_quartiles <- function(df, trait) {
-  # Make a copy to avoid modifying the original
-  df_copy <- copy(df)
-
-  # Assign quartiles directly based on trait values
-  df_copy[, quartile := cut(
-    get(trait),
-    breaks = quantile(get(trait), probs = 0:4/4, na.rm = TRUE),
-    labels = c("Q1 (Low)", "Q2", "Q3", "Q4 (High)"),
-    include.lowest = TRUE
-  )]
-
-  # Compute first seller rates by quartile
-  rates <- df_copy[, .(
-    n_first_sellers = sum(is_first_seller),
-    n_total = .N,
-    first_seller_rate = mean(is_first_seller)
-  ), by = quartile]
-
-  rates[, trait := trait]
-  rates[, trait_label := tools::toTitleCase(gsub("_", " ", trait))]
-
-  return(rates)
 }
 
 # =====
@@ -215,7 +182,6 @@ compute_single_trait_quartiles <- function(df, trait) {
 ensure_output_dir <- function() {
   if (!dir.exists(OUTPUT_DIR)) {
     dir.create(OUTPUT_DIR, recursive = TRUE)
-    cat("Created output directory:", OUTPUT_DIR, "\n")
   }
 }
 

@@ -1,7 +1,6 @@
 # Purpose: Descriptive statistics and t-tests comparing traits by first seller status
 # Author: Caleb Eynon w/ Claude Code
-# Date: 2025-02-01
-# nolint start
+# Date: 2026-02-17
 #
 # Creates appendix table: Mean (SD) of each trait by first seller status with t-tests
 
@@ -10,18 +9,23 @@ library(tidyverse)
 # =====
 # File paths
 # =====
-INPUT_PATH <- "datastore/derived/first_seller_analysis_data.csv"
+ROUND_DATA_PATH <- "datastore/derived/first_seller_round_data.csv"
+SURVEY_TRAITS_PATH <- "datastore/derived/survey_traits.csv"
 OUTPUT_PATH <- "analysis/output/tables/first_seller_trait_comparisons.tex"
+
+TRAITS <- c(
+  "extraversion", "agreeableness", "conscientiousness",
+  "neuroticism", "openness", "impulsivity", "state_anxiety"
+)
 
 # =====
 # Main
 # =====
 main <- function() {
   data <- load_data()
-  unique_data <- get_unique_player_observations(data)
 
-  summary_stats <- calculate_summary_stats(unique_data)
-  t_test_results <- run_t_tests(unique_data)
+  summary_stats <- calculate_summary_stats(data)
+  t_test_results <- run_t_tests(data)
 
   combined_table <- create_combined_table(summary_stats, t_test_results)
 
@@ -32,68 +36,58 @@ main <- function() {
 }
 
 # =====
-# Data loading
+# Data loading and preparation
 # =====
 load_data <- function() {
-  data <- read_csv(INPUT_PATH, show_col_types = FALSE)
-  cat("Loaded", nrow(data), "observations\n")
-  return(data)
+  round_data <- read_csv(ROUND_DATA_PATH, show_col_types = FALSE)
+  survey_traits <- read_csv(SURVEY_TRAITS_PATH, show_col_types = FALSE)
+
+  individual_data <- build_individual_data(round_data, survey_traits)
+
+  cat("Individual observations:", nrow(individual_data), "\n")
+  cat("Ever first seller:", sum(individual_data$is_ever_first_seller), "\n")
+  cat("Never first seller:", sum(!individual_data$is_ever_first_seller), "\n")
+
+  return(individual_data)
 }
 
-# =====
-# Get unique player-round observations to avoid repeated traits
-# =====
-get_unique_player_observations <- function(data) {
-  # Each player appears multiple times per round; get one observation per player-group-round
-  unique_data <- data %>%
-    distinct(session_id, group_id, round, player, .keep_all = TRUE)
+build_individual_data <- function(round_data, survey_traits) {
+  player_summary <- round_data %>%
+    group_by(session_id, player) %>%
+    summarise(times_first_seller = sum(is_first_seller), .groups = "drop")
 
-  cat("Unique player-round observations:", nrow(unique_data), "\n")
-  cat("First sellers:", sum(unique_data$is_first_seller), "\n")
-  cat("Non-first sellers:", sum(1 - unique_data$is_first_seller), "\n")
+  individual_data <- player_summary %>%
+    inner_join(survey_traits, by = c("session_id", "player")) %>%
+    mutate(is_ever_first_seller = times_first_seller >= 1)
 
-  return(unique_data)
+  return(individual_data)
 }
 
 # =====
 # Calculate summary statistics by first seller status
 # =====
 calculate_summary_stats <- function(data) {
-  traits <- c(
-    "extraversion", "agreeableness", "conscientiousness",
-    "neuroticism", "openness", "impulsivity", "state_anxiety"
-  )
-
-  summary_stats <- data %>%
-    group_by(is_first_seller) %>%
+  data %>%
+    group_by(is_ever_first_seller) %>%
     summarise(
-      across(all_of(traits), list(mean = mean, sd = sd), .names = "{.col}_{.fn}"),
+      across(all_of(TRAITS), list(mean = mean, sd = sd), .names = "{.col}_{.fn}"),
       n = n(),
       .groups = "drop"
     )
-
-  return(summary_stats)
 }
 
 # =====
 # Run t-tests for each trait
 # =====
 run_t_tests <- function(data) {
-  traits <- c(
-    "extraversion", "agreeableness", "conscientiousness",
-    "neuroticism", "openness", "impulsivity", "state_anxiety"
-  )
-
-  results <- map_dfr(traits, function(trait) {
+  map_dfr(TRAITS, function(trait) {
     run_single_t_test(data, trait)
   })
-
-  return(results)
 }
 
 run_single_t_test <- function(data, trait) {
-  first_sellers <- data %>% filter(is_first_seller == 1) %>% pull(!!sym(trait))
-  non_first_sellers <- data %>% filter(is_first_seller == 0) %>% pull(!!sym(trait))
+  first_sellers <- data %>% filter(is_ever_first_seller) %>% pull(!!sym(trait))
+  non_first_sellers <- data %>% filter(!is_ever_first_seller) %>% pull(!!sym(trait))
 
   test_result <- t.test(first_sellers, non_first_sellers)
 
@@ -110,15 +104,11 @@ run_single_t_test <- function(data, trait) {
 # Create combined table for output
 # =====
 create_combined_table <- function(summary_stats, t_test_results) {
-  traits <- c(
-    "extraversion", "agreeableness", "conscientiousness",
-    "neuroticism", "openness", "impulsivity", "state_anxiety"
-  )
-  fs_stats <- summary_stats %>% filter(is_first_seller == 1)
-  nfs_stats <- summary_stats %>% filter(is_first_seller == 0)
+  fs_stats <- summary_stats %>% filter(is_ever_first_seller)
+  nfs_stats <- summary_stats %>% filter(!is_ever_first_seller)
 
-  map_dfr(traits, function(trait) {
-    build_trait_row(trait_name = trait, fs_stats, nfs_stats, t_test_results)
+  map_dfr(TRAITS, function(trait) {
+    build_trait_row(trait, fs_stats, nfs_stats, t_test_results)
   })
 }
 
@@ -139,6 +129,9 @@ build_trait_row <- function(trait_name, fs_stats, nfs_stats, t_test_results) {
   )
 }
 
+# =====
+# Formatting helpers
+# =====
 format_trait_name <- function(trait) {
   trait %>%
     str_replace_all("_", " ") %>%
@@ -171,7 +164,6 @@ print_results <- function(combined_table) {
 # Write LaTeX table
 # =====
 write_latex_table <- function(combined_table) {
-  # Ensure output directory exists
   dir.create(dirname(OUTPUT_PATH), showWarnings = FALSE, recursive = TRUE)
 
   latex_content <- generate_latex_content(combined_table)
@@ -190,8 +182,9 @@ generate_latex_content <- function(combined_table) {
   rows <- format_latex_rows(combined_table)
   footer <- c(
     "\\bottomrule", "\\end{tabular}", "\\par", "\\vspace{2pt}",
-    "{\\footnotesize \\textit{Note:} Mean (SD). Two-sample $t$-tests.}\\\\",
-    "{\\footnotesize ***: $p<0.01$, **: $p<0.05$, *: $p<0.1$}",
+    paste0("{\\footnotesize \\textit{Note:} N = 95 individuals. ",
+           "First Seller = sold first 1+ times across all rounds.}\\\\"),
+    "{\\footnotesize Mean (SD). Two-sample $t$-tests. ***: $p<0.01$, **: $p<0.05$, *: $p<0.1$}",
     "\\endgroup"
   )
   paste(c(header, rows, footer), collapse = "\n")
@@ -206,7 +199,7 @@ format_latex_rows <- function(combined_table) {
   }, character(1))
 }
 
-# =====
-# Run
-# =====
-results <- main()
+# %%
+if (sys.nframe() == 0) {
+  main()
+}
