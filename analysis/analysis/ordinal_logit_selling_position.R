@@ -200,8 +200,8 @@ header_column_block <- function() {
 
 build_header <- function() {
   col_block <- header_column_block()
-  c("", "\\begingroup", "\\centering", "\\tiny",
-    "\\renewcommand{\\arraystretch}{0.75}",
+  c("", "\\begingroup", "\\centering", "\\scriptsize",
+    "\\renewcommand{\\arraystretch}{0.85}",
     "\\setlength{\\tabcolsep}{2pt}",
     "\\begin{tabular}{@{}lcc@{}}",
     col_block)

@@ -125,18 +125,27 @@ print_results <- function(model) {
 }
 
 export_latex_table <- function(model) {
+  var_labels <- c(
+    sold_next_round = "Sold next round",
+    round_payoff_factor = "Payoff",
+    prior_sales = "Prior sales",
+    global_group_id = "Group",
+    global_round = "Round"
+  )
   etable(
     model,
     file = OUTPUT_TEX,
     float = FALSE,
     tex = TRUE,
+    dict = var_labels,
     style.tex = style.tex(
-      fontsize = "tiny",
-      arraystretch = 0.75
+      fontsize = "scriptsize",
+      arraystretch = 0.85
     ),
     postprocess.tex = function(x) {
       x <- sub("\\\\begingroup", "\\\\begingroup\n\\\\setlength{\\\\tabcolsep}{2pt}", x)
-      sub("\\{lc\\}", "{@{}lc@{}}", x)
+      x <- sub("\\{lc\\}", "{@{}lc@{}}", x)
+      gsub("\\\\multicolumn\\{2\\}\\{l\\}", "\\\\multicolumn{2}{@{}p{\\\\linewidth}@{}}", x)
     }
   )
   cat("\nLaTeX table exported to:", OUTPUT_TEX, "\n")
