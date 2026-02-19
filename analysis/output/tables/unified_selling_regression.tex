@@ -1,43 +1,66 @@
 
-\begingroup
-\tiny
-\renewcommand{\arraystretch}{0.75}
-\begin{longtable}{l*{3}{>{\centering\arraybackslash}p{3.2cm}}}
-\caption{Determinants of selling probability} \label{tab:unified_selling_regression} \\
+\begin{table}[H]
+\singlespacing
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{0.85}
+\caption{Determinants of selling probability}
+\label{tab:unified_selling_regression}
+\centering
+\begin{minipage}[t]{0.54\linewidth}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3.5cm}*{3}{>{\centering\arraybackslash}p{1.4cm}}}
+\multicolumn{4}{@{}l}{\emph{Panel A: All Participants}} \\
    \midrule \midrule
    & (1) & (2) & (3) \\
-   & Random Effects & Individual FE & Random Effects \\
+   & RE & Indiv. FE & RE \\
    \midrule
-\endfirsthead
-\endlastfoot
-\multicolumn{4}{l}{\emph{Panel A: All Participants}} \\
-   \midrule
-   Exactly 1 prior sale      & 0.0013 & 0.0012 & 0.0017 \\
-                             & (0.0052) & (0.0085) & (0.0052) \\
-   Exactly 2 prior sales     & -0.0335$^{***}$ & -0.0339$^{***}$ & -0.0333$^{***}$ \\
-                             & (0.0085) & (0.0114) & (0.0085) \\
-   Exactly 3 prior sales     & -0.0866$^{***}$ & -0.0870$^{***}$ & -0.0872$^{***}$ \\
-                             & (0.0149) & (0.0142) & (0.0148) \\
+   1 prior sale              & -0.0105$^{*}$ & -0.0109 & -0.0101 \\
+                             & (0.0063) & (0.0107) & (0.0063) \\
+   2 prior sales             & -0.0594$^{***}$ & -0.0603$^{***}$ & -0.0596$^{***}$ \\
+                             & (0.0102) & (0.0114) & (0.0101) \\
+   3 prior sales             & -0.0923$^{***}$ & -0.0934$^{***}$ & -0.0934$^{***}$ \\
+                             & (0.0170) & (0.0172) & (0.0169) \\
+   \emph{Cumulative $\times$ prev.-period interactions} & & & \\
+   1 prior $\times$ 1 prev.  & 0.0281$^{***}$ & 0.0284$^{**}$ & 0.0280$^{***}$ \\
+                             & (0.0092) & (0.0139) & (0.0092) \\
+   2 prior $\times$ 1 prev.  & 0.0651$^{***}$ & 0.0649$^{***}$ & 0.0655$^{***}$ \\
+                             & (0.0185) & (0.0243) & (0.0184) \\
+   2 prior $\times$ 2 prev.  & 0.0735$^{***}$ & 0.0760$^{**}$ & 0.0753$^{***}$ \\
+                             & (0.0227) & (0.0304) & (0.0226) \\
+   3 prior $\times$ 1 prev.  & -0.0200 & -0.0185 & -0.0181 \\
+                             & (0.0460) & (0.0158) & (0.0457) \\
+   3 prior $\times$ 2 prev.  & -0.0056 & -0.0031 & -0.0047 \\
+                             & (0.0557) & (0.0139) & (0.0554) \\
+   3 prior $\times$ 3 prev.  & 0.0723 & 0.0766 & 0.0752 \\
+                             & (0.0576) & (0.0582) & (0.0572) \\
    \emph{Facial emotions} & & & \\
-   Fear                      &  & -0.0012 &  \\
+   Fear                      &  & -0.0011 &  \\
                              &  & (0.0012) &  \\
    Anger                     &  & -0.0010$^{*}$ &  \\
                              &  & (0.0005) &  \\
    \emph{Personality traits} & & & \\
-   State anxiety             &  &  & 0.0280$^{***}$ \\
+   State anxiety             &  &  & 0.0282$^{***}$ \\
                              &  &  & (0.0065) \\
-   Impulsivity               &  &  & 0.0083 \\
+   Impulsivity               &  &  & 0.0082 \\
                              &  &  & (0.0051) \\
    Conscientiousness         &  &  & 0.0207$^{***}$ \\
                              &  &  & (0.0042) \\
-   Treatment 2               & 0.0225$^{***}$ &  & 0.0103 \\
+   Treatment 2               & 0.0226$^{***}$ &  & 0.0104 \\
                              & (0.0067) &  & (0.0069) \\
    \midrule
    \emph{Fit statistics} & & & \\
    Observations  & 13,713 & 13,713 & 13,590 \\
-   R$^2$  & 0.0488 & 0.0469 & 0.0518 \\
+   R$^2$  & 0.0509 & 0.0491 & 0.0540 \\
    \midrule
-\multicolumn{4}{l}{\emph{Panel B: Second Sellers}} \\
+\end{tabular}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.44\linewidth}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{2.3cm}*{3}{>{\centering\arraybackslash}p{1.3cm}}}
+\multicolumn{4}{@{}l}{\emph{Panel B: Second Sellers}} \\
+   \midrule \midrule
+   & (1) & (2) & (3) \\
+   & RE & Indiv. FE & RE \\
    \midrule
    Sale in previous period   & 0.3145$^{***}$ & 0.2371$^{***}$ & 0.3015$^{***}$ \\
                              & (0.0356) & (0.0730) & (0.0358) \\
@@ -60,7 +83,13 @@
    Observations  & 622 & 622 & 619 \\
    R$^2$  & 0.2524 & 0.3367 & 0.2633 \\
    \midrule
-\multicolumn{4}{l}{\emph{Panel C: First Sellers}} \\
+\end{tabular}
+\vspace{0.5em}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{2.3cm}*{3}{>{\centering\arraybackslash}p{1.3cm}}}
+\multicolumn{4}{@{}l}{\emph{Panel C: First Sellers}} \\
+   \midrule \midrule
+   & (1) & (2) & (3) \\
+   & RE & Indiv. FE & RE \\
    \midrule
    \emph{Facial emotions} & & & \\
    Fear                      &  & 0.0035 &  \\
@@ -81,9 +110,13 @@
    Observations  & 1,218 & 1,217 & 1,183 \\
    R$^2$  & 0.2214 & 0.3359 & 0.2375 \\
    \midrule
-   \multicolumn{4}{l}{\emph{Controls: signal, period, round, segment indicators, age, gender. Full results in Appendix Table \ref{tab:unified_selling_regression_full}.}} \\
-   \multicolumn{4}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}} \\
-\end{longtable}
-\endgroup
+\end{tabular}
+\end{minipage}
+
+\vspace{0.5em}
+\footnotesize \emph{Controls: signal, period, round, segment indicators, age, gender. Additional emotion controls (contempt, disgust, joy, sadness, surprise, engagement, valence) and personality traits (extraversion, agreeableness, neuroticism, openness) included but not displayed. Full results in Appendix Table~\ref{tab:unified_selling_regression_full}.}
+
+\footnotesize \emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}
+\end{table}
 
 
