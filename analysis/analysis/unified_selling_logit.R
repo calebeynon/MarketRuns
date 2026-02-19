@@ -41,8 +41,8 @@ main <- function() {
   panel_b <- run_logit_panel_b(df_em, df_full)
   panel_c <- run_logit_panel_c(df_em)
 
-  build_unified_table(panel_a, panel_b, panel_c, compact = TRUE)
-  build_unified_table(panel_a, panel_b, panel_c, compact = FALSE)
+  build_unified_table(panel_a, panel_c, panel_b, compact = TRUE)
+  build_unified_table(panel_a, panel_c, panel_b, compact = FALSE)
   cat("Done.\n")
 }
 
@@ -135,8 +135,8 @@ build_unified_table <- function(pa, pb, pc, compact) {
   lines <- c(build_preamble(tbl$caption, tbl$label, compact),
     build_col_header(compact),
     build_panel("Panel A: All Participants", pa, v$a),
-    build_panel("Panel B: Second Sellers", pb, v$b),
-    build_panel("Panel C: First Sellers", pc, v$c),
+    build_panel("Panel B: First Sellers", pb, v$b),
+    build_panel("Panel C: Second Sellers", pc, v$c),
     if (compact) build_footer_compact() else build_footer_full())
   write_table(lines, tbl$path)
 }
@@ -146,11 +146,11 @@ get_panel_vars <- function(compact) {
   int_vars <- c(INTERACTION_HEADER, INTERACTION_VARS)
   panel_a <- c(cascade, int_vars, PERSON_VARS)
   if (compact) return(list(a = panel_a,
-                           b = c("dummy_prev_period", PERSON_VARS),
-                           c = PERSON_VARS))
+                           b = PERSON_VARS,
+                           c = c("dummy_prev_period", PERSON_VARS)))
   list(a = c(panel_a, CONTROLS),
-       b = c("dummy_prev_period", PERSON_VARS, CONTROLS),
-       c = c(PERSON_VARS, CONTROLS))
+       b = c(ALL_PERSON_VARS, CONTROLS),
+       c = c("dummy_prev_period", ALL_PERSON_VARS, CONTROLS))
 }
 
 get_table_config <- function(compact) {

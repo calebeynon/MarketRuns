@@ -12,9 +12,9 @@ build_landscape_table <- function(panel_a, panel_b, panel_c) {
   tbl <- get_table_config(compact = TRUE)
   left <- build_col_panel("Panel A: All Participants",
                           panel_a, vars$a, wide = TRUE)
-  right_b <- build_col_panel("Panel B: Second Sellers",
+  right_b <- build_col_panel("Panel B: First Sellers",
                              panel_b, vars$b, wide = FALSE)
-  right_c <- build_col_panel("Panel C: First Sellers",
+  right_c <- build_col_panel("Panel C: Second Sellers",
                              panel_c, vars$c, wide = FALSE)
   lines <- build_twocol_wrapper(tbl, left, right_b, right_c)
   write_table(lines, tbl$path)

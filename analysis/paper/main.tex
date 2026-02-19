@@ -192,66 +192,51 @@ Our post-study survey questions consist of the six-item form of the state scale 
 
 \subsection{Summary Statistics}
 
-Table~\ref{tab:summary_demographics} summarizes the subject pool. We recruited 96 subjects across 6 sessions (3 per treatment), with balanced demographics across treatments. Table~\ref{tab:summary_traits} reports personality trait measures by treatment; only conscientiousness differs significantly between treatments ($p<0.05$), while the remaining traits are well balanced. Table~\ref{tab:summary_market_outcomes} compares market outcomes across the no-chat (Segments 1--2) and chat (Segments 3--4) conditions. 
+Table~\ref{tab:summary_demographics_traits} summarizes the subject pool. We recruited 96 subjects across 6 sessions (3 per treatment), with balanced demographics and personality traits across treatments; only conscientiousness differs significantly between treatments ($p<0.05$), while the remaining traits are well balanced. Table~\ref{tab:summary_sell_rates} compares average sell rates across treatment and chat conditions.
 
 \begin{table}[H]
   \centering
-  \caption{Subject pool and demographics}
-  \label{tab:summary_demographics}
-  \input{summary_demographics}
+  \caption{Subject pool demographics and personality traits}
+  \label{tab:summary_demographics_traits}
+  \input{summary_demographics_traits}
 \end{table}
 
 \begin{table}[H]
   \centering
-  \caption{Personality traits by treatment}
-  \label{tab:summary_traits}
-  \input{summary_traits}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Market outcomes by chat condition}
-  \label{tab:summary_market_outcomes}
-  \input{summary_market_outcomes}
+  \caption{Average sell rates by treatment and chat condition}
+  \label{tab:summary_sell_rates}
+  \input{summary_sell_rates}
 \end{table}
 
 \subsection{Personality Traits and First Sellers}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\linewidth]{first_seller_trait_ci_diff.pdf}
-  \caption{Difference in mean trait scores between first sellers and non-first sellers with 95\% confidence intervals. First seller defined as selling first at least once across all rounds (83 first sellers, 12 non-first sellers).}
-  \label{fig:first_seller_trait_ci_diff}
+  \includegraphics[width=0.8\linewidth]{first_seller_trait_robustness.pdf}
+  \caption{Mean trait scores with 95\% confidence intervals by first-seller frequency (0 times, 1--2 times, 3+ times). N = 95 individuals.}
+  \label{fig:first_seller_trait_robustness}
 \end{figure}
-
-\begin{table}[H]
-  \centering
-  \caption{Personality trait comparisons between first sellers and non-first sellers (individual-level, N = 95)}
-  \label{tab:first_seller_trait_comparisons}
-  \input{first_seller_trait_comparisons}
-\end{table}
 
 \subsection{Determinants of Selling Behavior}
 
 \clearpage
+% Ordinal logit table (standalone)
+\begin{table}[H]
+  \centering
+  \caption{Ordinal logit: selling position within group-round}
+  \label{tab:ordinal_logit_selling_position}
+  \input{ordinal_logit_selling_position}
+\end{table}
+
 % Unified selling regression (two-column layout)
 \input{unified_selling_regression}
 
-% Ordinal logit + holdout tables side by side
+% Holdout liquidation regression (standalone)
 \begin{table}[H]
-\begin{minipage}[t]{0.50\textwidth}
   \centering
-  \captionof{table}{Ordinal logit: selling position within group-round}
-  \label{tab:ordinal_logit_selling_position}
-  \resizebox{\linewidth}{!}{\input{ordinal_logit_selling_position}}
-\end{minipage}%
-\hfill
-\begin{minipage}[t]{0.47\textwidth}
-  \centering
-  \captionof{table}{Effect of holdout liquidation payoff on next-round selling}
+  \caption{Effect of holdout liquidation payoff on next-round selling}
   \label{tab:holdout_liquidation_regression}
-  \resizebox{\linewidth}{!}{\input{holdout_liquidation_regression}}
-\end{minipage}
+  \input{holdout_liquidation_regression}
 \end{table}
 
 \begin{figure}[H]
@@ -333,18 +318,29 @@ Table~\ref{tab:summary_demographics} summarizes the subject pool. We recruited 9
 
 \newpage
 
-\section*{Appendix D. Personality Traits by First-Seller Frequency}
+\section*{Appendix D. First Seller vs.\ Non-First Seller Trait Differences}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\linewidth]{first_seller_trait_robustness.pdf}
-  \caption{Mean trait scores with 95\% confidence intervals by first-seller frequency (0 times, 1--2 times, 3+ times). N = 95 individuals.}
-  \label{fig:first_seller_trait_robustness}
+  \includegraphics[width=0.8\linewidth]{first_seller_trait_ci_diff.pdf}
+  \caption{Difference in mean trait scores between first sellers and non-first sellers with 95\% confidence intervals. First seller defined as selling first at least once across all rounds (83 first sellers, 12 non-first sellers).}
+  \label{fig:first_seller_trait_ci_diff}
 \end{figure}
 
 \newpage
 
-\section*{Appendix E. Instructions}
+\section*{Appendix E. First Seller Trait Comparisons}
+
+\begin{table}[H]
+  \centering
+  \caption{Personality trait comparisons between first sellers and non-first sellers (individual-level, N = 95)}
+  \label{tab:first_seller_trait_comparisons}
+  \input{first_seller_trait_comparisons}
+\end{table}
+
+\newpage
+
+\section*{Appendix F. Instructions}
 
 
 
