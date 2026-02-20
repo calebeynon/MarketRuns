@@ -5,7 +5,7 @@
 #
 # Outputs 2 LaTeX tables to analysis/output/tables/:
 #   summary_demographics_traits.tex — demographics + personality traits by treatment
-#   summary_sell_rates.tex — sell rates by treatment x chat x state
+#   summary_sell_rates.tex — sell rates, avg sell period, avg sell price by treatment x chat x state
 
 library(tidyverse)
 
@@ -102,35 +102,46 @@ wrap_combined_latex <- function(demo_rows, trait_rows) {
 }
 
 # =====
-# Table 2: Sell rates by treatment x chat x state
+# Table 2: Sell rates, avg sell period, avg sell price
 # =====
 write_sell_rate_table <- function(panel) {
   panel <- panel %>%
     mutate(chat = if_else(segment %in% CHAT_SEGMENTS, "Chat", "No Chat"))
-  rows <- c(
-    build_sell_rate_row("Sell rate (\\%)", panel),
-    build_sell_rate_row("\\quad Good state", panel %>% filter(state == 1)),
-    build_sell_rate_row("\\quad Bad state", panel %>% filter(state == 0))
-  )
+  sellers <- panel %>% filter(did_sell == 1)
+  sell_rate_rows <- build_stat_block("Sell rate (\\%)", panel, stat_sell_rate)
+  period_rows <- build_stat_block("Avg sell period", sellers, stat_avg_sell_period)
+  price_rows <- build_stat_block("Avg sell price", sellers, stat_avg_sell_price)
+  rows <- c(sell_rate_rows, "\\midrule", period_rows, "\\midrule", price_rows)
   latex <- wrap_sell_rate_latex(rows)
   write_table(latex, "summary_sell_rates.tex")
 }
 
-build_sell_rate_row <- function(label, data) {
-  vals <- calc_sell_rates_by_group(data)
+stat_sell_rate <- function(data) sprintf("%.1f", 100 * mean(data$did_sell))
+stat_avg_sell_period <- function(data) sprintf("%.1f", mean(data$sell_period))
+stat_avg_sell_price <- function(data) sprintf("%.1f", mean(data$sell_price))
+
+build_stat_block <- function(label, data, stat_fn) {
+  c(
+    build_stat_row(label, data, stat_fn),
+    build_stat_row("\\quad Good state", data %>% filter(state == 1), stat_fn),
+    build_stat_row("\\quad Bad state", data %>% filter(state == 0), stat_fn)
+  )
+}
+
+build_stat_row <- function(label, data, stat_fn) {
+  vals <- calc_stat_by_group(data, stat_fn)
   sprintf("  %s & %s & %s & %s & %s \\\\",
           label, vals[1], vals[2], vals[3], vals[4])
 }
 
-calc_sell_rates_by_group <- function(data) {
-  # Returns sell rates for: tr1 no chat, tr1 chat, tr2 no chat, tr2 chat
+calc_stat_by_group <- function(data, stat_fn) {
   combos <- tibble(
     treatment = c("tr1", "tr1", "tr2", "tr2"),
     chat = c("No Chat", "Chat", "No Chat", "Chat")
   )
   pmap_chr(combos, function(treatment, chat) {
     subset <- data %>% filter(.data$treatment == .env$treatment, .data$chat == .env$chat)
-    sprintf("%.1f", 100 * mean(subset$did_sell))
+    stat_fn(subset)
   })
 }
 
