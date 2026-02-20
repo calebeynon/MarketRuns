@@ -22,11 +22,13 @@ OUTPUT_DIR <- "analysis/output/tables"
 # =====
 TRAITS <- c(
   "extraversion", "agreeableness", "conscientiousness",
-  "neuroticism", "openness", "impulsivity", "state_anxiety"
+  "neuroticism", "openness", "impulsivity", "state_anxiety",
+  "risky_investment"
 )
 TRAIT_LABELS <- c(
   "Extraversion", "Agreeableness", "Conscientiousness",
-  "Neuroticism", "Openness", "Impulsivity", "State Anxiety"
+  "Neuroticism", "Openness", "Impulsivity", "State Anxiety",
+  "Risky Investment"
 )
 NO_CHAT_SEGMENTS <- c(1, 2)
 CHAT_SEGMENTS <- c(3, 4)
