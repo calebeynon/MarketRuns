@@ -72,7 +72,7 @@ run_logit_panel_a_m3 <- function(df) {
       int_1_1 + int_2_1 + int_2_2 + int_3_1 + int_3_2 + int_3_3 +
       state_anxiety + impulsivity + conscientiousness +
       extraversion + agreeableness + neuroticism + openness +
-      age + gender_female +
+      risk_tolerance + age + gender_female +
       signal + period + round + segment + treatment +
       (1 | player_id),
     family = binomial,

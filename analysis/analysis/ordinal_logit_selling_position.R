@@ -19,13 +19,13 @@ CONTINUOUS_VARS <- c("state_anxiety", "impulsivity", "conscientiousness",
                      "extraversion", "agreeableness", "neuroticism", "openness",
                      "contempt_p95", "disgust_p95", "joy_p95", "sadness_p95",
                      "surprise_p95", "engagement_p95", "valence_p95",
-                     "age", "round")
+                     "risk_tolerance", "age", "round")
 EMOTION_COLS <- c("fear_p95", "anger_p95", "contempt_p95", "disgust_p95",
                   "joy_p95", "sadness_p95", "surprise_p95",
                   "engagement_p95", "valence_p95")
 ALL_PREDICTORS <- c("state_anxiety", "impulsivity", "conscientiousness",
                     EMOTION_COLS, "extraversion", "agreeableness",
-                    "neuroticism", "openness",
+                    "neuroticism", "openness", "risk_tolerance",
                     "age", "gender_female",
                     "segment2", "segment3", "segment4", "round")
 
@@ -40,13 +40,14 @@ VAR_DICT <- c(
   valence_p95 = "Valence (p95)",
   extraversion = "Extraversion", agreeableness = "Agreeableness",
   neuroticism = "Neuroticism", openness = "Openness",
+  risk_tolerance = "Risk tolerance",
   age = "Age", gender_female = "Female",
   segment2 = "Segment 2", segment3 = "Segment 3",
   segment4 = "Segment 4", round = "Round"
 )
 
 # Ordered variable groups for display
-KEY_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness")
+KEY_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness", "risk_tolerance")
 OTHER_TRAITS <- c("extraversion", "agreeableness", "neuroticism", "openness")
 CONTROLS <- c("age", "gender_female", "segment2", "segment3",
               "segment4", "round")

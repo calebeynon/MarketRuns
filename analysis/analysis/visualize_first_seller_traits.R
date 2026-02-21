@@ -16,7 +16,8 @@ OUTPUT_ROBUSTNESS <- file.path(OUTPUT_DIR, "first_seller_trait_robustness.pdf")
 
 TRAITS <- c(
   "extraversion", "agreeableness", "conscientiousness",
-  "neuroticism", "openness", "impulsivity", "state_anxiety"
+  "neuroticism", "openness", "impulsivity", "state_anxiety",
+  "risk_tolerance"
 )
 
 GROUP_PALETTE <- c(
@@ -40,7 +41,7 @@ main <- function() {
   cat("Creating robustness plot...\n")
   group_dt <- compute_group_means(individual)
   p_robust <- create_robustness_plot(group_dt)
-  save_plot(p_robust, OUTPUT_ROBUSTNESS, width = 10, height = 6)
+  save_plot(p_robust, OUTPUT_ROBUSTNESS, width = 10, height = 8)
 
   cat("All plots saved to:", OUTPUT_DIR, "\n")
 }
@@ -166,7 +167,7 @@ create_robustness_plot <- function(group_dt) {
       aes(xmin = ci_lower, xmax = ci_upper),
       size = 0.5, fatten = 3
     ) +
-    facet_wrap(~trait_label) +
+    facet_wrap(~trait_label, ncol = 3) +
     scale_color_manual(values = GROUP_PALETTE, name = "Times First Seller") +
     labs(x = "Mean Score", y = NULL) +
     theme_minimal() +

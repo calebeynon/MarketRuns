@@ -4,7 +4,7 @@
 
 # VARIABLE LISTS
 SHOW_EMOTIONS <- c("fear_mean", "anger_mean")
-SHOW_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness")
+SHOW_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness", "risk_tolerance")
 HIDE_EMOTIONS <- c("contempt_mean", "disgust_mean", "joy_mean", "sadness_mean",
                    "surprise_mean", "engagement_mean", "valence_mean")
 HIDE_TRAITS <- c("extraversion", "agreeableness", "neuroticism", "openness")
@@ -30,6 +30,7 @@ VAR_LABELS <- c(
   valence_mean = "Valence",
   state_anxiety = "State anxiety", impulsivity = "Impulsivity",
   conscientiousness = "Conscientiousness",
+  risk_tolerance = "Risk tolerance",
   extraversion = "Extraversion", agreeableness = "Agreeableness",
   neuroticism = "Neuroticism", openness = "Openness",
   age = "Age", gender_female = "Female",

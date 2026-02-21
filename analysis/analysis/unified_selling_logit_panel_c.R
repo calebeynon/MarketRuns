@@ -51,7 +51,8 @@ run_logit_panel_c_m2 <- function(df_first) {
 run_logit_panel_c_m3 <- function(df_first) {
   glmer(
     sold ~ state_anxiety + impulsivity + conscientiousness + extraversion +
-      agreeableness + neuroticism + openness + age + gender_female +
+      agreeableness + neuroticism + openness + risk_tolerance +
+      age + gender_female +
       signal + period + round + segment + treatment + (1 | player_id),
     family = binomial,
     data = df_first,

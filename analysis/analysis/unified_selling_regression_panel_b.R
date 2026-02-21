@@ -76,7 +76,7 @@ run_panel_b_m3 <- function(df_second) {
   plm(sold ~ dummy_prev_period +
       state_anxiety + impulsivity + conscientiousness +
       extraversion + agreeableness + neuroticism + openness +
-      age + gender_female +
+      risk_tolerance + age + gender_female +
       signal + period + round + segment + treatment,
       data = pdata, model = "random")
 }

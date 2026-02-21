@@ -87,7 +87,8 @@ print_first_seller_distribution <- function(dt) {
 print_trait_summary <- function(dt) {
   trait_vars <- c(
     "extraversion", "agreeableness", "conscientiousness",
-    "neuroticism", "openness", "impulsivity", "state_anxiety"
+    "neuroticism", "openness", "impulsivity", "state_anxiety",
+    "risk_tolerance"
   )
   cat("\nTrait variable means:\n")
   for (var in trait_vars) {
@@ -108,7 +109,7 @@ run_lpm_regression <- function(dt) {
   model <- feols(
     is_first_seller ~ extraversion + agreeableness + conscientiousness +
       neuroticism + openness + impulsivity + state_anxiety +
-      public_signal + segment + age + gender_female | session_id,
+      risk_tolerance + public_signal + segment + age + gender_female | session_id,
     cluster = ~global_group_id,
     data = dt
   )
