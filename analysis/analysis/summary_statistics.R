@@ -29,6 +29,11 @@ TRAIT_LABELS <- c(
   "Neuroticism", "Openness", "Impulsivity", "State Anxiety",
   "Risk Tolerance"
 )
+TRAIT_RANGES <- c(
+  "[1,7]", "[1,7]", "[1,7]",
+  "[1,7]", "[1,7]", "[1,7]", "[1,4]",
+  "[0,20]"
+)
 NO_CHAT_SEGMENTS <- c(1, 2)
 CHAT_SEGMENTS <- c(3, 4)
 
@@ -56,10 +61,13 @@ write_combined_demographics_traits_table <- function(panel, survey) {
   demo_rows <- c(
     build_demo_row("$N$ (subjects)", panel, count_subjects),
     build_demo_row("$N$ (sessions)", panel, count_sessions),
-    build_demo_row("Age$^\\dagger$", survey, summarise_age),
-    build_demo_row("Female (\\%)$^\\dagger$", survey, pct_female)
+    build_demo_row("Age", survey, summarise_age),
+    build_demo_row("Female (\\%)", survey, pct_female)
   )
-  trait_rows <- map2_chr(TRAITS, TRAIT_LABELS, ~build_trait_row(survey, .x, .y))
+  trait_rows <- pmap_chr(
+    list(TRAITS, TRAIT_LABELS, TRAIT_RANGES),
+    ~build_trait_row(survey, ..1, ..2, ..3)
+  )
   latex <- wrap_combined_latex(demo_rows, trait_rows)
   write_table(latex, "summary_demographics_traits.tex")
 }
@@ -75,30 +83,30 @@ build_demo_row <- function(label, data, fn) {
   full <- fn(data)
   tr1 <- fn(data %>% filter(treatment == "tr1"))
   tr2 <- fn(data %>% filter(treatment == "tr2"))
-  sprintf("  %s & %s & %s & %s \\\\", label, full, tr1, tr2)
+  sprintf("  %s & & %s & %s & %s \\\\", label, full, tr1, tr2)
 }
 
-build_trait_row <- function(survey, trait, label) {
+build_trait_row <- function(survey, trait, label, range) {
   full <- format_mean_sd(mean(survey[[trait]]), sd(survey[[trait]]))
   tr1_vals <- survey %>% filter(treatment == "tr1") %>% pull(!!sym(trait))
   tr2_vals <- survey %>% filter(treatment == "tr2") %>% pull(!!sym(trait))
   tr1 <- format_mean_sd(mean(tr1_vals), sd(tr1_vals))
   tr2 <- format_mean_sd(mean(tr2_vals), sd(tr2_vals))
-  sprintf("  %s & %s & %s & %s \\\\", label, full, tr1, tr2)
+  sprintf("  %s & %s & %s & %s & %s \\\\", label, range, full, tr1, tr2)
 }
 
 wrap_combined_latex <- function(demo_rows, trait_rows) {
   c(
     "\\begingroup", "\\centering", "\\small",
-    "\\begin{tabular}{lccc}", "\\toprule",
-    " & Full Sample & Treatment 1 & Treatment 2 \\\\",
+    "\\begin{tabular}{lcccc}", "\\toprule",
+    " & Range & Full Sample & Treatment 1 & Treatment 2 \\\\",
     "\\midrule",
     demo_rows,
     "\\midrule",
     trait_rows,
     "\\bottomrule", "\\end{tabular}", "\\par", "\\vspace{2pt}",
-    "{\\footnotesize \\textit{Note:} Trait values reported as Mean (SD).}\\\\",
-    "{\\footnotesize $^\\dagger$Based on 95 survey respondents; one survey response was lost due to data corruption.}",
+    "{\\footnotesize \\textit{Note:} Trait values reported as Mean (SD). Ranges of possible values are in brackets.}\\\\",
+    "{\\footnotesize Based on 95 survey respondents; one survey response from Treatment 2 was lost due to data corruption.}",
     "\\endgroup"
   ) %>% paste(collapse = "\n")
 }
