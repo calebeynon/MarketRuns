@@ -24,8 +24,14 @@ VAR_LABELS <- c(
   int_3_3 = "3 prior $\\times$ 3 prev.",
   dummy_prev_period = "Sale in previous period",
   fear_mean = "Fear", anger_mean = "Anger",
+  contempt_mean = "Contempt", disgust_mean = "Disgust",
+  joy_mean = "Joy", sadness_mean = "Sadness",
+  surprise_mean = "Surprise", engagement_mean = "Engagement",
+  valence_mean = "Valence",
   state_anxiety = "State anxiety", impulsivity = "Impulsivity",
   conscientiousness = "Conscientiousness",
+  extraversion = "Extraversion", agreeableness = "Agreeableness",
+  neuroticism = "Neuroticism", openness = "Openness",
   age = "Age", gender_female = "Female",
   signal = "Signal", period = "Period", round = "Round",
   segment2 = "Segment 2", segment3 = "Segment 3", segment4 = "Segment 4",
@@ -40,6 +46,8 @@ INTERACTION_VARS <- c("int_1_1", "int_2_1", "int_2_2",
                        "int_3_1", "int_3_2", "int_3_3")
 PERSON_VARS <- c(EMOTION_HEADER, SHOW_EMOTIONS,
                  TRAIT_HEADER, SHOW_TRAITS, "treatmenttr2")
+ALL_PERSON_VARS <- c(EMOTION_HEADER, ALL_EMOTIONS,
+                     TRAIT_HEADER, ALL_TRAITS, "treatmenttr2")
 
 # =====
 # Previous-period dummy construction

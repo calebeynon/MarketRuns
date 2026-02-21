@@ -1,8 +1,9 @@
 # Purpose: Ordinal logit regressions for selling position (rank 1-4)
 #          Model 1: Full sample, clm (non-sellers = rank 4, no random effects)
 #          Model 2: Sellers only, clmm (did_sell == 1, player random effects)
+#          Output: Two-column minipage AME table with all controls displayed
 # Author: Claude Code
-# Date: 2026-02-10
+# Date: 2026-02-19
 
 library(data.table)
 library(ordinal)
@@ -13,14 +14,6 @@ INPUT_PATH <- "datastore/derived/ordinal_selling_position.csv"
 OUTPUT_PATH <- "analysis/output/tables/ordinal_logit_selling_position.tex"
 
 # VARIABLE LISTS
-SHOW_VARS <- c("state_anxiety", "impulsivity", "conscientiousness",
-               "fear_p95", "anger_p95")
-HIDE_VARS <- c("extraversion", "agreeableness", "neuroticism", "openness",
-               "contempt_p95", "disgust_p95", "joy_p95", "sadness_p95",
-               "surprise_p95", "engagement_p95", "valence_p95",
-               "age", "gender_female",
-               "segment2", "segment3", "segment4", "round")
-ALL_PREDICTORS <- c(SHOW_VARS, HIDE_VARS)
 CONTINUOUS_VARS <- c("state_anxiety", "impulsivity", "conscientiousness",
                      "fear_p95", "anger_p95",
                      "extraversion", "agreeableness", "neuroticism", "openness",
@@ -30,9 +23,33 @@ CONTINUOUS_VARS <- c("state_anxiety", "impulsivity", "conscientiousness",
 EMOTION_COLS <- c("fear_p95", "anger_p95", "contempt_p95", "disgust_p95",
                   "joy_p95", "sadness_p95", "surprise_p95",
                   "engagement_p95", "valence_p95")
-VAR_DICT <- c(state_anxiety = "State anxiety", impulsivity = "Impulsivity",
-              conscientiousness = "Conscientiousness",
-              fear_p95 = "Fear (p95)", anger_p95 = "Anger (p95)")
+ALL_PREDICTORS <- c("state_anxiety", "impulsivity", "conscientiousness",
+                    EMOTION_COLS, "extraversion", "agreeableness",
+                    "neuroticism", "openness",
+                    "age", "gender_female",
+                    "segment2", "segment3", "segment4", "round")
+
+# Display labels for all predictors
+VAR_DICT <- c(
+  state_anxiety = "State anxiety", impulsivity = "Impulsivity",
+  conscientiousness = "Conscientiousness",
+  fear_p95 = "Fear (p95)", anger_p95 = "Anger (p95)",
+  contempt_p95 = "Contempt (p95)", disgust_p95 = "Disgust (p95)",
+  joy_p95 = "Joy (p95)", sadness_p95 = "Sadness (p95)",
+  surprise_p95 = "Surprise (p95)", engagement_p95 = "Engagement (p95)",
+  valence_p95 = "Valence (p95)",
+  extraversion = "Extraversion", agreeableness = "Agreeableness",
+  neuroticism = "Neuroticism", openness = "Openness",
+  age = "Age", gender_female = "Female",
+  segment2 = "Segment 2", segment3 = "Segment 3",
+  segment4 = "Segment 4", round = "Round"
+)
+
+# Ordered variable groups for display
+KEY_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness")
+OTHER_TRAITS <- c("extraversion", "agreeableness", "neuroticism", "openness")
+CONTROLS <- c("age", "gender_female", "segment2", "segment3",
+              "segment4", "round")
 
 # =====
 # Main function (FIRST - shows high-level flow)
@@ -41,26 +58,19 @@ main <- function() {
   cat("Loading data from:", INPUT_PATH, "\n")
   df <- load_and_prepare(INPUT_PATH)
 
-  cat("\n=== Sell rank frequencies (full sample) ===\n")
-  print(table(df$sell_rank))
-
   cat("\n--- Fitting Model 1: Full Sample (clm, no RE) ---\n")
   model1 <- fit_clm(df, "Full Sample")
 
   df_sellers <- df[did_sell == 1]
-  cat("\n=== Sell rank frequencies (sellers only) ===\n")
-  print(table(df_sellers$sell_rank))
-
   cat("\n--- Fitting Model 2: Sellers Only (clmm, player RE) ---\n")
   model2 <- fit_clmm(df_sellers, "Sellers Only")
 
   cat("\n--- Computing AMEs on P(rank=1) ---\n")
   ame1 <- compute_ames(model1)
-  # marginaleffects doesn't support clmm; refit as clm for AMEs
   model2_clm <- fit_clm(df_sellers, "Sellers Only (clm for AMEs)")
   ame2 <- compute_ames(model2_clm)
 
-  build_two_model_table(model1, model2, ame1, ame2, OUTPUT_PATH)
+  build_minipage_table(model1, model2, ame1, ame2, OUTPUT_PATH)
   cat("\nDone!\n")
 }
 
@@ -73,7 +83,6 @@ load_and_prepare <- function(file_path) {
   n_before <- nrow(df)
   df <- df[complete.cases(df[, ..EMOTION_COLS])]
   cat("Dropped", n_before - nrow(df), "rows with missing emotions\n")
-  cat("Analysis sample:", nrow(df), "rows\n")
   df[, sell_rank := ordered(factor(sell_rank))]
   df[, player_id := as.factor(player_id)]
   create_segment_dummies(df)
@@ -95,19 +104,19 @@ standardize_continuous <- function(df) {
 # Model fitting
 # =====
 fit_clm <- function(df, label) {
-  formula_str <- paste("sell_rank ~", paste(ALL_PREDICTORS, collapse = " + "))
-  cat("Formula:", formula_str, "\nN observations:", nrow(df), "\n")
-  model <- clm(as.formula(formula_str), data = df)
+  fml <- paste("sell_rank ~", paste(ALL_PREDICTORS, collapse = " + "))
+  cat("Formula:", fml, "\nN observations:", nrow(df), "\n")
+  model <- clm(as.formula(fml), data = df)
   cat("\n--- Summary:", label, "---\n")
   print(summary(model))
   return(model)
 }
 
 fit_clmm <- function(df, label) {
-  formula_str <- paste("sell_rank ~", paste(ALL_PREDICTORS, collapse = " + "),
-                       "+ (1 | player_id)")
-  cat("Formula:", formula_str, "\nN observations:", nrow(df), "\n")
-  model <- clmm(as.formula(formula_str), data = df)
+  fml <- paste("sell_rank ~", paste(ALL_PREDICTORS, collapse = " + "),
+               "+ (1 | player_id)")
+  cat("Formula:", fml, "\nN observations:", nrow(df), "\n")
+  model <- clmm(as.formula(fml), data = df)
   cat("\n--- Summary:", label, "---\n")
   print(summary(model))
   return(model)
@@ -123,42 +132,7 @@ compute_ames <- function(model) {
 }
 
 # =====
-# Coefficient extraction for clm/clmm
-# =====
-extract_clmm_coefs <- function(model) {
-  s <- summary(model)
-  beta_dt <- extract_beta_table(s)
-  # clm stores thresholds in $Theta; clmm stores them in $alpha
-  thresholds <- if (!is.null(model$alpha)) model$alpha else model$Theta
-  alpha_dt <- extract_alpha_table(model, thresholds)
-  list(beta = beta_dt, alpha = alpha_dt)
-}
-
-extract_beta_table <- function(s) {
-  beta <- as.data.frame(s$coefficients)
-  data.table(var = rownames(beta), est = beta[, "Estimate"],
-             se = beta[, "Std. Error"], pval = beta[, "Pr(>|z|)"])
-}
-
-# Extract threshold params; use vcov when Hessian is available
-extract_alpha_table <- function(model, thresholds) {
-  tnames <- names(thresholds)
-  ests <- unname(thresholds)
-  vc <- tryCatch(vcov(model), error = function(e) NULL)
-  if (!is.null(vc) && all(tnames %in% rownames(vc))) {
-    ses <- sapply(tnames, function(t) sqrt(vc[t, t]))
-    pvals <- 2 * pnorm(abs(ests / ses), lower.tail = FALSE)
-    return(data.table(var = tnames, est = ests, se = ses, pval = pvals))
-  }
-  data.table(var = tnames, est = ests, se = NaN, pval = NaN)
-}
-
-extract_clmm_fit <- function(model) {
-  list(n = nobs(model), loglik = logLik(model), aic = AIC(model))
-}
-
-# =====
-# LaTeX table builder (two-model side-by-side)
+# LaTeX formatting helpers
 # =====
 get_sig_stars <- function(pval) {
   if (is.nan(pval) || is.na(pval)) return("")
@@ -172,94 +146,108 @@ format_coef_cell <- function(coefs_dt, varname) {
   row <- coefs_dt[var == varname]
   if (nrow(row) == 0) return(c("", ""))
   val <- sprintf("%.4f%s", row$est, get_sig_stars(row$pval))
-  se <- if (is.nan(row$se)) "(---)" else sprintf("(%.4f)", row$se)
+  se <- sprintf("(%.4f)", row$se)
   c(val, se)
 }
 
-build_two_model_table <- function(model1, model2, ame1, ame2, output_path) {
-  c1 <- extract_clmm_coefs(model1)
-  c2 <- extract_clmm_coefs(model2)
-  f1 <- extract_clmm_fit(model1)
-  f2 <- extract_clmm_fit(model2)
-  lines <- build_header()
-  lines <- c(lines, "   \\emph{Panel A: Log-odds coefficients}\\\\")
-  lines <- append_var_rows(lines, c1$beta, c2$beta)
-  lines <- append_threshold_rows(lines, c1$alpha, c2$alpha)
-  lines <- append_ame_rows(lines, ame1, ame2)
-  lines <- append_fit_rows(lines, f1, f2)
-  lines <- append_footer(lines)
+get_var_label <- function(v) {
+  if (v %in% names(VAR_DICT)) return(VAR_DICT[v])
+  gsub("_", "\\_", v, fixed = TRUE)
+}
+
+# =====
+# Build single minipage tabular for one model
+# =====
+build_single_tabular <- function(title, ame_dt) {
+  col_spec <- ">{\\raggedright\\arraybackslash}p{2.8cm}>{\\centering\\arraybackslash}p{1.8cm}"
+  lines <- c(
+    sprintf("\\begin{tabular}[t]{%s}", col_spec),
+    sprintf("\\multicolumn{2}{@{}l}{\\emph{%s}} \\\\", title),
+    "   \\midrule \\midrule")
+  lines <- append_section(lines, "Key traits", KEY_TRAITS, ame_dt)
+  lines <- append_section(lines, "Facial emotions", EMOTION_COLS, ame_dt)
+  lines <- append_section(lines, "Other personality traits", OTHER_TRAITS, ame_dt)
+  lines <- append_section(lines, "Controls", CONTROLS, ame_dt)
+  c(lines, "   \\midrule", "\\end{tabular}")
+}
+
+append_section <- function(lines, header, vars, ame_dt) {
+  lines <- c(lines, sprintf("   \\emph{%s} & \\\\", header))
+  for (v in vars) {
+    cell <- format_coef_cell(ame_dt, v)
+    label <- get_var_label(v)
+    lines <- c(lines,
+      sprintf("   %-25s& %s\\\\", label, cell[1]),
+      sprintf("   %-25s& %s\\\\", "", cell[2]))
+  }
+  lines
+}
+
+# =====
+# Build two-column minipage table
+# =====
+build_minipage_table <- function(m1, m2, ame1, ame2, output_path) {
+  f1 <- extract_fit(m1)
+  f2 <- extract_fit(m2)
+  lines <- build_table_preamble()
+  lines <- c(lines, build_minipages(ame1, ame2))
+  lines <- c(lines, "", build_fit_line(f1, f2))
+  lines <- c(lines, build_footer())
   write_table(lines, output_path)
 }
 
-header_column_block <- function() {
-  c("   \\midrule \\midrule",
-    "   & (1) Full & (2) Sellers\\\\",
-    "   & Sample & Only\\\\",
-    "   \\midrule")
+build_table_preamble <- function() {
+  c("", "\\begin{center}", "\\begingroup", "\\tiny",
+    "\\renewcommand{\\arraystretch}{0.7}",
+    "\\setlength{\\tabcolsep}{2pt}")
 }
 
-build_header <- function() {
-  col_block <- header_column_block()
-  c("", "\\begingroup", "\\centering", "\\scriptsize",
-    "\\renewcommand{\\arraystretch}{0.85}",
-    "\\setlength{\\tabcolsep}{2pt}",
-    "\\begin{tabular}{@{}lcc@{}}",
-    col_block)
+build_minipages <- function(ame1, ame2) {
+  left <- build_single_tabular("(1) Full Sample CLM", ame1)
+  right <- build_single_tabular("(2) Sellers Only CLMM", ame2)
+  c("\\begin{minipage}[t]{0.42\\linewidth}",
+    "\\centering",
+    left,
+    "\\end{minipage}%",
+    "\\hspace{1.5em}",
+    "\\begin{minipage}[t]{0.42\\linewidth}",
+    "\\centering",
+    right,
+    "\\end{minipage}")
 }
 
-append_var_rows <- function(lines, dt1, dt2, vars = SHOW_VARS) {
-  for (v in vars) {
-    label <- if (v %in% names(VAR_DICT)) VAR_DICT[v] else gsub("_", "\\\\_", v)
-    c1 <- format_coef_cell(dt1, v)
-    c2 <- format_coef_cell(dt2, v)
-    lines <- c(lines,
-      sprintf("   %-20s& %s & %s\\\\", label, c1[1], c2[1]),
-      sprintf("   %-20s& %s & %s\\\\", "", c1[2], c2[2]))
-  }
-  return(lines)
+extract_fit <- function(model) {
+  list(n = nobs(model), loglik = logLik(model), aic = AIC(model))
 }
 
-append_threshold_rows <- function(lines, alpha1, alpha2) {
-  lines <- c(lines, "   \\midrule", "   \\emph{Threshold parameters}\\\\")
-  for (tname in union(alpha1$var, alpha2$var)) {
-    label <- gsub("\\|", "$|$", tname)
-    c1 <- format_coef_cell(alpha1, tname)
-    c2 <- format_coef_cell(alpha2, tname)
-    lines <- c(lines,
-      sprintf("   %-20s& %s & %s\\\\", label, c1[1], c2[1]),
-      sprintf("   %-20s& %s & %s\\\\", "", c1[2], c2[2]))
-  }
-  return(lines)
-}
-
-append_ame_rows <- function(lines, ame1, ame2) {
-  lines <- c(lines, "   \\midrule",
-    "   \\emph{Panel B: Average Marginal Effects on P(selling first)}\\\\")
-  append_var_rows(lines, ame1, ame2)
-}
-
-append_fit_rows <- function(lines, f1, f2) {
-  c(lines, "   \\midrule", "   \\emph{Fit statistics}\\\\",
-    "   Model         & CLM & CLMM\\\\",
-    sprintf("   Observations  & %s & %s\\\\",
+build_fit_line <- function(f1, f2) {
+  c("\\vspace{0.1em}",
+    "\\begin{center}",
+    "\\begin{tabular}{lcc}",
+    "   \\emph{Fit statistics} & (1) Full Sample & (2) Sellers Only \\\\",
+    "   \\midrule",
+    "   Model & CLM & CLMM \\\\",
+    sprintf("   Observations & %s & %s \\\\",
             format(f1$n, big.mark = ","), format(f2$n, big.mark = ",")),
-    sprintf("   Log-lik.      & %.1f & %.1f\\\\",
+    sprintf("   Log-lik. & %.1f & %.1f \\\\",
             as.numeric(f1$loglik), as.numeric(f2$loglik)),
-    sprintf("   AIC           & %.1f & %.1f\\\\", f1$aic, f2$aic))
+    sprintf("   AIC & %.1f & %.1f \\\\", f1$aic, f2$aic),
+    "\\end{tabular}",
+    "\\end{center}")
 }
 
-append_footer <- function(lines) {
-  controls_note <- paste0(
-    "Controls: extraversion, agreeableness, neuroticism, openness, ",
-    "contempt (p95), disgust (p95), joy (p95), sadness (p95), ",
-    "surprise (p95), engagement (p95), valence (p95), age, gender, ",
-    "segment dummies, round. Model 1 excludes random effects; ",
-    "Model 2 includes player random effects.")
-  c(lines, "   \\midrule \\midrule",
-    sprintf("   \\multicolumn{3}{@{}p{\\linewidth}@{}}{\\emph{%s}}\\\\", controls_note),
-    "   \\multicolumn{3}{@{}l@{}}{\\emph{Standardized coefficients (z-scored)}}\\\\",
-    "   \\multicolumn{3}{@{}l@{}}{\\emph{***: 0.01, **: 0.05, *: 0.1}}\\\\",
-    "\\end{tabular}", "\\endgroup", "", "")
+build_footer <- function() {
+  c("\\vspace{0.1em}",
+    "\\begin{minipage}{0.95\\linewidth}",
+    "\\tiny",
+    paste0("\\emph{All coefficients are average marginal effects on ",
+           "P(selling first), standardized (z-scored).} "),
+    paste0("\\emph{Model 1 excludes random effects; ",
+           "Model 2 includes player random effects ",
+           "(AMEs computed via clm refit).} "),
+    "\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}",
+    "\\end{minipage}",
+    "\\endgroup", "\\end{center}", "", "")
 }
 
 write_table <- function(lines, output_path) {

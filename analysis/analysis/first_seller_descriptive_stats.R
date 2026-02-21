@@ -26,11 +26,12 @@ main <- function() {
 
   summary_stats <- calculate_summary_stats(data)
   t_test_results <- run_t_tests(data)
+  group_counts <- get_group_counts(summary_stats)
 
   combined_table <- create_combined_table(summary_stats, t_test_results)
 
   print_results(combined_table)
-  write_latex_table(combined_table)
+  write_latex_table(combined_table, group_counts)
 
   return(combined_table)
 }
@@ -74,6 +75,13 @@ calculate_summary_stats <- function(data) {
       n = n(),
       .groups = "drop"
     )
+}
+
+get_group_counts <- function(summary_stats) {
+  list(
+    first_sellers = summary_stats$n[summary_stats$is_ever_first_seller],
+    non_first_sellers = summary_stats$n[!summary_stats$is_ever_first_seller]
+  )
 }
 
 # =====
@@ -163,31 +171,38 @@ print_results <- function(combined_table) {
 # =====
 # Write LaTeX table
 # =====
-write_latex_table <- function(combined_table) {
+write_latex_table <- function(combined_table, group_counts) {
   dir.create(dirname(OUTPUT_PATH), showWarnings = FALSE, recursive = TRUE)
 
-  latex_content <- generate_latex_content(combined_table)
+  latex_content <- generate_latex_content(combined_table, group_counts)
   writeLines(latex_content, OUTPUT_PATH)
 
   cat("\nLaTeX table written to:", OUTPUT_PATH, "\n")
 }
 
-generate_latex_content <- function(combined_table) {
-  header <- c(
-    "\\begingroup", "\\centering", "\\small",
-    "\\begin{tabular}{lccr}", "\\toprule",
-    "Trait & First Sellers & Non-First Sellers & Difference \\\\",
-    "\\midrule"
-  )
+generate_latex_content <- function(combined_table, group_counts) {
+  n_fs <- group_counts$first_sellers
+  n_nfs <- group_counts$non_first_sellers
+  header <- build_latex_header(n_fs, n_nfs)
   rows <- format_latex_rows(combined_table)
-  footer <- c(
-    "\\bottomrule", "\\end{tabular}", "\\par", "\\vspace{2pt}",
-    paste0("{\\footnotesize \\textit{Note:} N = 95 individuals. ",
-           "First Seller = sold first 1+ times across all rounds.}\\\\"),
-    "{\\footnotesize Mean (SD). Two-sample $t$-tests. ***: $p<0.01$, **: $p<0.05$, *: $p<0.1$}",
-    "\\endgroup"
-  )
+  footer <- build_latex_footer(n_fs + n_nfs)
   paste(c(header, rows, footer), collapse = "\n")
+}
+
+build_latex_header <- function(n_fs, n_nfs) {
+  c("\\begingroup", "\\centering", "\\small",
+    "\\begin{tabular}{lccr}", "\\toprule",
+    sprintf("Trait & First Sellers (N=%d) & Non-First Sellers (N=%d) & Difference \\\\",
+            n_fs, n_nfs),
+    "\\midrule")
+}
+
+build_latex_footer <- function(n_total) {
+  c("\\bottomrule", "\\end{tabular}", "\\par", "\\vspace{2pt}",
+    sprintf("{\\footnotesize \\textit{Note:} N = %d individuals. %s}\\\\",
+            n_total, "First Seller = sold first 1+ times across all rounds."),
+    "{\\footnotesize Mean (SD). Two-sample $t$-tests. ***: $p<0.01$, **: $p<0.05$, *: $p<0.1$}",
+    "\\endgroup")
 }
 
 format_latex_rows <- function(combined_table) {

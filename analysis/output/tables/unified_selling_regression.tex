@@ -57,7 +57,34 @@
 \hfill
 \begin{minipage}[t]{0.44\linewidth}
 \begin{tabular}[t]{>{\raggedright\arraybackslash}p{2.3cm}*{3}{>{\centering\arraybackslash}p{1.3cm}}}
-\multicolumn{4}{@{}l}{\emph{Panel B: Second Sellers}} \\
+\multicolumn{4}{@{}l}{\emph{Panel B: First Sellers}} \\
+   \midrule \midrule
+   & (1) & (2) & (3) \\
+   & RE & Indiv. FE & RE \\
+   \midrule
+   \emph{Facial emotions} & & & \\
+   Fear                      &  & 0.0035 &  \\
+                             &  & (0.0053) &  \\
+   Anger                     &  & -0.0112$^{*}$ &  \\
+                             &  & (0.0062) &  \\
+   \emph{Personality traits} & & & \\
+   State anxiety             &  &  & 0.0752$^{**}$ \\
+                             &  &  & (0.0304) \\
+   Impulsivity               &  &  & 0.0667$^{***}$ \\
+                             &  &  & (0.0228) \\
+   Conscientiousness         &  &  & 0.0757$^{***}$ \\
+                             &  &  & (0.0190) \\
+   Treatment 2               & 0.0304 &  & 0.0015 \\
+                             & (0.0307) &  & (0.0310) \\
+   \midrule
+   \emph{Fit statistics} & & & \\
+   Observations  & 1,218 & 1,217 & 1,183 \\
+   R$^2$  & 0.2214 & 0.3359 & 0.2375 \\
+   \midrule
+\end{tabular}
+\vspace{0.5em}
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{2.3cm}*{3}{>{\centering\arraybackslash}p{1.3cm}}}
+\multicolumn{4}{@{}l}{\emph{Panel C: Second Sellers}} \\
    \midrule \midrule
    & (1) & (2) & (3) \\
    & RE & Indiv. FE & RE \\
@@ -84,37 +111,12 @@
    R$^2$  & 0.2524 & 0.3367 & 0.2633 \\
    \midrule
 \end{tabular}
-\vspace{0.5em}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{2.3cm}*{3}{>{\centering\arraybackslash}p{1.3cm}}}
-\multicolumn{4}{@{}l}{\emph{Panel C: First Sellers}} \\
-   \midrule \midrule
-   & (1) & (2) & (3) \\
-   & RE & Indiv. FE & RE \\
-   \midrule
-   \emph{Facial emotions} & & & \\
-   Fear                      &  & 0.0035 &  \\
-                             &  & (0.0053) &  \\
-   Anger                     &  & -0.0112$^{*}$ &  \\
-                             &  & (0.0062) &  \\
-   \emph{Personality traits} & & & \\
-   State anxiety             &  &  & 0.0752$^{**}$ \\
-                             &  &  & (0.0304) \\
-   Impulsivity               &  &  & 0.0667$^{***}$ \\
-                             &  &  & (0.0228) \\
-   Conscientiousness         &  &  & 0.0757$^{***}$ \\
-                             &  &  & (0.0190) \\
-   Treatment 2               & 0.0304 &  & 0.0015 \\
-                             & (0.0307) &  & (0.0310) \\
-   \midrule
-   \emph{Fit statistics} & & & \\
-   Observations  & 1,218 & 1,217 & 1,183 \\
-   R$^2$  & 0.2214 & 0.3359 & 0.2375 \\
-   \midrule
-\end{tabular}
 \end{minipage}
 
 \vspace{0.5em}
 \footnotesize \emph{Controls: signal, period, round, segment indicators, age, gender. Additional emotion controls (contempt, disgust, joy, sadness, surprise, engagement, valence) and personality traits (extraversion, agreeableness, neuroticism, openness) included but not displayed. Full results in Appendix Table~\ref{tab:unified_selling_regression_full}.}
+
+\footnotesize \emph{Standard errors in parentheses. (1) \& (3): RE with individual-level effects. (2): individual FE, clustered by group.}
 
 \footnotesize \emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}
 \end{table}
