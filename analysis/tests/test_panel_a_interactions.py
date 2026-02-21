@@ -195,19 +195,19 @@ class TestObservationCountsUnchanged:
         assert _parse_panel_obs(LPM_TABLE_FULL, "Panel A") == [13713, 13713, 13590]
 
     def test_lpm_panel_b_obs(self):
-        assert _parse_panel_obs(LPM_TABLE_FULL, "Panel B") == [622, 622, 619]
+        assert _parse_panel_obs(LPM_TABLE_FULL, "Panel B") == [1218, 1217, 1183]
 
     def test_lpm_panel_c_obs(self):
-        assert _parse_panel_obs(LPM_TABLE_FULL, "Panel C") == [1218, 1217, 1183]
+        assert _parse_panel_obs(LPM_TABLE_FULL, "Panel C") == [622, 622, 619]
 
     def test_logit_panel_a_obs(self):
         assert _parse_panel_obs(LOGIT_TABLE_FULL, "Panel A") == [13713, 12369, 13590]
 
     def test_logit_panel_b_obs(self):
-        assert _parse_panel_obs(LOGIT_TABLE_FULL, "Panel B") == [622, 622, 619]
+        assert _parse_panel_obs(LOGIT_TABLE_FULL, "Panel B") == [1218, 1194, 1183]
 
     def test_logit_panel_c_obs(self):
-        assert _parse_panel_obs(LOGIT_TABLE_FULL, "Panel C") == [1218, 1194, 1183]
+        assert _parse_panel_obs(LOGIT_TABLE_FULL, "Panel C") == [622, 622, 619]
 
 
 # =====

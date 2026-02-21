@@ -29,6 +29,7 @@ CHAT_SEGMENTS = [3, 4]
 TRAITS = [
     "extraversion", "agreeableness", "conscientiousness",
     "neuroticism", "openness", "impulsivity", "state_anxiety",
+    "risk_tolerance",
 ]
 
 
@@ -148,9 +149,9 @@ class TestDemographicsTraitsTable:
                     f"{trait} SD mismatch (col {col_idx})"
 
     def test_row_count(self, combined_tex):
-        """4 demographics rows + 7 trait rows = 11 total."""
+        """4 demographics rows + 8 trait rows = 12 total."""
         rows = parse_all_data_rows(combined_tex)
-        assert len(rows) == 11, f"Expected 11 data rows, got {len(rows)}"
+        assert len(rows) == 12, f"Expected 12 data rows, got {len(rows)}"
 
 
 # =====
