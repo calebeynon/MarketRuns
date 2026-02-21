@@ -76,9 +76,8 @@ jobs:
           fi
 
           # If human edits exist, check if they've already been merged
-          # Uses diff3 three-way merge: if merging human edits into our repo
-          # version produces no new changes, the edits are already incorporated
-          # (even when our repo has additional changes on top)
+          # Compares lines added by human edits against our repo version —
+          # if every non-trivial addition is present, the edits are merged
           already_merged=false
           if [ -n "$human_commits" ] && [ -n "$last_sync" ]; then
             already_merged=true
@@ -98,18 +97,19 @@ jobs:
                 echo "Unmerged file only on Overleaf: $file"
                 break
               fi
-              # Get the file at the last sync point (base for three-way merge)
+              # Get lines added by human edits (base → current Overleaf)
               git show "${last_sync}:${file}" > /tmp/guard_base 2>/dev/null || continue
-              merged=$(diff3 -m "$repo_file" /tmp/guard_base "$file" 2>/dev/null) || {
-                already_merged=false
-                echo "Merge conflict in: $file"
-                break
-              }
-              if [ "$merged" != "$(cat "$repo_file")" ]; then
-                already_merged=false
-                echo "Unmerged change: $file"
-                break
-              fi
+              human_additions=$(diff /tmp/guard_base "$file" | grep '^> ' | sed 's/^> //' || true)
+
+              while IFS= read -r line; do
+                trimmed=$(echo "$line" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+                [ -z "$trimmed" ] && continue
+                if ! grep -qF "$trimmed" "$repo_file"; then
+                  already_merged=false
+                  echo "Unmerged addition in $file: $trimmed"
+                  break 2
+                fi
+              done <<< "$human_additions"
             done
 
             if [ "$already_merged" = "true" ]; then

@@ -56,8 +56,7 @@ jobs:
           fi
 
           # Human commits exist — check if they've already been merged
-          # Uses diff3 three-way merge: if merging human edits into our repo
-          # version produces no new changes, the edits are already incorporated
+          # Compares lines added by human edits against our repo version
           already_merged=true
           if [ -n "$last_sync" ]; then
             human_files=""
@@ -77,16 +76,17 @@ jobs:
                 break
               fi
               git show "${last_sync}:${file}" > /tmp/guard_base 2>/dev/null || continue
-              merged=$(diff3 -m "$repo_file" /tmp/guard_base "$file" 2>/dev/null) || {
-                already_merged=false
-                echo "Merge conflict in: $file"
-                break
-              }
-              if [ "$merged" != "$(cat "$repo_file")" ]; then
-                already_merged=false
-                echo "Unmerged change: $file"
-                break
-              fi
+              human_additions=$(diff /tmp/guard_base "$file" | grep '^> ' | sed 's/^> //' || true)
+
+              while IFS= read -r line; do
+                trimmed=$(echo "$line" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+                [ -z "$trimmed" ] && continue
+                if ! grep -qF "$trimmed" "$repo_file"; then
+                  already_merged=false
+                  echo "Unmerged addition in $file: $trimmed"
+                  break 2
+                fi
+              done <<< "$human_additions"
             done
           else
             already_merged=false
