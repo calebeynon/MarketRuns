@@ -144,7 +144,8 @@ build_unified_table <- function(pa, pb, pc, compact) {
 get_panel_vars <- function(compact) {
   cascade <- c("dummy_1_cum", "dummy_2_cum", "dummy_3_cum")
   int_vars <- c(INTERACTION_HEADER, INTERACTION_VARS)
-  panel_a <- c(cascade, int_vars, PERSON_VARS)
+  person <- if (compact) PERSON_VARS else ALL_PERSON_VARS
+  panel_a <- c(cascade, int_vars, person)
   if (compact) return(list(a = panel_a,
                            b = PERSON_VARS,
                            c = c("dummy_prev_period", PERSON_VARS)))
@@ -212,7 +213,10 @@ build_footer_compact <- function() {
   note <- paste0("   \\multicolumn{4}{l}{\\emph{Controls: signal, period, round,",
     " segment indicators, age, gender. Full results in",
     " Appendix Table \\ref{tab:unified_selling_logit_full}.}} \\\\")
-  c(note, build_footer_common())
+  se_note <- paste0("   \\multicolumn{4}{l}{\\emph{Average marginal effects reported.",
+    " (1) \\& (3): random-intercept logit (glmer).",
+    " (2): conditional logit (feglm), clustered by group.}} \\\\")
+  c(note, se_note, build_footer_common())
 }
 
 build_footer_full <- function() {

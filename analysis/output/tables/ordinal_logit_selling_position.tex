@@ -1,11 +1,12 @@
 
+\begin{center}
 \begingroup
-\centering
-\scriptsize
-\renewcommand{\arraystretch}{0.85}
+\tiny
+\renewcommand{\arraystretch}{0.7}
 \setlength{\tabcolsep}{2pt}
-\begin{minipage}[t]{0.48\linewidth}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\centering\arraybackslash}p{1.8cm}}
+\begin{minipage}[t]{0.42\linewidth}
+\centering
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{2.8cm}>{\centering\arraybackslash}p{1.8cm}}
 \multicolumn{2}{@{}l}{\emph{(1) Full Sample CLM}} \\
    \midrule \midrule
    \emph{Key traits} & \\
@@ -59,9 +60,10 @@
    \midrule
 \end{tabular}
 \end{minipage}%
-\hfill
-\begin{minipage}[t]{0.48\linewidth}
-\begin{tabular}[t]{>{\raggedright\arraybackslash}p{3cm}>{\centering\arraybackslash}p{1.8cm}}
+\hspace{1.5em}
+\begin{minipage}[t]{0.42\linewidth}
+\centering
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{2.8cm}>{\centering\arraybackslash}p{1.8cm}}
 \multicolumn{2}{@{}l}{\emph{(2) Sellers Only CLMM}} \\
    \midrule \midrule
    \emph{Key traits} & \\
@@ -116,8 +118,9 @@
 \end{tabular}
 \end{minipage}
 
-\vspace{0.5em}
-\begin{tabular}{@{}lcc@{}}
+\vspace{0.1em}
+\begin{center}
+\begin{tabular}{lcc}
    \emph{Fit statistics} & (1) Full Sample & (2) Sellers Only \\
    \midrule
    Model & CLM & CLMM \\
@@ -125,12 +128,15 @@
    Log-lik. & -1934.3 & -473.9 \\
    AIC & 3918.7 & 999.7 \\
 \end{tabular}
-\vspace{0.5em}
-\emph{All coefficients are average marginal effects on P(selling first), standardized (z-scored).}
-
-\emph{Model 1 excludes random effects; Model 2 includes player random effects (AMEs computed via clm refit).}
-
+\end{center}
+\vspace{0.1em}
+\begin{minipage}{0.95\linewidth}
+\tiny
+\emph{All coefficients are average marginal effects on P(selling first), standardized (z-scored).} 
+\emph{Model 1 excludes random effects; Model 2 includes player random effects (AMEs computed via clm refit).} 
 \emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}
+\end{minipage}
 \endgroup
+\end{center}
 
 

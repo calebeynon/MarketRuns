@@ -107,8 +107,15 @@ build_twocol_footer <- function() {
     "included but not displayed. ",
     "Full results in Appendix ",
     "Table~\\ref{tab:unified_selling_regression_full}.}")
+  se_note <- paste0(
+    "\\footnotesize ",
+    "\\emph{Standard errors in parentheses. ",
+    "(1) \\& (3): RE with individual-level effects. ",
+    "(2): individual FE, clustered by group.}")
   c("\\vspace{0.5em}",
     note,
+    "",
+    se_note,
     "",
     paste0("\\footnotesize ",
            "\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}"))

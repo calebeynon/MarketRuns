@@ -159,7 +159,7 @@ get_var_label <- function(v) {
 # Build single minipage tabular for one model
 # =====
 build_single_tabular <- function(title, ame_dt) {
-  col_spec <- ">{\\raggedright\\arraybackslash}p{3cm}>{\\centering\\arraybackslash}p{1.8cm}"
+  col_spec <- ">{\\raggedright\\arraybackslash}p{2.8cm}>{\\centering\\arraybackslash}p{1.8cm}"
   lines <- c(
     sprintf("\\begin{tabular}[t]{%s}", col_spec),
     sprintf("\\multicolumn{2}{@{}l}{\\emph{%s}} \\\\", title),
@@ -197,19 +197,21 @@ build_minipage_table <- function(m1, m2, ame1, ame2, output_path) {
 }
 
 build_table_preamble <- function() {
-  c("", "\\begingroup", "\\centering", "\\scriptsize",
-    "\\renewcommand{\\arraystretch}{0.85}",
+  c("", "\\begin{center}", "\\begingroup", "\\tiny",
+    "\\renewcommand{\\arraystretch}{0.7}",
     "\\setlength{\\tabcolsep}{2pt}")
 }
 
 build_minipages <- function(ame1, ame2) {
   left <- build_single_tabular("(1) Full Sample CLM", ame1)
   right <- build_single_tabular("(2) Sellers Only CLMM", ame2)
-  c("\\begin{minipage}[t]{0.48\\linewidth}",
+  c("\\begin{minipage}[t]{0.42\\linewidth}",
+    "\\centering",
     left,
     "\\end{minipage}%",
-    "\\hfill",
-    "\\begin{minipage}[t]{0.48\\linewidth}",
+    "\\hspace{1.5em}",
+    "\\begin{minipage}[t]{0.42\\linewidth}",
+    "\\centering",
     right,
     "\\end{minipage}")
 }
@@ -219,8 +221,9 @@ extract_fit <- function(model) {
 }
 
 build_fit_line <- function(f1, f2) {
-  c("\\vspace{0.5em}",
-    "\\begin{tabular}{@{}lcc@{}}",
+  c("\\vspace{0.1em}",
+    "\\begin{center}",
+    "\\begin{tabular}{lcc}",
     "   \\emph{Fit statistics} & (1) Full Sample & (2) Sellers Only \\\\",
     "   \\midrule",
     "   Model & CLM & CLMM \\\\",
@@ -229,20 +232,22 @@ build_fit_line <- function(f1, f2) {
     sprintf("   Log-lik. & %.1f & %.1f \\\\",
             as.numeric(f1$loglik), as.numeric(f2$loglik)),
     sprintf("   AIC & %.1f & %.1f \\\\", f1$aic, f2$aic),
-    "\\end{tabular}")
+    "\\end{tabular}",
+    "\\end{center}")
 }
 
 build_footer <- function() {
-  c("\\vspace{0.5em}",
+  c("\\vspace{0.1em}",
+    "\\begin{minipage}{0.95\\linewidth}",
+    "\\tiny",
     paste0("\\emph{All coefficients are average marginal effects on ",
-           "P(selling first), standardized (z-scored).}"),
-    "",
+           "P(selling first), standardized (z-scored).} "),
     paste0("\\emph{Model 1 excludes random effects; ",
            "Model 2 includes player random effects ",
-           "(AMEs computed via clm refit).}"),
-    "",
+           "(AMEs computed via clm refit).} "),
     "\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}",
-    "\\endgroup", "", "")
+    "\\end{minipage}",
+    "\\endgroup", "\\end{center}", "", "")
 }
 
 write_table <- function(lines, output_path) {
