@@ -167,7 +167,7 @@ create_robustness_plot <- function(group_dt) {
       aes(xmin = ci_lower, xmax = ci_upper),
       size = 0.5, fatten = 3
     ) +
-    facet_wrap(~trait_label, ncol = 3) +
+    facet_wrap(~trait_label, ncol = 3, scales = "free_x") +
     scale_color_manual(values = GROUP_PALETTE, name = "Times First Seller") +
     labs(x = "Mean Score", y = NULL) +
     theme_minimal() +
