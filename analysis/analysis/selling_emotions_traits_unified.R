@@ -95,40 +95,44 @@ filter_complete_emotions <- function(df) {
 # =====
 # Table 1: Full Sample with Both Cascade Variables and Interactions
 # =====
-run_full_sample_table <- function(df) {
-  df_em <- filter_complete_emotions(df)
-  cat("Sample size after emotion filter:", nrow(df_em), "\n")
-
-  # Build interaction terms (5 emotion/trait vars x 2 cascade vars = 10 interactions)
+build_interaction_formula <- function(all_controls) {
   int_vars <- c(SHOW_EMOTIONS, SHOW_TRAITS)
   int_nse <- paste0("n_sales_earlier:", int_vars, collapse = " + ")
   int_spp <- paste0("sale_prev_period:", int_vars, collapse = " + ")
+  paste("sold ~ n_sales_earlier + sale_prev_period +",
+        int_nse, "+", int_spp, "+",
+        all_controls, "+ signal + period + round + segment + treatment")
+}
 
-  # All controls (shown + hidden)
-  all_controls <- paste(c(ALL_EMOTIONS, ALL_TRAITS, "age", "gender_female"), collapse = " + ")
-
-  formula_str <- paste("sold ~ n_sales_earlier + sale_prev_period +",
-                       int_nse, "+", int_spp, "+",
-                       all_controls, "+ signal + period + round + segment + treatment")
-
-  pdata <- pdata.frame(as.data.frame(df_em), index = c("player_id", "time_id"))
-  model <- plm(as.formula(formula_str), data = pdata, model = "random")
-
-  # Build variable order for display
+build_interaction_dict <- function() {
+  int_vars <- c(SHOW_EMOTIONS, SHOW_TRAITS)
   int_names_nse <- paste0("n_sales_earlier:", int_vars)
   int_names_spp <- paste0("sale_prev_period:", int_vars)
   int_labels_nse <- paste0("n\\_sales\\_earlier $\\times$ ", VAR_DICT[int_vars])
   int_labels_spp <- paste0("sale\\_prev\\_period $\\times$ ", VAR_DICT[int_vars])
-  int_dict <- setNames(c(int_labels_nse, int_labels_spp), c(int_names_nse, int_names_spp))
+  setNames(c(int_labels_nse, int_labels_spp), c(int_names_nse, int_names_spp))
+}
 
-  var_order <- c("n_sales_earlier", "sale_prev_period",
-                 int_names_nse, int_names_spp,
-                 SHOW_EMOTIONS, SHOW_TRAITS,
-                 "signal", "period", "round",
-                 "segment2", "segment3", "segment4", "treatmenttr2", "(Intercept)")
+build_full_sample_var_order <- function() {
+  int_vars <- c(SHOW_EMOTIONS, SHOW_TRAITS)
+  c("n_sales_earlier", "sale_prev_period",
+    paste0("n_sales_earlier:", int_vars),
+    paste0("sale_prev_period:", int_vars),
+    SHOW_EMOTIONS, SHOW_TRAITS,
+    "signal", "period", "round",
+    "segment2", "segment3", "segment4", "treatmenttr2", "(Intercept)")
+}
 
-  build_single_table(model, var_order, OUTPUT_FULL, extra_dict = int_dict,
-                     use_longtable = TRUE,
+run_full_sample_table <- function(df) {
+  df_em <- filter_complete_emotions(df)
+  cat("Sample size after emotion filter:", nrow(df_em), "\n")
+
+  all_controls <- paste(c(ALL_EMOTIONS, ALL_TRAITS, "age", "gender_female"), collapse = " + ")
+  pdata <- pdata.frame(as.data.frame(df_em), index = c("player_id", "time_id"))
+  model <- plm(as.formula(build_interaction_formula(all_controls)), data = pdata, model = "random")
+
+  build_single_table(model, build_full_sample_var_order(), OUTPUT_FULL,
+                     extra_dict = build_interaction_dict(), use_longtable = TRUE,
                      caption = "Emotions and traits predicting selling period (full sample)")
 }
 
@@ -208,25 +212,19 @@ get_sig_stars <- function(pval) {
   return("")
 }
 
+build_table_lines <- function(model, var_order, full_dict, use_longtable, caption) {
+  coefs <- extract_coefs(model)
+  fit <- extract_fit(model)
+  lines <- if (use_longtable) build_longtable_header(caption) else build_table_header()
+  lines <- append_coefficient_rows(lines, coefs, var_order, full_dict)
+  lines <- append_fit_statistics(lines, fit)
+  if (use_longtable) append_longtable_footer(lines) else append_table_footer(lines)
+}
+
 build_single_table <- function(model, var_order, output_path, extra_dict = NULL,
                                use_longtable = FALSE, caption = NULL) {
   full_dict <- c(VAR_DICT, extra_dict)
-  coefs <- extract_coefs(model)
-  fit <- extract_fit(model)
-
-  if (use_longtable) {
-    lines <- build_longtable_header(caption)
-  } else {
-    lines <- build_table_header()
-  }
-  lines <- append_coefficient_rows(lines, coefs, var_order, full_dict)
-  lines <- append_fit_statistics(lines, fit)
-  if (use_longtable) {
-    lines <- append_longtable_footer(lines)
-  } else {
-    lines <- append_table_footer(lines)
-  }
-
+  lines <- build_table_lines(model, var_order, full_dict, use_longtable, caption)
   write_table(lines, output_path)
 }
 
@@ -281,18 +279,8 @@ append_table_footer <- function(lines) {
 # =====
 # Longtable builders (for multi-page tables)
 # =====
-build_longtable_header <- function(caption) {
-  c("",
-    "\\begingroup",
-    "\\scriptsize",
-    "\\begin{longtable}{lc}",
-    sprintf("\\caption{%s} \\\\", caption),
-    "   \\midrule \\midrule",
-    "   Dependent Variable: & sold\\\\",
-    "   Model:              & (1)\\\\",
-    "   \\midrule",
-    "   \\emph{Variables}\\\\",
-    "\\endfirsthead",
+build_longtable_continuation_header <- function() {
+  c("\\endfirsthead",
     "\\multicolumn{2}{l}{\\emph{(continued)}}\\\\",
     "   \\midrule \\midrule",
     "   Dependent Variable: & sold\\\\",
@@ -303,6 +291,20 @@ build_longtable_header <- function(caption) {
     "   \\multicolumn{2}{r}{\\emph{continued on next page}}\\\\",
     "\\endfoot",
     "\\endlastfoot")
+}
+
+build_longtable_header <- function(caption) {
+  first_head <- c("",
+    "\\begingroup",
+    "\\scriptsize",
+    "\\begin{longtable}{lc}",
+    sprintf("\\caption{%s} \\\\", caption),
+    "   \\midrule \\midrule",
+    "   Dependent Variable: & sold\\\\",
+    "   Model:              & (1)\\\\",
+    "   \\midrule",
+    "   \\emph{Variables}\\\\")
+  c(first_head, build_longtable_continuation_header())
 }
 
 append_longtable_footer <- function(lines) {

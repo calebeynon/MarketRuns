@@ -60,43 +60,51 @@ def main():
 # =====
 # Merge logic
 # =====
+TRAIT_COLS = [
+    "session_id", "player", "extraversion", "agreeableness",
+    "conscientiousness", "neuroticism", "openness",
+    "impulsivity", "state_anxiety", "risk_tolerance", "age", "gender",
+]
+
+# NOTE: period values in emotions_df are already aligned to oTree period numbering.
+# The offset (iMotions m{N} -> oTree period N-1) is applied upstream in
+# build_imotions_period_emotions.py::parse_market_period_annotation(), so merge
+# keys match correctly between oTree selling data and iMotions emotion data.
+EMOTION_COLS = [
+    "session_id", "segment", "round", "period", "player",
+    "anger_mean", "contempt_mean", "disgust_mean", "fear_mean",
+    "joy_mean", "sadness_mean", "surprise_mean",
+    "engagement_mean", "valence_mean", "n_frames",
+]
+
+
 def merge_datasets(
     period_df: pd.DataFrame,
     traits_df: pd.DataFrame,
     emotions_df: pd.DataFrame,
 ) -> pd.DataFrame:
     """Left-join traits and emotions onto the period dataset."""
-    # Merge traits (player-level, constant across all periods)
-    trait_cols = [
-        "session_id", "player", "extraversion", "agreeableness",
-        "conscientiousness", "neuroticism", "openness",
-        "impulsivity", "state_anxiety", "risk_tolerance", "age", "gender",
-    ]
-    merged = period_df.merge(
-        traits_df[trait_cols],
+    merged = merge_traits(period_df, traits_df)
+    merged = merge_emotions(merged, emotions_df)
+    return merged
+
+
+def merge_traits(period_df: pd.DataFrame, traits_df: pd.DataFrame) -> pd.DataFrame:
+    """Left-join player-level traits onto the period dataset."""
+    return period_df.merge(
+        traits_df[TRAIT_COLS],
         on=["session_id", "player"],
         how="left",
     )
 
-    # Merge emotions (period-level)
-    # NOTE: The `period` values in emotions_df are already aligned to oTree period
-    # numbering. The offset (iMotions m{N} -> oTree period N-1) is applied upstream
-    # in `build_imotions_period_emotions.py::parse_market_period_annotation()`.
-    # This ensures the merge keys (session_id, segment, round, period, player)
-    # match correctly between oTree selling data and iMotions emotion data.
-    emotion_cols = [
-        "session_id", "segment", "round", "period", "player",
-        "anger_mean", "contempt_mean", "disgust_mean", "fear_mean",
-        "joy_mean", "sadness_mean", "surprise_mean",
-        "engagement_mean", "valence_mean", "n_frames",
-    ]
-    merged = merged.merge(
-        emotions_df[emotion_cols],
+
+def merge_emotions(merged: pd.DataFrame, emotions_df: pd.DataFrame) -> pd.DataFrame:
+    """Left-join period-level emotions onto the merged dataset."""
+    return merged.merge(
+        emotions_df[EMOTION_COLS],
         on=["session_id", "segment", "round", "period", "player"],
         how="left",
     )
-
-    return merged
 
 
 def add_global_group_id(df: pd.DataFrame) -> pd.DataFrame:
@@ -112,36 +120,43 @@ def add_global_group_id(df: pd.DataFrame) -> pd.DataFrame:
 # =====
 # Reporting
 # =====
+REPORT_COLS = [
+    "extraversion", "impulsivity", "state_anxiety", "risk_tolerance",
+    "anger_mean", "joy_mean", "n_frames",
+]
+
+
 def print_merge_report(merged: pd.DataFrame, original: pd.DataFrame):
     """Report merge quality metrics."""
     n_total = len(merged)
-
     print("\n" + "=" * 50)
     print("MERGE REPORT")
     print("=" * 50)
     print(f"Total rows: {n_total} (original: {len(original)})")
+    print_coverage(merged, n_total)
+    print_nan_counts(merged)
+    print_session_summary(merged)
 
-    # Traits coverage
+
+def print_coverage(merged: pd.DataFrame, n_total: int):
+    """Print trait and emotion match rates."""
     trait_matched = merged["extraversion"].notna().sum()
+    emotion_matched = merged["anger_mean"].notna().sum()
     print(f"\nTraits coverage: {trait_matched}/{n_total} "
           f"({trait_matched / n_total * 100:.1f}%)")
-
-    # Emotions coverage
-    emotion_matched = merged["anger_mean"].notna().sum()
     print(f"Emotions coverage: {emotion_matched}/{n_total} "
           f"({emotion_matched / n_total * 100:.1f}%)")
 
-    # NaN counts for key columns
-    print("\nNaN counts:")
-    check_cols = [
-        "extraversion", "impulsivity", "state_anxiety", "risk_tolerance",
-        "anger_mean", "joy_mean", "n_frames",
-    ]
-    for col in check_cols:
-        n_nan = merged[col].isna().sum()
-        print(f"  {col}: {n_nan}")
 
-    # Sessions represented
+def print_nan_counts(merged: pd.DataFrame):
+    """Print NaN count for each key column."""
+    print("\nNaN counts:")
+    for col in REPORT_COLS:
+        print(f"  {col}: {merged[col].isna().sum()}")
+
+
+def print_session_summary(merged: pd.DataFrame):
+    """Print session and group counts."""
     print(f"\nSessions: {sorted(merged['session_id'].unique())}")
     print(f"Unique global_group_ids: {merged['global_group_id'].nunique()}")
 
