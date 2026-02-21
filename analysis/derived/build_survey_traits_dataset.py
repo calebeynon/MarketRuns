@@ -105,8 +105,10 @@ def process_session(session_id: str) -> list[dict]:
 
 
 def has_missing_survey_data(row: pd.Series) -> bool:
-    """Check if any required survey question (q1-q24) is missing."""
-    return any(pd.isna(row[f"player.q{i}"]) for i in range(1, 25))
+    """Check if any required survey field (q1-q24, allocate) is missing."""
+    if any(pd.isna(row[f"player.q{i}"]) for i in range(1, 25)):
+        return True
+    return pd.isna(row["player.allocate"])
 
 
 def extract_participant_traits(row: pd.Series, session_id: str) -> dict:

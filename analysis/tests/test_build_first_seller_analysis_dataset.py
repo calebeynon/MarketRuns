@@ -195,8 +195,8 @@ def test_validate_no_missing_traits(capsys):
     assert "OK: No missing values" in captured.out
 
 
-def test_validate_catches_missing_traits(capsys):
-    """Validation warns when trait values are missing."""
+def test_validate_catches_missing_traits():
+    """Validation raises AssertionError when trait values are missing."""
     df = pd.DataFrame({
         "session_id": ["1_11-7-tr1"],
         "extraversion": [None],  # Missing
@@ -210,10 +210,8 @@ def test_validate_catches_missing_traits(capsys):
         "age": [18.0],
         "gender_female": [1],
     })
-    validate_dataset(df)
-    captured = capsys.readouterr()
-    assert "WARNING" in captured.out
-    assert "extraversion" in captured.out
+    with pytest.raises(AssertionError, match="Missing trait values"):
+        validate_dataset(df)
 
 
 # =====

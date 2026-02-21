@@ -137,10 +137,11 @@ def validate_dataset(df: pd.DataFrame):
     has_missing = missing_traits.sum() > 0
 
     if has_missing:
-        print("  WARNING: Missing values in trait columns:")
+        print("  Missing values in trait columns:")
         for col, count in missing_traits.items():
             if count > 0:
                 print(f"    {col}: {count}")
+        assert False, f"Missing trait values: {int(missing_traits.sum())}"
     else:
         print("  OK: No missing values in trait columns")
 
