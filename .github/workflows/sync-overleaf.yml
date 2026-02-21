@@ -76,8 +76,11 @@ jobs:
           fi
 
           # If human edits exist, check if they've already been merged
+          # Uses diff3 three-way merge: if merging human edits into our repo
+          # version produces no new changes, the edits are already incorporated
+          # (even when our repo has additional changes on top)
           already_merged=false
-          if [ -n "$human_commits" ]; then
+          if [ -n "$human_commits" ] && [ -n "$last_sync" ]; then
             already_merged=true
             human_files=""
             for hash in $human_hashes; do
@@ -87,15 +90,24 @@ jobs:
 
             for file in $human_files; do
               repo_file="${GITHUB_WORKSPACE}/analysis/paper/${file}"
-              if [ -f "$file" ] && [ -f "$repo_file" ]; then
-                if ! diff -q "$file" "$repo_file" > /dev/null 2>&1; then
-                  already_merged=false
-                  echo "Unmerged change: $file"
-                  break
-                fi
-              elif [ -f "$file" ]; then
+              if [ ! -f "$file" ]; then
+                continue
+              fi
+              if [ ! -f "$repo_file" ]; then
                 already_merged=false
                 echo "Unmerged file only on Overleaf: $file"
+                break
+              fi
+              # Get the file at the last sync point (base for three-way merge)
+              git show "${last_sync}:${file}" > /tmp/guard_base 2>/dev/null || continue
+              merged=$(diff3 -m "$repo_file" /tmp/guard_base "$file" 2>/dev/null) || {
+                already_merged=false
+                echo "Merge conflict in: $file"
+                break
+              }
+              if [ "$merged" != "$(cat "$repo_file")" ]; then
+                already_merged=false
+                echo "Unmerged change: $file"
                 break
               fi
             done

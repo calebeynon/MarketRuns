@@ -56,27 +56,41 @@ jobs:
           fi
 
           # Human commits exist — check if they've already been merged
+          # Uses diff3 three-way merge: if merging human edits into our repo
+          # version produces no new changes, the edits are already incorporated
           already_merged=true
-          human_files=""
-          for hash in $human_hashes; do
-            human_files="${human_files} $(git diff-tree --no-commit-id -r --name-only "$hash" 2>/dev/null)"
-          done
-          human_files=$(echo "$human_files" | tr ' ' '\n' | sort -u | sed '/^$/d')
+          if [ -n "$last_sync" ]; then
+            human_files=""
+            for hash in $human_hashes; do
+              human_files="${human_files} $(git diff-tree --no-commit-id -r --name-only "$hash" 2>/dev/null)"
+            done
+            human_files=$(echo "$human_files" | tr ' ' '\n' | sort -u | sed '/^$/d')
 
-          for file in $human_files; do
-            repo_file="${GITHUB_WORKSPACE}/analysis/paper/${file}"
-            if [ -f "$file" ] && [ -f "$repo_file" ]; then
-              if ! diff -q "$file" "$repo_file" > /dev/null 2>&1; then
+            for file in $human_files; do
+              repo_file="${GITHUB_WORKSPACE}/analysis/paper/${file}"
+              if [ ! -f "$file" ]; then
+                continue
+              fi
+              if [ ! -f "$repo_file" ]; then
+                already_merged=false
+                echo "Unmerged file only on Overleaf: $file"
+                break
+              fi
+              git show "${last_sync}:${file}" > /tmp/guard_base 2>/dev/null || continue
+              merged=$(diff3 -m "$repo_file" /tmp/guard_base "$file" 2>/dev/null) || {
+                already_merged=false
+                echo "Merge conflict in: $file"
+                break
+              }
+              if [ "$merged" != "$(cat "$repo_file")" ]; then
                 already_merged=false
                 echo "Unmerged change: $file"
                 break
               fi
-            elif [ -f "$file" ]; then
-              already_merged=false
-              echo "Unmerged file only on Overleaf: $file"
-              break
-            fi
-          done
+            done
+          else
+            already_merged=false
+          fi
 
           if [ "$already_merged" = "true" ]; then
             echo "Human edits already present in repo — no issue needed"
