@@ -23,7 +23,7 @@ Risk tolerance may confound selling behavior. Participants who are more risk-tol
 - **Ordinal logit full sample**: AME = -0.026, p < 0.001 — risk-tolerant participants sell earlier
 - **Unified regression Panel A**: coef = -0.0014, p < 0.01
 - **Logit Panel A**: AME = -0.0016, p < 0.05
-- **Descriptive stats**: Non-first sellers significantly more risk-tolerant (15.33 vs 11.29 ECUs, p < 0.05)
+- **Descriptive stats**: Non-first sellers significantly more risk-tolerant (15.33 vs 11.29 ECUs, p < 0.1)
 - Not significant in LPM regression, sellers-only ordinal logit, or Panels B/C
 
 ## Scripts and Outputs
