@@ -35,12 +35,16 @@ TRAIT_SHORT <- c("(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)")
 main <- function() {
   survey <- read_csv(SURVEY_PATH, show_col_types = FALSE)
   trait_data <- survey[, TRAITS]
+  matrices <- compute_correlation_matrices(trait_data)
+  latex <- build_correlation_latex(matrices$cor, matrices$p)
+  write_table(latex, "trait_correlations.tex")
+  cat("Trait correlation table written to", OUTPUT_DIR, "\n")
+}
 
-  # Compute correlation matrix and p-value matrix
+compute_correlation_matrices <- function(trait_data) {
   n <- length(TRAITS)
   cor_mat <- matrix(NA, n, n)
   p_mat <- matrix(NA, n, n)
-
   for (i in 1:n) {
     for (j in 1:n) {
       test <- cor.test(trait_data[[TRAITS[i]]], trait_data[[TRAITS[j]]])
@@ -48,11 +52,7 @@ main <- function() {
       p_mat[i, j] <- test$p.value
     }
   }
-
-  # Build LaTeX table (lower triangle only)
-  latex <- build_correlation_latex(cor_mat, p_mat)
-  write_table(latex, "trait_correlations.tex")
-  cat("Trait correlation table written to", OUTPUT_DIR, "\n")
+  list(cor = cor_mat, p = p_mat)
 }
 
 # =====
@@ -67,50 +67,49 @@ format_stars <- function(p) {
 
 build_correlation_latex <- function(cor_mat, p_mat) {
   n <- nrow(cor_mat)
-
-  # Column alignment: label + n numeric columns
   col_spec <- paste0("l", paste(rep("c", n), collapse = ""))
-
-  # Header row with short labels
   header <- paste0("  & ", paste(TRAIT_SHORT, collapse = " & "), " \\\\")
+  rows <- build_data_rows(cor_mat, p_mat)
+  assemble_latex(col_spec, header, rows)
+}
 
-  # Build each row: label, then lower-triangle entries, diagonal = 1
+build_data_rows <- function(cor_mat, p_mat) {
+  n <- nrow(cor_mat)
   rows <- character(n)
   for (i in 1:n) {
-    cells <- character(n)
-    for (j in 1:n) {
-      if (j < i) {
-        # Lower triangle: show correlation with stars
-        stars <- format_stars(p_mat[i, j])
-        cells[j] <- sprintf("%.2f%s", cor_mat[i, j], stars)
-      } else if (j == i) {
-        cells[j] <- "1"
-      } else {
-        # Upper triangle: leave blank
-        cells[j] <- ""
-      }
-    }
+    cells <- build_row_cells(cor_mat, p_mat, i, n)
     rows[i] <- sprintf("  %s %s & %s \\\\",
                         TRAIT_SHORT[i], TRAIT_LABELS[i],
                         paste(cells, collapse = " & "))
   }
+  rows
+}
 
-  # Assemble full table
+build_row_cells <- function(cor_mat, p_mat, i, n) {
+  cells <- character(n)
+  for (j in 1:n) {
+    if (j < i) {
+      stars <- format_stars(p_mat[i, j])
+      cells[j] <- sprintf("%.2f%s", cor_mat[i, j], stars)
+    } else if (j == i) {
+      cells[j] <- "1"
+    } else {
+      cells[j] <- ""
+    }
+  }
+  cells
+}
+
+assemble_latex <- function(col_spec, header, rows) {
   lines <- c(
     "\\begingroup", "\\centering", "\\small",
     sprintf("\\begin{tabular}{%s}", col_spec),
-    "\\toprule",
-    header,
-    "\\midrule",
-    rows,
-    "\\bottomrule",
-    "\\end{tabular}",
-    "\\par", "\\vspace{2pt}",
+    "\\toprule", header, "\\midrule", rows, "\\bottomrule",
+    "\\end{tabular}", "\\par", "\\vspace{2pt}",
     "{\\footnotesize \\textit{Note:} Pairwise Pearson correlations ($N = 95$). Lower triangle reported.}\\\\",
     "{\\footnotesize ***: $p<0.01$, **: $p<0.05$, *: $p<0.1$}",
     "\\endgroup"
   )
-
   paste(lines, collapse = "\n")
 }
 
