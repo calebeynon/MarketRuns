@@ -16,7 +16,7 @@ OUTPUT VARIABLES:
     openness: BFI-10 openness score (1-7)
     impulsivity: Impulsivity score (1-7, mean of 8 items)
     state_anxiety: State anxiety score (1-4, mean of 6 items)
-    risky_investment: Amount invested in risky option (0-20 ECUs)
+    risk_tolerance: Risk tolerance allocation (0-20, tokens allocated to risky asset)
     age: Participant age
     gender: Participant gender
 """
@@ -105,8 +105,10 @@ def process_session(session_id: str) -> list[dict]:
 
 
 def has_missing_survey_data(row: pd.Series) -> bool:
-    """Check if any required survey question (q1-q24) is missing."""
-    return any(pd.isna(row[f"player.q{i}"]) for i in range(1, 25))
+    """Check if any required survey field (q1-q24, allocate) is missing."""
+    if any(pd.isna(row[f"player.q{i}"]) for i in range(1, 25)):
+        return True
+    return pd.isna(row["player.allocate"])
 
 
 def extract_participant_traits(row: pd.Series, session_id: str) -> dict:
@@ -121,7 +123,7 @@ def extract_participant_traits(row: pd.Series, session_id: str) -> dict:
         "openness": compute_openness(row),
         "impulsivity": compute_impulsivity(row),
         "state_anxiety": compute_state_anxiety(row),
-        "risky_investment": int(row["player.allocate"]),
+        "risk_tolerance": row["player.allocate"],
         "age": row["player.q25"],
         "gender": row["player.q26"],
     }
@@ -230,7 +232,7 @@ def print_summary(df: pd.DataFrame):
     trait_cols = [
         "extraversion", "agreeableness", "conscientiousness",
         "neuroticism", "openness", "impulsivity", "state_anxiety",
-        "risky_investment",
+        "risk_tolerance",
     ]
     print("\nTrait score ranges:")
     for col in trait_cols:

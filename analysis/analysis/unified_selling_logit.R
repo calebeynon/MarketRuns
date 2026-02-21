@@ -41,8 +41,8 @@ main <- function() {
   panel_b <- run_logit_panel_b(df_em, df_full)
   panel_c <- run_logit_panel_c(df_em)
 
-  build_unified_table(panel_a, panel_b, panel_c, compact = TRUE)
-  build_unified_table(panel_a, panel_b, panel_c, compact = FALSE)
+  build_unified_table(panel_a, panel_c, panel_b, compact = TRUE)
+  build_unified_table(panel_a, panel_c, panel_b, compact = FALSE)
   cat("Done.\n")
 }
 
@@ -135,8 +135,8 @@ build_unified_table <- function(pa, pb, pc, compact) {
   lines <- c(build_preamble(tbl$caption, tbl$label, compact),
     build_col_header(compact),
     build_panel("Panel A: All Participants", pa, v$a),
-    build_panel("Panel B: Second Sellers", pb, v$b),
-    build_panel("Panel C: First Sellers", pc, v$c),
+    build_panel("Panel B: First Sellers", pb, v$b),
+    build_panel("Panel C: Second Sellers", pc, v$c),
     if (compact) build_footer_compact() else build_footer_full())
   write_table(lines, tbl$path)
 }
@@ -144,13 +144,14 @@ build_unified_table <- function(pa, pb, pc, compact) {
 get_panel_vars <- function(compact) {
   cascade <- c("dummy_1_cum", "dummy_2_cum", "dummy_3_cum")
   int_vars <- c(INTERACTION_HEADER, INTERACTION_VARS)
-  panel_a <- c(cascade, int_vars, PERSON_VARS)
+  person <- if (compact) PERSON_VARS else ALL_PERSON_VARS
+  panel_a <- c(cascade, int_vars, person)
   if (compact) return(list(a = panel_a,
-                           b = c("dummy_prev_period", PERSON_VARS),
-                           c = PERSON_VARS))
+                           b = PERSON_VARS,
+                           c = c("dummy_prev_period", PERSON_VARS)))
   list(a = c(panel_a, CONTROLS),
-       b = c("dummy_prev_period", PERSON_VARS, CONTROLS),
-       c = c(PERSON_VARS, CONTROLS))
+       b = c(ALL_PERSON_VARS, CONTROLS),
+       c = c("dummy_prev_period", ALL_PERSON_VARS, CONTROLS))
 }
 
 get_table_config <- function(compact) {
@@ -212,7 +213,10 @@ build_footer_compact <- function() {
   note <- paste0("   \\multicolumn{4}{l}{\\emph{Controls: signal, period, round,",
     " segment indicators, age, gender. Full results in",
     " Appendix Table \\ref{tab:unified_selling_logit_full}.}} \\\\")
-  c(note, build_footer_common())
+  se_note <- paste0("   \\multicolumn{4}{l}{\\emph{Average marginal effects reported.",
+    " (1) \\& (3): random-intercept logit (glmer).",
+    " (2): conditional logit (feglm), clustered by group.}} \\\\")
+  c(note, se_note, build_footer_common())
 }
 
 build_footer_full <- function() {

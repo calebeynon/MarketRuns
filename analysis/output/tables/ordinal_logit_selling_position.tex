@@ -1,56 +1,146 @@
 
+\begin{center}
 \begingroup
-\centering
-\scriptsize
-\renewcommand{\arraystretch}{0.85}
+\tiny
+\renewcommand{\arraystretch}{0.7}
 \setlength{\tabcolsep}{2pt}
-\begin{tabular}{@{}lcc@{}}
+\begin{minipage}[t]{0.42\linewidth}
+\centering
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{2.8cm}>{\centering\arraybackslash}p{1.8cm}}
+\multicolumn{2}{@{}l}{\emph{(1) Full Sample CLM}} \\
    \midrule \midrule
-   & (1) Full & (2) Sellers\\
-   & Sample & Only\\
+   \emph{Key traits} & \\
+   State anxiety            & 0.0339$^{***}$\\
+                            & (0.0065)\\
+   Impulsivity              & 0.0136$^{*}$\\
+                            & (0.0075)\\
+   Conscientiousness        & 0.0538$^{***}$\\
+                            & (0.0092)\\
+   Risk tolerance           & -0.0258$^{***}$\\
+                            & (0.0065)\\
+   \emph{Facial emotions} & \\
+   Fear (p95)               & -0.0101\\
+                            & (0.0222)\\
+   Anger (p95)              & -0.0156\\
+                            & (0.0115)\\
+   Contempt (p95)           & -0.0099\\
+                            & (0.0069)\\
+   Disgust (p95)            & -0.0091\\
+                            & (0.0097)\\
+   Joy (p95)                & 0.0335$^{**}$\\
+                            & (0.0169)\\
+   Sadness (p95)            & -0.0062\\
+                            & (0.0076)\\
+   Surprise (p95)           & -0.0077\\
+                            & (0.0213)\\
+   Engagement (p95)         & 0.0042\\
+                            & (0.0089)\\
+   Valence (p95)            & -0.0387$^{**}$\\
+                            & (0.0172)\\
+   \emph{Other personality traits} & \\
+   Extraversion             & -0.0144$^{**}$\\
+                            & (0.0068)\\
+   Agreeableness            & -0.0176$^{***}$\\
+                            & (0.0068)\\
+   Neuroticism              & 0.0121\\
+                            & (0.0077)\\
+   Openness                 & 0.0046\\
+                            & (0.0065)\\
+   \emph{Controls} & \\
+   Age                      & 0.0127$^{*}$\\
+                            & (0.0068)\\
+   Female                   & -0.0212\\
+                            & (0.0148)\\
+   Segment 2                & -0.0255\\
+                            & (0.0162)\\
+   Segment 3                & -0.0785$^{***}$\\
+                            & (0.0138)\\
+   Segment 4                & -0.0984$^{***}$\\
+                            & (0.0125)\\
+   Round                    & -0.0124$^{*}$\\
+                            & (0.0064)\\
    \midrule
-   \emph{Panel A: Log-odds coefficients}\\
-   State anxiety       & -0.2769$^{***}$ & -0.2478$^{*}$\\
-                       & (0.0496) & (0.1304)\\
-   Impulsivity         & -0.1131$^{**}$ & 0.2516\\
-                       & (0.0573) & (0.1554)\\
-   Conscientiousness   & -0.4679$^{***}$ & -0.3725$^{**}$\\
-                       & (0.0699) & (0.1693)\\
-   Fear (p95)          & 0.1099 & -0.5172\\
-                       & (0.1728) & (0.3890)\\
-   Anger (p95)         & 0.1147 & 0.1022\\
-                       & (0.0893) & (0.2779)\\
-   \midrule
-   \emph{Threshold parameters}\\
-   1$|$2               & -1.2904$^{***}$ & 1.2461$^{***}$\\
-                       & (0.0996) & (0.2363)\\
-   2$|$3               & -0.9260$^{***}$ & 3.2338$^{***}$\\
-                       & (0.0974) & (0.2804)\\
-   3$|$4               & -0.8402$^{***}$ & 6.3888$^{***}$\\
-                       & (0.0970) & (0.7456)\\
-   \midrule
-   \emph{Panel B: Average Marginal Effects on P(selling first)}\\
-   State anxiety       & 0.0362$^{***}$ & 0.0461$^{**}$\\
-                       & (0.0065) & (0.0194)\\
-   Impulsivity         & 0.0148$^{**}$ & -0.0378$^{*}$\\
-                       & (0.0075) & (0.0224)\\
-   Conscientiousness   & 0.0611$^{***}$ & 0.0753$^{***}$\\
-                       & (0.0091) & (0.0237)\\
-   Fear (p95)          & -0.0144 & 0.1099\\
-                       & (0.0226) & (0.0730)\\
-   Anger (p95)         & -0.0150 & -0.0110\\
-                       & (0.0117) & (0.0508)\\
-   \midrule
-   \emph{Fit statistics}\\
-   Model         & CLM & CLMM\\
-   Observations  & 2,845 & 659\\
-   Log-lik.      & -1934.3 & -473.9\\
-   AIC           & 3918.7 & 999.7\\
-   \midrule \midrule
-   \multicolumn{3}{@{}p{\linewidth}@{}}{\emph{Controls: extraversion, agreeableness, neuroticism, openness, contempt (p95), disgust (p95), joy (p95), sadness (p95), surprise (p95), engagement (p95), valence (p95), age, gender, segment dummies, round. Model 1 excludes random effects; Model 2 includes player random effects.}}\\
-   \multicolumn{3}{@{}l@{}}{\emph{Standardized coefficients (z-scored)}}\\
-   \multicolumn{3}{@{}l@{}}{\emph{***: 0.01, **: 0.05, *: 0.1}}\\
 \end{tabular}
+\end{minipage}%
+\hspace{1.5em}
+\begin{minipage}[t]{0.42\linewidth}
+\centering
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{2.8cm}>{\centering\arraybackslash}p{1.8cm}}
+\multicolumn{2}{@{}l}{\emph{(2) Sellers Only CLMM}} \\
+   \midrule \midrule
+   \emph{Key traits} & \\
+   State anxiety            & 0.0463$^{**}$\\
+                            & (0.0194)\\
+   Impulsivity              & -0.0422$^{*}$\\
+                            & (0.0226)\\
+   Conscientiousness        & 0.0783$^{***}$\\
+                            & (0.0238)\\
+   Risk tolerance           & 0.0279\\
+                            & (0.0188)\\
+   \emph{Facial emotions} & \\
+   Fear (p95)               & 0.0998\\
+                            & (0.0729)\\
+   Anger (p95)              & -0.0136\\
+                            & (0.0484)\\
+   Contempt (p95)           & 0.0026\\
+                            & (0.0201)\\
+   Disgust (p95)            & 0.0126\\
+                            & (0.0343)\\
+   Joy (p95)                & -0.0261\\
+                            & (0.0471)\\
+   Sadness (p95)            & -0.0084\\
+                            & (0.0222)\\
+   Surprise (p95)           & -0.0539\\
+                            & (0.0637)\\
+   Engagement (p95)         & 0.0198\\
+                            & (0.0255)\\
+   Valence (p95)            & -0.0024\\
+                            & (0.0474)\\
+   \emph{Other personality traits} & \\
+   Extraversion             & 0.0091\\
+                            & (0.0192)\\
+   Agreeableness            & -0.0487$^{**}$\\
+                            & (0.0198)\\
+   Neuroticism              & 0.0435$^{*}$\\
+                            & (0.0234)\\
+   Openness                 & 0.0166\\
+                            & (0.0185)\\
+   \emph{Controls} & \\
+   Age                      & 0.0152\\
+                            & (0.0175)\\
+   Female                   & -0.0846$^{**}$\\
+                            & (0.0383)\\
+   Segment 2                & 0.0040\\
+                            & (0.0482)\\
+   Segment 3                & 0.0659\\
+                            & (0.0491)\\
+   Segment 4                & -0.1202$^{**}$\\
+                            & (0.0475)\\
+   Round                    & 0.0392$^{**}$\\
+                            & (0.0188)\\
+   \midrule
+\end{tabular}
+\end{minipage}
+
+\vspace{0.1em}
+\begin{center}
+\begin{tabular}{lcc}
+   \emph{Fit statistics} & (1) Full Sample & (2) Sellers Only \\
+   \midrule
+   Model & CLM & CLMM \\
+   Observations & 2,845 & 659 \\
+   Log-lik. & -1926.5 & -473.5 \\
+   AIC & 3905.0 & 1000.9 \\
+\end{tabular}
+\end{center}
+\vspace{0.1em}
+\begin{minipage}{0.95\linewidth}
+\tiny
+\emph{All coefficients are average marginal effects on P(selling first), standardized (z-scored).} 
+\emph{Model 1 excludes random effects; Model 2 includes player random effects (AMEs computed via clm refit).} 
+\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}
+\end{minipage}
 \endgroup
+\end{center}
 
 

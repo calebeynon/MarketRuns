@@ -174,6 +174,11 @@ def test_state_anxiety_range_raw(raw_traits):
     assert raw_traits["state_anxiety"].between(1.0, 4.0).all()
 
 
+def test_risk_tolerance_range_raw(raw_traits):
+    """Risk tolerance from raw data in [0, 20]."""
+    assert raw_traits["risk_tolerance"].between(0, 20).all()
+
+
 # =====
 # Section C: LaTeX table cross-validation
 # =====
@@ -272,10 +277,10 @@ def test_latex_table_exists():
     assert LATEX_TABLE.exists() and LATEX_TABLE.stat().st_size > 0
 
 
-def test_latex_has_seven_rows(latex_content):
-    """LaTeX table has exactly 7 data rows."""
+def test_latex_has_eight_rows(latex_content):
+    """LaTeX table has exactly 8 data rows."""
     rows = [l for l in latex_content.split("\n") if "&" in l and "Trait" not in l]
-    assert len(rows) == 7
+    assert len(rows) == 8
 
 
 def test_latex_headers(latex_content):

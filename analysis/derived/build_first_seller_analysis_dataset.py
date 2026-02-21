@@ -24,6 +24,7 @@ OUTPUT VARIABLES:
     openness: BFI-10 openness score (1-7)
     impulsivity: Impulsivity score (1-7)
     state_anxiety: State anxiety score (1-4)
+    risk_tolerance: Risk tolerance allocation (0-20, tokens allocated to risky asset)
     age: Participant age
     gender_female: Binary indicator (1=Female, 0=otherwise)
 """
@@ -114,7 +115,8 @@ def finalize_columns(df: pd.DataFrame) -> pd.DataFrame:
         "session_id", "treatment", "segment", "group_id", "round", "player",
         "public_signal", "state", "is_first_seller", "first_sale_period",
         "extraversion", "agreeableness", "conscientiousness", "neuroticism",
-        "openness", "impulsivity", "state_anxiety", "age", "gender_female"
+        "openness", "impulsivity", "state_anxiety", "risk_tolerance",
+        "age", "gender_female"
     ]
     return df[output_columns]
 
@@ -127,7 +129,7 @@ def validate_dataset(df: pd.DataFrame):
     trait_cols = [
         "extraversion", "agreeableness", "conscientiousness",
         "neuroticism", "openness", "impulsivity", "state_anxiety",
-        "age", "gender_female"
+        "risk_tolerance", "age", "gender_female"
     ]
 
     print("\nValidation:")
@@ -135,10 +137,11 @@ def validate_dataset(df: pd.DataFrame):
     has_missing = missing_traits.sum() > 0
 
     if has_missing:
-        print("  WARNING: Missing values in trait columns:")
+        print("  Missing values in trait columns:")
         for col, count in missing_traits.items():
             if count > 0:
                 print(f"    {col}: {count}")
+        assert False, f"Missing trait values: {int(missing_traits.sum())}"
     else:
         print("  OK: No missing values in trait columns")
 
@@ -176,7 +179,8 @@ def print_trait_stats(df: pd.DataFrame):
     """Print trait variable summary statistics."""
     trait_cols = [
         "extraversion", "agreeableness", "conscientiousness",
-        "neuroticism", "openness", "impulsivity", "state_anxiety"
+        "neuroticism", "openness", "impulsivity", "state_anxiety",
+        "risk_tolerance"
     ]
 
     print("\nTrait summary statistics:")

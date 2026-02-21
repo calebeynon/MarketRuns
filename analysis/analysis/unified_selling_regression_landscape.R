@@ -12,9 +12,9 @@ build_landscape_table <- function(panel_a, panel_b, panel_c) {
   tbl <- get_table_config(compact = TRUE)
   left <- build_col_panel("Panel A: All Participants",
                           panel_a, vars$a, wide = TRUE)
-  right_b <- build_col_panel("Panel B: Second Sellers",
+  right_b <- build_col_panel("Panel B: First Sellers",
                              panel_b, vars$b, wide = FALSE)
-  right_c <- build_col_panel("Panel C: First Sellers",
+  right_c <- build_col_panel("Panel C: Second Sellers",
                              panel_c, vars$c, wide = FALSE)
   lines <- build_twocol_wrapper(tbl, left, right_b, right_c)
   write_table(lines, tbl$path)
@@ -97,19 +97,26 @@ append_coef_rows <- function(lines, var_order, coefs) {
 # =====
 # Footer note
 # =====
-build_twocol_footer <- function() {
-  note <- paste0(
-    "\\footnotesize ",
+build_controls_note <- function() {
+  paste0("\\footnotesize ",
     "\\emph{Controls: signal, period, round, segment indicators, ",
     "age, gender. Additional emotion controls (contempt, disgust, ",
     "joy, sadness, surprise, engagement, valence) and personality ",
     "traits (extraversion, agreeableness, neuroticism, openness) ",
-    "included but not displayed. ",
-    "Full results in Appendix ",
+    "included but not displayed. Full results in Appendix ",
     "Table~\\ref{tab:unified_selling_regression_full}.}")
+}
+
+build_se_note <- function() {
+  paste0("\\footnotesize ",
+    "\\emph{Standard errors in parentheses. ",
+    "(1) \\& (3): RE with individual-level effects. ",
+    "(2): individual FE, clustered by group.}")
+}
+
+build_twocol_footer <- function() {
   c("\\vspace{0.5em}",
-    note,
-    "",
-    paste0("\\footnotesize ",
-           "\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}"))
+    build_controls_note(), "",
+    build_se_note(), "",
+    "\\footnotesize \\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}")
 }

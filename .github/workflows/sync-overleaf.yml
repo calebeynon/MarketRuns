@@ -39,19 +39,27 @@ jobs:
         run: |
           cd /tmp/overleaf
 
-          # Find the most recent commit by GitHub Actions
+          # Find the most recent commit by GitHub Actions (our last sync)
           last_sync=$(git log --all --author="GitHub Actions" --format="%H" -1 || true)
 
           if [ -z "$last_sync" ]; then
             echo "No prior sync commit found — treating all commits as human edits"
-            human_commits=$(git log --format="%h %s (%an, %ai)" --all)
+            human_hashes=$(git log --format="%H" --all)
           else
-            # Find commits after the last sync that are NOT by GitHub Actions
-            # --invert-grep only inverts --grep, not --author, so filter via tab-delimited author column
-            human_commits=$(git log --format="%aN	%h %s (%an, %ai)" "${last_sync}..HEAD" \
+            # Commits after last sync that are NOT by GitHub Actions
+            human_hashes=$(git log --format="%aN	%H" "${last_sync}..HEAD" \
               | grep -v "^GitHub Actions	" \
-              | cut -f2- || true)
+              | cut -f2 || true)
           fi
+
+          # Filter out empty commits (Overleaf autosaves with no actual changes)
+          human_commits=""
+          for hash in $human_hashes; do
+            if [ -n "$(git diff-tree --no-commit-id -r "$hash")" ]; then
+              human_commits="${human_commits}$(git log --format="%h %s (%an, %ai)" -1 "$hash")"$'\n'
+            fi
+          done
+          human_commits=$(echo "$human_commits" | sed '/^$/d')
 
           if [ -n "$human_commits" ]; then
             echo "::warning::Overleaf has unmerged human edits"
@@ -67,9 +75,51 @@ jobs:
             echo "has_edits=false" >> "$GITHUB_OUTPUT"
           fi
 
-          # Determine if it's safe to proceed
+          # If human edits exist, check if they've already been merged
+          # Compares lines added by human edits against our repo version —
+          # if every non-trivial addition is present, the edits are merged
+          already_merged=false
+          if [ -n "$human_commits" ] && [ -n "$last_sync" ]; then
+            already_merged=true
+            human_files=""
+            for hash in $human_hashes; do
+              human_files="${human_files} $(git diff-tree --no-commit-id -r --name-only "$hash" 2>/dev/null)"
+            done
+            human_files=$(echo "$human_files" | tr ' ' '\n' | sort -u | sed '/^$/d')
+
+            for file in $human_files; do
+              repo_file="${GITHUB_WORKSPACE}/analysis/paper/${file}"
+              if [ ! -f "$file" ]; then
+                continue
+              fi
+              if [ ! -f "$repo_file" ]; then
+                already_merged=false
+                echo "Unmerged file only on Overleaf: $file"
+                break
+              fi
+              # Get lines added by human edits (base → current Overleaf)
+              git show "${last_sync}:${file}" > /tmp/guard_base 2>/dev/null || continue
+              human_additions=$(diff /tmp/guard_base "$file" | grep '^> ' | sed 's/^> //' || true)
+
+              while IFS= read -r line; do
+                trimmed=$(echo "$line" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+                [ -z "$trimmed" ] && continue
+                if ! grep -qF "$trimmed" "$repo_file"; then
+                  already_merged=false
+                  echo "Unmerged addition in $file: $trimmed"
+                  break 2
+                fi
+              done <<< "$human_additions"
+            done
+
+            if [ "$already_merged" = "true" ]; then
+              echo "Human edits already present in repo — safe to sync"
+            fi
+          fi
+
+          # Determine if safe to proceed
           force="${{ inputs.force }}"
-          if [ "$force" = "true" ] || [ -z "$human_commits" ]; then
+          if [ "$force" = "true" ] || [ -z "$human_commits" ] || [ "$already_merged" = "true" ]; then
             echo "safe=true" >> "$GITHUB_OUTPUT"
           else
             echo "safe=false" >> "$GITHUB_OUTPUT"
@@ -81,7 +131,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMITS: ${{ steps.guard.outputs.commits }}
         run: |
-          # Check for existing open issue with overleaf-sync label
           existing=$(gh issue list --label "overleaf-sync" --state open --json number --jq '.[0].number' -R "${{ github.repository }}" || true)
 
           if [ -n "$existing" ]; then

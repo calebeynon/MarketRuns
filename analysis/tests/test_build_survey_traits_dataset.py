@@ -17,6 +17,7 @@ from analysis.derived.build_survey_traits_dataset import (
     compute_openness,
     compute_impulsivity,
     compute_state_anxiety,
+    extract_participant_traits,
 )
 import pandas as pd
 
@@ -87,6 +88,7 @@ def make_survey_row(**overrides) -> pd.Series:
         data[f"player.q{i}"] = "Moderately"
     for i in range(7, 25):
         data[f"player.q{i}"] = "Neither agree nor disagree"
+    data["player.allocate"] = 10
     data["player.q25"] = 20
     data["player.q26"] = "Female"
     data.update(overrides)
@@ -240,6 +242,26 @@ def test_state_anxiety_known_values():
     row = make_survey_row(**overrides)
     # Sum: 3 + 4 + 2 + 3 + 2 + 4 = 18, mean = 18/6 = 3.0
     assert compute_state_anxiety(row) == pytest.approx(3.0)
+
+
+# =====
+# Risk tolerance tests
+# =====
+def test_risk_tolerance_extraction():
+    """Risk tolerance is extracted as raw allocate value."""
+    row = make_survey_row(**{"player.allocate": 15})
+    row["participant.label"] = "A"
+    traits = extract_participant_traits(row, "1_11-7-tr1")
+    assert traits["risk_tolerance"] == 15
+
+
+def test_risk_tolerance_range():
+    """Risk tolerance values must be in [0, 20]."""
+    for value in [0, 10, 20]:
+        row = make_survey_row(**{"player.allocate": value})
+        row["participant.label"] = "A"
+        traits = extract_participant_traits(row, "1_11-7-tr1")
+        assert 0 <= traits["risk_tolerance"] <= 20
 
 
 # =====

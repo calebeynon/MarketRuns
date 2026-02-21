@@ -46,6 +46,7 @@ EMOTION_COLS = [
 TRAIT_COLS = [
     "extraversion", "agreeableness", "conscientiousness",
     "neuroticism", "openness", "impulsivity", "state_anxiety",
+    "risk_tolerance",
 ]
 
 

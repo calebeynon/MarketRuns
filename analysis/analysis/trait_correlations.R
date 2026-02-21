@@ -20,12 +20,12 @@ OUTPUT_DIR <- "analysis/output/tables"
 TRAITS <- c(
   "extraversion", "agreeableness", "conscientiousness",
   "neuroticism", "openness", "impulsivity", "state_anxiety",
-  "risky_investment"
+  "risk_tolerance"
 )
 TRAIT_LABELS <- c(
   "Extraversion", "Agreeableness", "Conscientiousness",
   "Neuroticism", "Openness", "Impulsivity", "State Anxiety",
-  "Risky Investment"
+  "Risk Tolerance"
 )
 TRAIT_SHORT <- c("(1)", "(2)", "(3)", "(4)", "(5)", "(6)", "(7)", "(8)")
 

@@ -78,8 +78,8 @@ def parse_panels(tex_text):
     """Split a unified table into Panel A, B, C coefficient dicts."""
     panel_labels = [
         "Panel A: All Participants",
-        "Panel B: Second Sellers",
-        "Panel C: First Sellers",
+        "Panel B: First Sellers",
+        "Panel C: Second Sellers",
     ]
     panels = {}
     for i, label in enumerate(panel_labels):
@@ -221,16 +221,16 @@ class TestAmeSignsMatchLpm:
     def test_panel_b_signs_match(self, logit_panels, lpm_panels):
         """Panel B: AME signs match LPM signs for significant variables."""
         mismatches = check_sign_agreement(
-            logit_panels["Panel B: Second Sellers"],
-            lpm_panels["Panel B: Second Sellers"],
+            logit_panels["Panel B: First Sellers"],
+            lpm_panels["Panel B: First Sellers"],
         )
         assert len(mismatches) == 0, format_sign_mismatches(mismatches)
 
     def test_panel_c_signs_match(self, logit_panels, lpm_panels):
         """Panel C: AME signs match LPM signs for significant variables."""
         mismatches = check_sign_agreement(
-            logit_panels["Panel C: First Sellers"],
-            lpm_panels["Panel C: First Sellers"],
+            logit_panels["Panel C: Second Sellers"],
+            lpm_panels["Panel C: Second Sellers"],
         )
         assert len(mismatches) == 0, format_sign_mismatches(mismatches)
 
@@ -286,32 +286,32 @@ class TestObservationCounts:
         assert obs[2] == 13590, f"Panel A M3: {obs[2]} != 13590"
 
     def test_panel_b_obs(self, logit_full_text):
-        """Panel B: ~620 obs."""
-        obs = get_panel_obs(logit_full_text, "Panel B: Second Sellers")
-        assert_obs_in_range(obs[0], 550, 700, "Panel B M1")
-        assert_obs_in_range(obs[1], 550, 700, "Panel B M2")
-        assert_obs_in_range(obs[2], 550, 700, "Panel B M3")
+        """Panel B (First Sellers): ~1,200 obs."""
+        obs = get_panel_obs(logit_full_text, "Panel B: First Sellers")
+        assert_obs_in_range(obs[0], 1100, 1350, "Panel B M1")
+        assert_obs_in_range(obs[1], 1100, 1350, "Panel B M2")
+        assert_obs_in_range(obs[2], 1050, 1300, "Panel B M3")
 
     def test_panel_b_exact_obs(self, logit_full_text):
         """Panel B exact values from verified output."""
-        obs = get_panel_obs(logit_full_text, "Panel B: Second Sellers")
-        assert obs[0] == 622, f"Panel B M1: {obs[0]} != 622"
-        assert obs[1] == 622, f"Panel B M2: {obs[1]} != 622"
-        assert obs[2] == 619, f"Panel B M3: {obs[2]} != 619"
+        obs = get_panel_obs(logit_full_text, "Panel B: First Sellers")
+        assert obs[0] == 1218, f"Panel B M1: {obs[0]} != 1218"
+        assert obs[1] == 1194, f"Panel B M2: {obs[1]} != 1194"
+        assert obs[2] == 1183, f"Panel B M3: {obs[2]} != 1183"
 
     def test_panel_c_obs(self, logit_full_text):
-        """Panel C: ~1,200 for M1, ~1,190 for M2."""
-        obs = get_panel_obs(logit_full_text, "Panel C: First Sellers")
-        assert_obs_in_range(obs[0], 1100, 1350, "Panel C M1")
-        assert_obs_in_range(obs[1], 1100, 1350, "Panel C M2")
-        assert_obs_in_range(obs[2], 1050, 1300, "Panel C M3")
+        """Panel C (Second Sellers): ~620 obs."""
+        obs = get_panel_obs(logit_full_text, "Panel C: Second Sellers")
+        assert_obs_in_range(obs[0], 550, 700, "Panel C M1")
+        assert_obs_in_range(obs[1], 550, 700, "Panel C M2")
+        assert_obs_in_range(obs[2], 550, 700, "Panel C M3")
 
     def test_panel_c_exact_obs(self, logit_full_text):
         """Panel C exact values from verified output."""
-        obs = get_panel_obs(logit_full_text, "Panel C: First Sellers")
-        assert obs[0] == 1218, f"Panel C M1: {obs[0]} != 1218"
-        assert obs[1] == 1194, f"Panel C M2: {obs[1]} != 1194"
-        assert obs[2] == 1183, f"Panel C M3: {obs[2]} != 1183"
+        obs = get_panel_obs(logit_full_text, "Panel C: Second Sellers")
+        assert obs[0] == 622, f"Panel C M1: {obs[0]} != 622"
+        assert obs[1] == 622, f"Panel C M2: {obs[1]} != 622"
+        assert obs[2] == 619, f"Panel C M3: {obs[2]} != 619"
 
 
 def get_panel_obs(tex_text, panel_label):
@@ -320,8 +320,8 @@ def get_panel_obs(tex_text, panel_label):
     # Re-extract the raw block for obs parsing
     panel_labels = [
         "Panel A: All Participants",
-        "Panel B: Second Sellers",
-        "Panel C: First Sellers",
+        "Panel B: First Sellers",
+        "Panel C: Second Sellers",
     ]
     idx = panel_labels.index(panel_label)
     end_label = panel_labels[idx + 1] if idx + 1 < len(panel_labels) else None
@@ -425,14 +425,14 @@ class TestTableStructure:
     def test_full_table_has_all_panels(self, logit_full_text):
         """Full table contains all three panel headers."""
         assert "Panel A: All Participants" in logit_full_text
-        assert "Panel B: Second Sellers" in logit_full_text
-        assert "Panel C: First Sellers" in logit_full_text
+        assert "Panel B: First Sellers" in logit_full_text
+        assert "Panel C: Second Sellers" in logit_full_text
 
     def test_compact_table_has_all_panels(self, logit_compact_text):
         """Compact table contains all three panel headers."""
         assert "Panel A: All Participants" in logit_compact_text
-        assert "Panel B: Second Sellers" in logit_compact_text
-        assert "Panel C: First Sellers" in logit_compact_text
+        assert "Panel B: First Sellers" in logit_compact_text
+        assert "Panel C: Second Sellers" in logit_compact_text
 
     def test_full_table_has_longtable(self, logit_full_text):
         """Full table uses longtable environment."""

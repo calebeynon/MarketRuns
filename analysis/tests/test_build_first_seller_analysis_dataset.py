@@ -49,6 +49,7 @@ def sample_traits_df():
         "openness": [7.0, 5.5, 4.5],
         "impulsivity": [4.125, 1.5, 2.625],
         "state_anxiety": [3.17, 1.83, 1.67],
+        "risk_tolerance": [10, 5, 12],
         "age": [18.0, 28.0, 23.0],
         "gender": ["Female", "Female", "Male"],
     })
@@ -153,13 +154,14 @@ def test_finalize_columns_correct_order(sample_first_seller_df, sample_traits_df
         "session_id", "treatment", "segment", "group_id", "round", "player",
         "public_signal", "state", "is_first_seller", "first_sale_period",
         "extraversion", "agreeableness", "conscientiousness", "neuroticism",
-        "openness", "impulsivity", "state_anxiety", "age", "gender_female"
+        "openness", "impulsivity", "state_anxiety", "risk_tolerance",
+        "age", "gender_female"
     ]
     assert list(final.columns) == expected_columns
 
 
 def test_finalize_columns_count(sample_first_seller_df, sample_traits_df):
-    """Final dataset has exactly 19 columns."""
+    """Final dataset has exactly 20 columns."""
     traits = sample_traits_df.copy()
     traits["gender_female"] = (traits["gender"] == "Female").astype(int)
     traits = traits.drop(columns=["gender"])
@@ -167,7 +169,7 @@ def test_finalize_columns_count(sample_first_seller_df, sample_traits_df):
     merged = merge_datasets(sample_first_seller_df, traits)
     final = finalize_columns(merged)
 
-    assert len(final.columns) == 19
+    assert len(final.columns) == 20
 
 
 # =====
@@ -184,6 +186,7 @@ def test_validate_no_missing_traits(capsys):
         "openness": [7.0],
         "impulsivity": [4.125],
         "state_anxiety": [3.17],
+        "risk_tolerance": [10],
         "age": [18.0],
         "gender_female": [1],
     })
@@ -192,8 +195,8 @@ def test_validate_no_missing_traits(capsys):
     assert "OK: No missing values" in captured.out
 
 
-def test_validate_catches_missing_traits(capsys):
-    """Validation warns when trait values are missing."""
+def test_validate_catches_missing_traits():
+    """Validation raises AssertionError when trait values are missing."""
     df = pd.DataFrame({
         "session_id": ["1_11-7-tr1"],
         "extraversion": [None],  # Missing
@@ -203,13 +206,12 @@ def test_validate_catches_missing_traits(capsys):
         "openness": [7.0],
         "impulsivity": [4.125],
         "state_anxiety": [3.17],
+        "risk_tolerance": [10],
         "age": [18.0],
         "gender_female": [1],
     })
-    validate_dataset(df)
-    captured = capsys.readouterr()
-    assert "WARNING" in captured.out
-    assert "extraversion" in captured.out
+    with pytest.raises(AssertionError, match="Missing trait values"):
+        validate_dataset(df)
 
 
 # =====
