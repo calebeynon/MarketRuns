@@ -16,6 +16,7 @@ OUTPUT VARIABLES:
     openness: BFI-10 openness score (1-7)
     impulsivity: Impulsivity score (1-7, mean of 8 items)
     state_anxiety: State anxiety score (1-4, mean of 6 items)
+    risk_tolerance: Risk tolerance allocation (0-20, tokens allocated to risky asset)
     age: Participant age
     gender: Participant gender
 """
@@ -120,6 +121,7 @@ def extract_participant_traits(row: pd.Series, session_id: str) -> dict:
         "openness": compute_openness(row),
         "impulsivity": compute_impulsivity(row),
         "state_anxiety": compute_state_anxiety(row),
+        "risk_tolerance": row["player.allocate"],
         "age": row["player.q25"],
         "gender": row["player.q26"],
     }
@@ -228,6 +230,7 @@ def print_summary(df: pd.DataFrame):
     trait_cols = [
         "extraversion", "agreeableness", "conscientiousness",
         "neuroticism", "openness", "impulsivity", "state_anxiety",
+        "risk_tolerance",
     ]
     print("\nTrait score ranges:")
     for col in trait_cols:

@@ -15,7 +15,8 @@ OUTPUT_PATH <- "analysis/output/tables/first_seller_trait_comparisons.tex"
 
 TRAITS <- c(
   "extraversion", "agreeableness", "conscientiousness",
-  "neuroticism", "openness", "impulsivity", "state_anxiety"
+  "neuroticism", "openness", "impulsivity", "state_anxiety",
+  "risk_tolerance"
 )
 
 # =====

@@ -52,6 +52,7 @@ SEGMENT_MAP = {1: "chat_noavg", 2: "chat_noavg2", 3: "chat_noavg3", 4: "chat_noa
 TRAITS = [
     "extraversion", "agreeableness", "conscientiousness",
     "neuroticism", "openness", "impulsivity", "state_anxiety",
+    "risk_tolerance",
 ]
 
 
@@ -137,6 +138,7 @@ def build_trait_record(row, session_id):
         "openness": compute_openness(row),
         "impulsivity": compute_impulsivity(row),
         "state_anxiety": compute_state_anxiety(row),
+        "risk_tolerance": int(row["player.allocate"]),
     }
 
 

@@ -11,7 +11,7 @@ Combines three data sources into a single analysis-ready dataset:
 OUTPUT VARIABLES:
     All columns from individual_period_dataset, plus:
     - Trait columns: extraversion, agreeableness, conscientiousness,
-      neuroticism, openness, impulsivity, state_anxiety, age, gender
+      neuroticism, openness, impulsivity, state_anxiety, risk_tolerance, age, gender
     - Emotion columns: anger_mean, contempt_mean, disgust_mean, fear_mean,
       joy_mean, sadness_mean, surprise_mean, engagement_mean, valence_mean, n_frames
     - global_group_id: Unique group identifier across sessions ({session_id}_{segment}_{group_id})
@@ -70,7 +70,7 @@ def merge_datasets(
     trait_cols = [
         "session_id", "player", "extraversion", "agreeableness",
         "conscientiousness", "neuroticism", "openness",
-        "impulsivity", "state_anxiety", "age", "gender",
+        "impulsivity", "state_anxiety", "risk_tolerance", "age", "gender",
     ]
     merged = period_df.merge(
         traits_df[trait_cols],
@@ -134,7 +134,7 @@ def print_merge_report(merged: pd.DataFrame, original: pd.DataFrame):
     # NaN counts for key columns
     print("\nNaN counts:")
     check_cols = [
-        "extraversion", "impulsivity", "state_anxiety",
+        "extraversion", "impulsivity", "state_anxiety", "risk_tolerance",
         "anger_mean", "joy_mean", "n_frames",
     ]
     for col in check_cols:

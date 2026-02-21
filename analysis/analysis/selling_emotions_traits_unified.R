@@ -13,7 +13,7 @@ OUTPUT_SECOND <- "analysis/output/tables/selling_emotions_traits_second.tex"
 
 # VARIABLE LISTS
 SHOW_EMOTIONS <- c("fear_mean", "anger_mean")
-SHOW_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness")
+SHOW_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness", "risk_tolerance")
 HIDE_EMOTIONS <- c("contempt_mean", "disgust_mean", "joy_mean", "sadness_mean",
                    "surprise_mean", "engagement_mean", "valence_mean")
 HIDE_TRAITS <- c("extraversion", "agreeableness", "neuroticism", "openness")
@@ -29,6 +29,7 @@ VAR_DICT <- c(
   fear_mean = "Fear", anger_mean = "Anger",
   state_anxiety = "State anxiety", impulsivity = "Impulsivity",
   conscientiousness = "Conscientiousness",
+  risk_tolerance = "Risk tolerance",
   signal = "Signal", period = "Period", round = "Round",
   segment2 = "Segment 2", segment3 = "Segment 3", segment4 = "Segment 4",
   treatmenttr2 = "Treatment 2"

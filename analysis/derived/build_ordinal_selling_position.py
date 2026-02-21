@@ -19,6 +19,7 @@ OUTPUT VARIABLES:
     sell_rank: Selling position within group-round (1-4, min-rank for ties)
     anger_p95 ... valence_p95: 9 p95 emotion columns at sell/last period
     extraversion ... state_anxiety: BFI-10 and anxiety traits
+    risk_tolerance: Risk tolerance allocation (0-20, tokens allocated to risky asset)
     age: Participant age
     gender_female: Binary indicator (1=Female, 0=otherwise)
 """
@@ -180,7 +181,7 @@ def select_output_columns(df: pd.DataFrame) -> pd.DataFrame:
     ] + P95_COLS + [
         "extraversion", "agreeableness", "conscientiousness",
         "neuroticism", "openness", "impulsivity", "state_anxiety",
-        "age", "gender_female",
+        "risk_tolerance", "age", "gender_female",
     ]
     return df[output_cols]
 
@@ -203,7 +204,7 @@ def validate_dataset(df: pd.DataFrame):
     trait_cols = [
         "extraversion", "agreeableness", "conscientiousness",
         "neuroticism", "openness", "impulsivity", "state_anxiety",
-        "age", "gender_female",
+        "risk_tolerance", "age", "gender_female",
     ]
     missing_traits = df[trait_cols].isna().sum().sum()
     assert missing_traits == 0, f"Missing trait values: {missing_traits}"
