@@ -92,7 +92,7 @@ create_segment_dummies <- function(df) {
 }
 
 standardize_continuous <- function(df) {
-  for (v in CONTINUOUS_VARS) df[, (v) := scale(get(v))]
+  for (v in CONTINUOUS_VARS) df[, (v) := as.vector(scale(get(v)))]
 }
 
 build_survival_vars <- function(df) {
