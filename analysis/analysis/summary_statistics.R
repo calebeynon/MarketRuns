@@ -5,7 +5,7 @@
 #
 # Outputs 2 LaTeX tables to analysis/output/tables/:
 #   summary_demographics_traits.tex — demographics + personality traits by treatment
-#   summary_sell_rates.tex — sell rates, avg sell period, avg sell price by treatment x chat x state
+#   summary_seller_counts.tex — avg sellers per group-round, avg sell period, avg sell price by treatment x chat x state
 
 library(tidyverse)
 
@@ -49,7 +49,7 @@ main <- function() {
   survey <- survey %>% left_join(session_treatments, by = "session_id")
 
   write_combined_demographics_traits_table(panel, survey)
-  write_sell_rate_table(panel)
+  write_seller_count_table(panel)
 
   cat("All summary tables written to", OUTPUT_DIR, "\n")
 }
@@ -112,21 +112,35 @@ wrap_combined_latex <- function(demo_rows, trait_rows) {
 }
 
 # =====
-# Table 2: Sell rates, avg sell period, avg sell price
+# Table 2: Seller counts, avg sell period, avg sell price
 # =====
-write_sell_rate_table <- function(panel) {
+write_seller_count_table <- function(panel) {
   panel <- panel %>%
     mutate(chat = if_else(segment %in% CHAT_SEGMENTS, "Chat", "No Chat"))
   sellers <- panel %>% filter(did_sell == 1)
-  sell_rate_rows <- build_stat_block("Sell rate (\\%)", panel, stat_sell_rate)
+  seller_count_rows <- build_stat_block("Avg sellers per group-round", panel, stat_avg_sellers)
   period_rows <- build_stat_block("Avg sell period", sellers, stat_avg_sell_period)
   price_rows <- build_stat_block("Avg sell price", sellers, stat_avg_sell_price)
-  rows <- c(sell_rate_rows, "\\midrule", period_rows, "\\midrule", price_rows)
-  latex <- wrap_sell_rate_latex(rows)
-  write_table(latex, "summary_sell_rates.tex")
+  zero_seller_rows <- build_stat_block("Zero-seller group-rounds", panel, stat_zero_seller_groups)
+  rows <- c(seller_count_rows, "\\midrule", period_rows, "\\midrule", price_rows, "\\midrule", zero_seller_rows)
+  latex <- wrap_seller_count_latex(rows)
+  write_table(latex, "summary_seller_counts.tex")
 }
 
-stat_sell_rate <- function(data) sprintf("%.1f", 100 * mean(data$did_sell))
+stat_avg_sellers <- function(data) {
+  group_counts <- data %>%
+    group_by(session_id, segment, group_id, round) %>%
+    summarise(n_sellers = sum(did_sell), .groups = "drop")
+  sprintf("%.2f", mean(group_counts$n_sellers))
+}
+
+stat_zero_seller_groups <- function(data) {
+  group_counts <- data %>%
+    group_by(session_id, segment, group_id, round) %>%
+    summarise(n_sellers = sum(did_sell), .groups = "drop")
+  as.character(sum(group_counts$n_sellers == 0))
+}
+
 stat_avg_sell_period <- function(data) sprintf("%.1f", mean(data$sell_period))
 stat_avg_sell_price <- function(data) sprintf("%.1f", mean(data$sell_price))
 
@@ -155,7 +169,7 @@ calc_stat_by_group <- function(data, stat_fn) {
   })
 }
 
-wrap_sell_rate_latex <- function(rows) {
+wrap_seller_count_latex <- function(rows) {
   c(
     "\\begingroup", "\\centering", "\\small",
     "\\begin{tabular}{lcccc}", "\\toprule",

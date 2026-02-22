@@ -1,7 +1,7 @@
 """
 Purpose: Verify summary_statistics.R output tables against raw input data
 Author: Claude Code
-Date: 2026-02-17
+Date: 2026-02-22
 
 Cross-validates each number in the 2 LaTeX tables by independently
 computing the same statistics from the CSV inputs.
@@ -21,7 +21,7 @@ SURVEY_PATH = Path("datastore/derived/survey_traits.csv")
 TABLE_DIR = Path("analysis/output/tables")
 
 COMBINED_TEX = TABLE_DIR / "summary_demographics_traits.tex"
-SELL_RATES_TEX = TABLE_DIR / "summary_sell_rates.tex"
+SELLER_COUNTS_TEX = TABLE_DIR / "summary_seller_counts.tex"
 
 NO_CHAT_SEGMENTS = [1, 2]
 CHAT_SEGMENTS = [3, 4]
@@ -54,8 +54,8 @@ def combined_tex():
 
 
 @pytest.fixture(scope="module")
-def sell_rates_tex():
-    return SELL_RATES_TEX.read_text()
+def seller_counts_tex():
+    return SELLER_COUNTS_TEX.read_text()
 
 
 # =====
@@ -155,10 +155,10 @@ class TestDemographicsTraitsTable:
 
 
 # =====
-# Sell rates table tests
+# Seller counts table tests
 # =====
-class TestSellRatesTable:
-    """Validate summary_sell_rates.tex against individual_round_panel.csv."""
+class TestSellerCountsTable:
+    """Validate summary_seller_counts.tex against individual_round_panel.csv."""
 
     COMBOS = [
         (1, "tr1", NO_CHAT_SEGMENTS),
@@ -175,35 +175,57 @@ class TestSellRatesTable:
         subset = panel[mask]
         return subset[subset.did_sell == 1] if sellers_only else subset
 
-    def _assert_block(self, panel, rows, col, stat_col, tr, segs, scale=1, sellers_only=False):
-        """Assert overall, good-state, and bad-state values for one column."""
-        overall_row, good_row, bad_row = rows
-        for row, state in [(overall_row, None), (good_row, 1), (bad_row, 0)]:
-            sub = self._filter_subset(panel, tr, segs, state, sellers_only)
-            expected = scale * sub[stat_col].mean()
-            assert float(row[col]) == pytest.approx(expected, abs=0.1)
+    def _group_seller_counts(self, panel, treatment, segs, state=None):
+        """Compute group-level seller counts for a subset."""
+        sub = self._filter_subset(panel, treatment, segs, state)
+        grouped = sub.groupby(
+            ["session_id", "segment", "group_id", "round"]
+        )["did_sell"].sum()
+        return grouped
 
-    def test_sell_rate_values(self, panel, sell_rates_tex):
-        rows = parse_all_data_rows(sell_rates_tex)
+    def test_avg_sellers_values(self, panel, seller_counts_tex):
+        rows = parse_all_data_rows(seller_counts_tex)
         block = rows[0:3]
+        overall_row, good_row, bad_row = block
         for col, tr, segs in self.COMBOS:
-            self._assert_block(panel, block, col, "did_sell", tr, segs, scale=100)
+            for row, state in [(overall_row, None), (good_row, 1), (bad_row, 0)]:
+                counts = self._group_seller_counts(panel, tr, segs, state)
+                expected = counts.mean()
+                assert float(row[col]) == pytest.approx(expected, abs=0.01)
 
-    def test_avg_sell_period_values(self, panel, sell_rates_tex):
-        rows = parse_all_data_rows(sell_rates_tex)
+    def test_avg_sell_period_values(self, panel, seller_counts_tex):
+        rows = parse_all_data_rows(seller_counts_tex)
         block = rows[3:6]
+        overall_row, good_row, bad_row = block
         for col, tr, segs in self.COMBOS:
-            self._assert_block(panel, block, col, "sell_period", tr, segs, sellers_only=True)
+            for row, state in [(overall_row, None), (good_row, 1), (bad_row, 0)]:
+                sub = self._filter_subset(panel, tr, segs, state, sellers_only=True)
+                expected = sub["sell_period"].mean()
+                assert float(row[col]) == pytest.approx(expected, abs=0.1)
 
-    def test_avg_sell_price_values(self, panel, sell_rates_tex):
-        rows = parse_all_data_rows(sell_rates_tex)
+    def test_avg_sell_price_values(self, panel, seller_counts_tex):
+        rows = parse_all_data_rows(seller_counts_tex)
         block = rows[6:9]
+        overall_row, good_row, bad_row = block
         for col, tr, segs in self.COMBOS:
-            self._assert_block(panel, block, col, "sell_price", tr, segs, sellers_only=True)
+            for row, state in [(overall_row, None), (good_row, 1), (bad_row, 0)]:
+                sub = self._filter_subset(panel, tr, segs, state, sellers_only=True)
+                expected = sub["sell_price"].mean()
+                assert float(row[col]) == pytest.approx(expected, abs=0.1)
 
-    def test_row_count(self, sell_rates_tex):
-        rows = parse_all_data_rows(sell_rates_tex)
-        assert len(rows) == 9, f"Expected 9 data rows, got {len(rows)}"
+    def test_zero_seller_groups_values(self, panel, seller_counts_tex):
+        rows = parse_all_data_rows(seller_counts_tex)
+        block = rows[9:12]
+        overall_row, good_row, bad_row = block
+        for col, tr, segs in self.COMBOS:
+            for row, state in [(overall_row, None), (good_row, 1), (bad_row, 0)]:
+                counts = self._group_seller_counts(panel, tr, segs, state)
+                expected = int((counts == 0).sum())
+                assert int(row[col]) == expected
+
+    def test_row_count(self, seller_counts_tex):
+        rows = parse_all_data_rows(seller_counts_tex)
+        assert len(rows) == 12, f"Expected 12 data rows, got {len(rows)}"
 
 
 # =====
@@ -213,8 +235,8 @@ class TestTablesExist:
     def test_combined_demographics_traits_exists(self):
         assert COMBINED_TEX.exists()
 
-    def test_sell_rates_exists(self):
-        assert SELL_RATES_TEX.exists()
+    def test_seller_counts_exists(self):
+        assert SELLER_COUNTS_TEX.exists()
 
 
 # %%
