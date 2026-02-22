@@ -145,7 +145,7 @@ extract_coefs <- function(model) {
   data.table(
     var = rownames(s$coefficients),
     est = s$coefficients[, "coef"],
-    se = s$coefficients[, "se(coef)"],
+    se = s$coefficients[, "robust se"],
     pval = s$coefficients[, "Pr(>|z|)"]
   )
 }
