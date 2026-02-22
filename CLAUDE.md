@@ -132,6 +132,19 @@ The paper compiles both locally and on Overleaf using path resolution:
 - Example: `\input{h2_regression_cluster}` not `\input{../output/tables/h2_regression_cluster.tex}`
 - Do NOT manually commit files to `analysis/paper/tables/` or `analysis/paper/plots/` — the Action manages these on Overleaf
 
+### Compiling the Paper
+```bash
+cd analysis/paper
+pdflatex -interaction=nonstopmode main.tex
+bibtex main
+pdflatex -interaction=nonstopmode main.tex
+pdflatex -interaction=nonstopmode main.tex
+```
+All four commands are required: the first `pdflatex` generates `.aux` files, `bibtex` resolves bibliography references, and the final two `pdflatex` passes resolve cross-references and citations. Running only `pdflatex` once produces question marks (`?`) for all `\cite{}` and some `\ref{}` commands.
+
+### Pulling from Overleaf
+After pulling Overleaf changes via rsync, check for `\includegraphics` paths that include directory prefixes (e.g., `plots/filename`). Overleaf editors may add these, but locally they break because `\graphicspath` already includes the `plots/` prefix. Fix by removing the directory prefix to use bare filenames.
+
 ## Visualization Standards
 
 ### LaTeX Tables
