@@ -1,6 +1,6 @@
 # Purpose: Ordinal logit regressions for selling position (rank 1-4)
 #          Model 1: Full sample, clm (non-sellers = rank 4, no random effects)
-#          Model 2: Sellers only, clmm (did_sell == 1, player random effects)
+#          Model 2: Sellers only, clm (did_sell == 1, no random effects)
 #          Output: Two-column minipage AME table with all controls displayed
 # Author: Claude Code
 # Date: 2026-02-19
@@ -26,7 +26,7 @@ EMOTION_COLS <- c("fear_p95", "anger_p95", "contempt_p95", "disgust_p95",
 ALL_PREDICTORS <- c("state_anxiety", "impulsivity", "conscientiousness",
                     EMOTION_COLS, "extraversion", "agreeableness",
                     "neuroticism", "openness", "risk_tolerance",
-                    "age", "gender_female",
+                    "age", "gender_female", "treatment_2",
                     "segment2", "segment3", "segment4", "round")
 
 # Display labels for all predictors
@@ -41,7 +41,7 @@ VAR_DICT <- c(
   extraversion = "Extraversion", agreeableness = "Agreeableness",
   neuroticism = "Neuroticism", openness = "Openness",
   risk_tolerance = "Risk tolerance",
-  age = "Age", gender_female = "Female",
+  age = "Age", gender_female = "Female", treatment_2 = "Treatment 2",
   segment2 = "Segment 2", segment3 = "Segment 3",
   segment4 = "Segment 4", round = "Round"
 )
@@ -49,8 +49,8 @@ VAR_DICT <- c(
 # Ordered variable groups for display
 KEY_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness", "risk_tolerance")
 OTHER_TRAITS <- c("extraversion", "agreeableness", "neuroticism", "openness")
-CONTROLS <- c("age", "gender_female", "segment2", "segment3",
-              "segment4", "round")
+CONTROLS <- c("age", "gender_female", "treatment_2", "segment2",
+              "segment3", "segment4", "round")
 
 # =====
 # Main function (FIRST - shows high-level flow)
@@ -63,13 +63,12 @@ main <- function() {
   model1 <- fit_clm(df, "Full Sample")
 
   df_sellers <- df[did_sell == 1]
-  cat("\n--- Fitting Model 2: Sellers Only (clmm, player RE) ---\n")
-  model2 <- fit_clmm(df_sellers, "Sellers Only")
+  cat("\n--- Fitting Model 2: Sellers Only (clm, no RE) ---\n")
+  model2 <- fit_clm(df_sellers, "Sellers Only")
 
   cat("\n--- Computing AMEs on P(rank=1) ---\n")
   ame1 <- compute_ames(model1)
-  model2_clm <- fit_clm(df_sellers, "Sellers Only (clm for AMEs)")
-  ame2 <- compute_ames(model2_clm)
+  ame2 <- compute_ames(model2)
 
   build_minipage_table(model1, model2, ame1, ame2, OUTPUT_PATH)
   cat("\nDone!\n")
@@ -95,6 +94,7 @@ create_segment_dummies <- function(df) {
   df[, segment2 := as.integer(segment == 2)]
   df[, segment3 := as.integer(segment == 3)]
   df[, segment4 := as.integer(segment == 4)]
+  df[, treatment_2 := as.integer(treatment == "tr2")]
 }
 
 standardize_continuous <- function(df) {
@@ -108,16 +108,6 @@ fit_clm <- function(df, label) {
   fml <- paste("sell_rank ~", paste(ALL_PREDICTORS, collapse = " + "))
   cat("Formula:", fml, "\nN observations:", nrow(df), "\n")
   model <- clm(as.formula(fml), data = df)
-  cat("\n--- Summary:", label, "---\n")
-  print(summary(model))
-  return(model)
-}
-
-fit_clmm <- function(df, label) {
-  fml <- paste("sell_rank ~", paste(ALL_PREDICTORS, collapse = " + "),
-               "+ (1 | player_id)")
-  cat("Formula:", fml, "\nN observations:", nrow(df), "\n")
-  model <- clmm(as.formula(fml), data = df)
   cat("\n--- Summary:", label, "---\n")
   print(summary(model))
   return(model)
@@ -205,7 +195,7 @@ build_table_preamble <- function() {
 
 build_minipages <- function(ame1, ame2) {
   left <- build_single_tabular("(1) Full Sample CLM", ame1)
-  right <- build_single_tabular("(2) Sellers Only CLMM", ame2)
+  right <- build_single_tabular("(2) Sellers Only CLM", ame2)
   c("\\begin{minipage}[t]{0.42\\linewidth}",
     "\\centering",
     left,
@@ -227,7 +217,7 @@ build_fit_line <- function(f1, f2) {
     "\\begin{tabular}{lcc}",
     "   \\emph{Fit statistics} & (1) Full Sample & (2) Sellers Only \\\\",
     "   \\midrule",
-    "   Model & CLM & CLMM \\\\",
+    "   Model & CLM & CLM \\\\",
     sprintf("   Observations & %s & %s \\\\",
             format(f1$n, big.mark = ","), format(f2$n, big.mark = ",")),
     sprintf("   Log-lik. & %.1f & %.1f \\\\",
@@ -243,9 +233,8 @@ build_footer <- function() {
     "\\tiny",
     paste0("\\emph{All coefficients are average marginal effects on ",
            "P(selling first), standardized (z-scored).} "),
-    paste0("\\emph{Model 1 excludes random effects; ",
-           "Model 2 includes player random effects ",
-           "(AMEs computed via clm refit).} "),
+    paste0("\\emph{Both models are cumulative link models (CLM) ",
+           "without random effects.} "),
     "\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}",
     "\\end{minipage}",
     "\\endgroup", "\\end{center}", "", "")
