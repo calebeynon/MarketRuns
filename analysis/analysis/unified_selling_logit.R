@@ -3,7 +3,6 @@
 # Date: 2026-02-09
 
 library(data.table)
-library(fixest)
 library(lme4)
 library(marginaleffects)
 
@@ -72,29 +71,8 @@ prepare_base_data <- function(file_path) {
 # AME extraction
 # =====
 extract_ame <- function(model) {
-  if (inherits(model, "fixest")) {
-    return(extract_ame_fixest(model))
-  }
   ame <- avg_slopes(model)
   normalize_ame_names(as.data.frame(ame))
-}
-
-# Delta method AME for feglm (marginaleffects cannot handle absorbed FE)
-extract_ame_fixest <- function(model) {
-  betas <- coef(model)
-  V <- vcov(model, vcov = ~global_group_id)
-  phat <- predict(model, type = "response")
-  w <- phat * (1 - phat)
-  X <- model.matrix(model)
-  p <- length(betas)
-  ame_vals <- sapply(seq_len(p), function(j) mean(betas[j] * w))
-  dw <- w * (1 - 2 * phat)
-  J <- matrix(0, p, p)
-  for (j in seq_len(p)) for (k in seq_len(p))
-    J[j, k] <- mean((if (j == k) w else 0) + betas[j] * dw * X[, k])
-  ame_se <- sqrt(pmax(diag(J %*% V %*% t(J)), 0))
-  data.table(var = names(betas), est = ame_vals,
-             se = ame_se, pval = 2 * pnorm(-abs(ame_vals / ame_se)))
 }
 
 # Map marginaleffects term/contrast pairs to table variable names
@@ -114,11 +92,6 @@ normalize_ame_names <- function(ame_df) {
 # Fit statistics
 # =====
 extract_logit_fit <- function(model) {
-  if (inherits(model, "fixest")) {
-    return(list(n = model$nobs,
-                pseudo_r2 = fitstat(model, "pr2")[[1]],
-                log_lik = fitstat(model, "ll")[[1]]))
-  }
   null_model <- glmer(sold ~ 1 + (1 | player_id),
                       family = binomial, data = model@frame)
   pr2 <- 1 - as.numeric(logLik(model)) / as.numeric(logLik(null_model))
@@ -172,7 +145,7 @@ build_preamble <- function(caption, label, compact = FALSE) {
 
 build_col_header <- function(compact = FALSE) {
   hdr <- c("   \\midrule \\midrule", "   & (1) & (2) & (3) \\\\",
-           "   & RE Logit & FE Logit & RE Logit \\\\", "   \\midrule")
+           "   & RE Logit & RE Logit & RE Logit \\\\", "   \\midrule")
   if (compact) return(c(hdr, "\\endfirsthead", "\\endlastfoot"))
   c(hdr, "\\endfirsthead", "\\multicolumn{4}{l}{\\emph{(continued)}} \\\\",
     hdr, "\\endhead", "   \\midrule",
@@ -214,15 +187,13 @@ build_footer_compact <- function() {
     " segment indicators, age, gender. Full results in",
     " Appendix Table \\ref{tab:unified_selling_logit_full}.}} \\\\")
   se_note <- paste0("   \\multicolumn{4}{l}{\\emph{Average marginal effects reported.",
-    " (1) \\& (3): random-intercept logit (glmer).",
-    " (2): conditional logit (feglm), clustered by group.}} \\\\")
+    " All columns: random-intercept logit (glmer).}} \\\\")
   c(note, se_note, build_footer_common())
 }
 
 build_footer_full <- function() {
   c(paste0("   \\multicolumn{4}{l}{\\emph{Average marginal effects reported.",
-           " (1) \\& (3): random-intercept logit (glmer).",
-           " (2): conditional logit (feglm), clustered by group.}} \\\\"),
+           " All columns: random-intercept logit (glmer).}} \\\\"),
     build_footer_common())
 }
 
