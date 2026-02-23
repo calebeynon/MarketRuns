@@ -8,7 +8,6 @@ Tests verify that:
 1. The logit script runs to completion and produces both output files
 2. AME signs match LPM coefficient signs for jointly-significant variables
 3. Observation counts match expected values from real output
-4. The manual delta method for feglm AMEs matches marginaleffects::avg_slopes()
 """
 
 import subprocess
@@ -272,17 +271,17 @@ class TestObservationCounts:
     """Verify observation counts from real output."""
 
     def test_panel_a_obs(self, logit_full_text):
-        """Panel A: ~13,700 for M1/M3, ~12,300 for M2."""
+        """Panel A: ~13,600-13,700 for all models."""
         obs = get_panel_obs(logit_full_text, "Panel A: All Participants")
         assert_obs_in_range(obs[0], 13000, 14500, "Panel A M1")
-        assert_obs_in_range(obs[1], 11500, 13000, "Panel A M2")
+        assert_obs_in_range(obs[1], 13000, 14500, "Panel A M2")
         assert_obs_in_range(obs[2], 13000, 14500, "Panel A M3")
 
     def test_panel_a_exact_obs(self, logit_full_text):
         """Panel A exact values from verified output."""
         obs = get_panel_obs(logit_full_text, "Panel A: All Participants")
         assert obs[0] == 13713, f"Panel A M1: {obs[0]} != 13713"
-        assert obs[1] == 12369, f"Panel A M2: {obs[1]} != 12369"
+        assert obs[1] == 13590, f"Panel A M2: {obs[1]} != 13590"
         assert obs[2] == 13590, f"Panel A M3: {obs[2]} != 13590"
 
     def test_panel_b_obs(self, logit_full_text):
@@ -296,7 +295,7 @@ class TestObservationCounts:
         """Panel B exact values from verified output."""
         obs = get_panel_obs(logit_full_text, "Panel B: First Sellers")
         assert obs[0] == 1218, f"Panel B M1: {obs[0]} != 1218"
-        assert obs[1] == 1194, f"Panel B M2: {obs[1]} != 1194"
+        assert obs[1] == 1183, f"Panel B M2: {obs[1]} != 1183"
         assert obs[2] == 1183, f"Panel B M3: {obs[2]} != 1183"
 
     def test_panel_c_obs(self, logit_full_text):
@@ -310,7 +309,7 @@ class TestObservationCounts:
         """Panel C exact values from verified output."""
         obs = get_panel_obs(logit_full_text, "Panel C: Second Sellers")
         assert obs[0] == 622, f"Panel C M1: {obs[0]} != 622"
-        assert obs[1] == 622, f"Panel C M2: {obs[1]} != 622"
+        assert obs[1] == 619, f"Panel C M2: {obs[1]} != 619"
         assert obs[2] == 619, f"Panel C M3: {obs[2]} != 619"
 
 
@@ -334,86 +333,6 @@ def assert_obs_in_range(obs, low, high, label):
     assert low <= obs <= high, (
         f"{label}: obs={obs} not in [{low}, {high}]"
     )
-
-
-# =====
-# Test 4: Delta method AME sanity check
-# =====
-class TestDeltaMethodAme:
-    """Validate manual delta method against marginaleffects::avg_slopes()."""
-
-    def test_delta_method_matches_avg_slopes(self):
-        """Manual delta method matches avg_slopes() on a simple logit."""
-        r_script = _build_delta_method_r_script()
-        result = subprocess.run(
-            ["Rscript", "-e", r_script],
-            capture_output=True,
-            text=True,
-            cwd=str(PROJECT_ROOT),
-            timeout=120,
-        )
-        assert result.returncode == 0, (
-            f"R script failed.\nSTDERR:\n{result.stderr[-2000:]}"
-        )
-        _verify_delta_method_output(result.stdout)
-
-
-def _build_delta_method_r_script():
-    """Build the R script that compares delta method vs avg_slopes."""
-    return """
-library(marginaleffects)
-
-# Load and prepare data (same as logit script)
-df <- read.csv("datastore/derived/emotions_traits_selling_dataset.csv")
-df <- df[df$already_sold == 0, ]
-df$segment <- as.factor(df$segment)
-
-# Fit simple logit WITHOUT absorbed FE
-model <- glm(sold ~ signal + period, family = binomial, data = df)
-
-# Method 1: marginaleffects::avg_slopes()
-ame_ref <- avg_slopes(model)
-ame_ref_df <- as.data.frame(ame_ref)
-
-# Method 2: Manual delta method (same logic as extract_ame_fixest)
-betas <- coef(model)
-phat <- predict(model, type = "response")
-w <- phat * (1 - phat)
-X <- model.matrix(model)
-p <- length(betas)
-ame_manual <- sapply(seq_len(p), function(j) mean(betas[j] * w))
-names(ame_manual) <- names(betas)
-
-# Compare for non-intercept terms
-for (term_name in c("signal", "period")) {
-  ref_row <- ame_ref_df[ame_ref_df$term == term_name, ]
-  ref_val <- ref_row$estimate
-  manual_val <- ame_manual[term_name]
-  diff <- abs(ref_val - manual_val)
-  cat(sprintf("TERM=%s REF=%.10f MANUAL=%.10f DIFF=%.2e\\n",
-              term_name, ref_val, manual_val, diff))
-}
-cat("DELTA_METHOD_TEST_COMPLETE\\n")
-"""
-
-
-def _verify_delta_method_output(stdout):
-    """Parse R output and check delta method matches avg_slopes."""
-    assert "DELTA_METHOD_TEST_COMPLETE" in stdout, (
-        f"R script did not complete. Output:\n{stdout[-1000:]}"
-    )
-    term_lines = re.findall(
-        r"TERM=(\S+) REF=(\S+) MANUAL=(\S+) DIFF=(\S+)", stdout
-    )
-    assert len(term_lines) >= 2, (
-        f"Expected at least 2 term comparisons, got {len(term_lines)}"
-    )
-    for term, ref_str, manual_str, diff_str in term_lines:
-        diff = float(diff_str)
-        assert diff < 1e-6, (
-            f"Delta method mismatch for {term}: "
-            f"ref={ref_str}, manual={manual_str}, diff={diff_str}"
-        )
 
 
 # =====
@@ -448,9 +367,9 @@ class TestTableStructure:
         assert "Log-likelihood" in logit_full_text
 
     def test_column_headers_say_logit(self, logit_full_text):
-        """Column headers identify RE Logit and FE Logit."""
+        """Column headers identify RE Logit (no FE Logit)."""
         assert "RE Logit" in logit_full_text
-        assert "FE Logit" in logit_full_text
+        assert "FE Logit" not in logit_full_text
 
     def test_compact_has_appendix_reference(self, logit_compact_text):
         """Compact table references the full appendix table."""

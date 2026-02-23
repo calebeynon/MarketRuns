@@ -17,7 +17,7 @@ run_logit_panel_a <- function(df) {
   cat("\n--- Panel A Logit Model Summaries ---\n")
   cat("\nModel 1 (Cascade RE glmer):\n")
   print(summary(m1))
-  cat("\nModel 2 (Cascade + Emotions, individual FE feglm):\n")
+  cat("\nModel 2 (Cascade + Emotions, RE glmer):\n")
   print(summary(m2))
   cat("\nModel 3 (Cascade + Traits, RE glmer):\n")
   print(summary(m3))
@@ -45,20 +45,25 @@ run_logit_panel_a_m1 <- function(df) {
 }
 
 # =====
-# Model 2: Cascade + Emotions with individual FE (logit)
+# Model 2: Cascade + Emotions RE (logit)
 # =====
 run_logit_panel_a_m2 <- function(df) {
-  cat("[Panel A M2] Cascade + Emotions with individual FE (feglm)...\n")
-  feglm(
+  cat("[Panel A M2] Cascade + Emotions RE (glmer)...\n")
+  glmer(
     sold ~ dummy_1_cum + dummy_2_cum + dummy_3_cum +
       int_1_1 + int_2_1 + int_2_2 + int_3_1 + int_3_2 + int_3_3 +
       fear_mean + anger_mean + contempt_mean + disgust_mean +
       joy_mean + sadness_mean + surprise_mean + engagement_mean +
       valence_mean +
-      signal + period + round + segment | player_id,
+      signal + period + round + segment + treatment +
+      age + gender_female +
+      (1 | player_id),
     family = binomial,
-    cluster = ~global_group_id,
-    data = df
+    data = df,
+    control = glmerControl(
+      optimizer = "bobyqa",
+      optCtrl = list(maxfun = 100000)
+    )
   )
 }
 

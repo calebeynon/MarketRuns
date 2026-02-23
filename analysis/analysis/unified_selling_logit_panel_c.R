@@ -15,7 +15,7 @@ run_logit_panel_c <- function(df) {
   cat("  [1/3] Model 1: Controls only (RE logit)...\n")
   m1 <- run_logit_panel_c_m1(df_first)
 
-  cat("  [2/3] Model 2: Emotions (individual FE logit)...\n")
+  cat("  [2/3] Model 2: Emotions (RE logit)...\n")
   m2 <- run_logit_panel_c_m2(df_first)
 
   cat("  [3/3] Model 3: Traits (RE logit)...\n")
@@ -38,13 +38,14 @@ run_logit_panel_c_m1 <- function(df_first) {
 }
 
 run_logit_panel_c_m2 <- function(df_first) {
-  feglm(
+  glmer(
     sold ~ fear_mean + anger_mean + contempt_mean + disgust_mean +
       joy_mean + sadness_mean + surprise_mean + engagement_mean +
-      valence_mean + signal + period + round + segment | player_id,
+      valence_mean + signal + period + round + segment +
+      treatment + age + gender_female + (1 | player_id),
     family = binomial,
-    cluster = ~global_group_id,
-    data = df_first
+    data = df_first,
+    control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000))
   )
 }
 
