@@ -193,8 +193,8 @@ class TestTableOutput:
     def test_average_row_avg_periods(self, tex):
         """Average of per-segment avg periods should be ~5.6."""
         summary = parse_summary_rows(tex)
-        avg_row = [r for r in summary if "average" in r[0].lower()]
-        assert len(avg_row) == 1, "Expected exactly one Average row"
+        avg_row = [r for r in summary if "avg" in r[0].lower()]
+        assert len(avg_row) == 1, "Expected exactly one Avg row"
         actual_avg = float(avg_row[0][5])
         assert actual_avg == pytest.approx(5.6, abs=0.1)
 

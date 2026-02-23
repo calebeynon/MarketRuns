@@ -111,7 +111,7 @@ def table_header():
         r'\begin{tabular}{clcccc}',
         r'\toprule',
         r'Segment & Chat & Rounds & Periods per Round'
-        r' & Total Periods & Avg.\ Periods per Round \\',
+        r' & Total Periods & Avg. per Round \\',
         r'\midrule',
     ]
 
@@ -149,7 +149,7 @@ def format_total_row(total_rounds, total_periods):
 
 
 def format_average_row(segments):
-    """Format the Average summary row."""
+    """Format the Avg. per Segment summary row."""
     n = len(segments)
     avg_rounds = sum(s['rounds'] for s in segments) / n
     avg_total = sum(s['total_periods'] for s in segments) / n
@@ -157,7 +157,7 @@ def format_average_row(segments):
         sum(s['avg_periods'] for s in segments) / n
     )
     return (
-        f"  Average & --- & {avg_rounds:.1f}"
+        f"  Avg. per Segment & --- & {avg_rounds:.1f}"
         f" & --- & {avg_total:.1f} & {avg_per_round:.1f} \\\\"
     )
 

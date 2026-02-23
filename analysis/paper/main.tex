@@ -192,13 +192,13 @@ Anxiety and Compulsiveness
 We experimentally implement the \cite{bernardo2004liquidity} framework in a laboratory setting. Our implementation is similar to that of \cite{magnani2020dynamic} and \cite{choi2022market}.
 
 \subsection{Market Model} \label{sec:market model}
-There are two types of agents in a market, a risk averse market-maker and individual investors. Each investor is endowed with a unit of an asset. There are $N=4$ investors\footnote{For a more general representation of the market model, see \cite{magnani2020dynamic}.} in each market. The market-maker is willing to absorb these assets upon demand. The market lasts for $T \in \mathbb{N}$ discrete time periods. Each investor has the choice to sell their asset in any discrete period $t < T$, but cannot repurchase, making the decision to sell final for that investor in the market. $T$ is a random variable following a geometric distribution with probability of termination $\lambda = 0.125$ in our case.
+There are two types of agents in a market, a risk averse market-maker and risk-neutral individual investors. Each investor is endowed with a unit of an asset. There are $N=4$ investors\footnote{For a more general representation of the market model, see \cite{magnani2020dynamic}.} in each market. The market-maker is willing to absorb these assets upon demand. The market lasts for $T \in \mathbb{N}$ discrete time periods. Each investor has the choice to sell their asset in any discrete period $t < T$, but cannot repurchase, making the decision to sell final for that investor in the market. $T$ is a random variable following a geometric distribution with probability of termination $\lambda = 0.125$ in our case.
 
-There are two possible states of the world, good and bad. In the good state, any investor that still holds their asset at time $T$ receives the asset's ``final value'', $v$ ,which is interpretable as an asset return. In our case, $v=20$. In the bad state, investors face a liquidity shock at time $T$ and are forced to sell their asset at the market price.
+There are two possible states of the world, good and bad. In the good state, any investor that still holds their asset at time $T$ receives the asset's ``final value'', $v$ ,which is interpretable as an asset return. In our case, $v=20$. This \textit{does not} depend on the number of market participants that have not sold their asset. In the bad state, investors face a liquidity shock at time $T$ and are forced to sell their asset at the market price.
 
 The market price is determined by a price schedule. Let $p_n$ be the market price of the asset when $n$ investors have not yet sold their asset. Then, $ v > p_4 > p_3 > p_2 > p_1$, meaning that a sale causes a fall in price, consistent with illiquidity. \cite{bernardo2004liquidity} show that the price schedule can be derived as linear with the assumption of a risk-averse competitive market-maker. Thus, we use the following price schedule $p_n = 8 - 2(4-n)$. In the event that multiple investors sell in period $t$, then the investors are randomly ordered with equal probability and receive the associated sale prices.
 
-The state of the world is uncertain. Let $z$ be the state of the world and G and B represent the good and bad states respectively. Each investor in a market begins with the common belief  $\pi(0) := P(z = G) = 0.5$\footnote{We define $\pi(t)$ slightly differently that \cite{magnani2020dynamic}. This is done to allow $\pi(t)$ to converge to 1 in the good state, which is more representative of our experimental implementation.}. At the beginning of a period $t$, each investor receives a binary public signal ($y(t)$, good ($y(t) = g$) or bad ($y(t) = b$). The likelihood of each signal depends of the quality of information. In our implementation, we use the HIGH information quality state from \cite{magnani2020dynamic} which sets $\mu_B = P(y(t) = b | z = B) = 0.675$ and $\mu_G = P(y(t) = g | z = B) = 0.325$. Thus, each investor's belief in period $t$ via Bayesian updating is
+The state of the world is uncertain. Let $z$ be the state of the world and G and B represent the good and bad states respectively. Each investor in a market begins with the common belief\footnote{We define $\pi(t)$ slightly differently that \cite{magnani2020dynamic}. This is done to allow $\pi(t)$ to converge to 1 in the good state, which is more representative of our experimental implementation.}  $\pi(0) := P(z = G) = 0.5$. At the beginning of a period $t$, each investor receives a binary public signal ($y(t)$, good ($y(t) = g$) or bad ($y(t) = b$). The likelihood of each signal depends of the quality of information. In our implementation, we use the HIGH information quality state from \cite{magnani2020dynamic} which sets $\mu_B = P(y(t) = b | z = B) = 0.675$ and $\mu_G = P(y(t) = g | z = B) = 0.325$. Thus, each investor's belief in period $t$ via Bayesian updating is
 \begin{equation}
     \pi(t) := P(z = G|y(t), \pi(t-1)) =
     \begin{cases}
@@ -217,7 +217,7 @@ This model captures key components of a market run environment.
 \end{itemize}
 
 \subsection{Experimental Implementation}
-We conducted six experimental sessions, each with 16 subjects in the TIDE Lab at the University of Alabama. Subjects were students at the university ranging in age from 18 to 34. Each session consisted of three parts, first subjects privately watched an instructions video on their computer with headphones\footnote{A typed version of the video is available in \ref{sec:app_instr}, and the video can be found in the online appendix.}. Then subjects proceeded to complete part 1, the market portion, of the experiment. Following, the conclusion of part 1, subjects completed part 2, the survey portion.
+We conducted six experimental sessions, each with 16 subjects in the TIDE Lab at the University of Alabama. Subjects were students at the university ranging in age from 18 to 34. Each session consisted of three parts, first subjects privately watched an instructions video and completed a quiz\footnote{The average quiz score on the first attempt across all six sessions was 85.7\%.} on their computer with headphones\footnote{A typed version of the video is available in \ref{sec:app_instr}, and the video can be found in the online appendix.}. Subjects answered the questions independently first, then the correct answers were read aloud by the experimenters. Then subjects proceeded to complete part 1, the market portion, of the experiment. Following, the conclusion of part 1, subjects completed part 2, the survey portion.
 
 In the market portion of the session we use a mixed design with 2 between-subjects treatments and 2 within-subjects treatments. Each participant was assigned an alphabet letter as an identifier that was constant throughout the session. Each entire session consisted of 4 segments. At the beginning of each segment, participants were grouped into four groups of four. Each segment grouping was designed such that no two participants are grouped together more than once. At the beginning of segments 1 and 2, participants did not interact with each other. At the beginning of segments 3 and 4, participants could communicate with members of their group through a virtual chat environment for 90 seconds.
 
@@ -253,7 +253,7 @@ Following the conclusion of segment 2, participants were informed that they woul
 
 Following the conclusion of segment 4, participants move onto the survey portion of the experiment. Our post-study survey questions consist of the six-item form of the state scale of the Spielberger State-Trait Anxiety Inventory developed by \cite{marteau1992development}, the ten-item form of the Big-Five Personality Inventory developed by \cite{gosling2003very}, and  the eight-item form of the Barratt Impulsiveness Scale developed by \cite{steinberg2013new}. To measure risk aversion, we use the technique adapted from the design in \cite{gneezy1997experiment}. Using a ${1}/{2}$ probability of success instead of ${1}/{3}$ avoids the problem of subjective over weighting of low-probability events.
 
-At the conclusion of the survey portion, each participants earnings were calculated. They received $\$7.50$ as a participation fee plus their earnings from part 1 plus their earnings from part 2. For part 1, one market from each segment was randomly selected and then summed. For part 2, participants receive 20 ECU's for completing the survey questions, and then have the opportunity to gamble those earnings in the risk aversion task. Earnings from part 1 and 2 were then converted at the rate of 4 Experimental Currency Units (ECU's) to \$1. Earnings from all six sessions ranged from \$11.00 to \$36.25 with a mean of \$23.57. Each session lasted approximately 75 minutes.
+At the conclusion of the survey portion, each participants earnings were calculated. They received $\$7.50$ as a participation fee plus their earnings from part 1 plus their earnings from part 2. For part 1, one market from each segment was randomly selected and then summed. Participants were not aware of the selected market from each segment until the conclusion of part 2. For part 2, participants receive 20 ECU's for completing the survey questions, and then have the opportunity to gamble those earnings in the risk aversion task. Earnings from part 1 and 2 were then converted at the rate of 4 Experimental Currency Units (ECU's) to \$1. Earnings from all six sessions ranged from \$11.00 to \$36.25 with a mean of \$23.57. Each session lasted approximately 75 minutes.
 
 \begin{table}[H]
   \centering
@@ -265,8 +265,14 @@ At the conclusion of the survey portion, each participants earnings were calcula
 \subsubsection{A Liquidation Example, Treatment 1 vs. Treatment 2}
 Suppose that we are in a market with four participants. Suppose at time $t-1$, no market participant has sold. Then in period $t$, both participants A and B decide to sell their asset. In treatment 1, according to our specified price schedule, A receives $p_4 = 8$ with probability 0.5 and $p_3 = 6$ with probability 0.5. B then receives whichever price A does not. In treatment 2, both A and B would receive $\bar{p}_{4,2} = (p_4+p_3)/2 = (8+6)/2 = 7$.
 
-Now suppose that in period $t$, participants A, B, and C decided to sell their asset. In treatment 1, each participant would be assigned a price from the schedule $\{p_4=8,p_3=6,p_2=4\}$ with exclusivity. In treatment 2, participants A, B, and C would each receive $\bar{p}_{4,3} = (p_4+p_3+p_2)/3 = (8+6+4)/3 = 6$.
+Now suppose that in period $t$, participants A, B, and C decided to sell their asset (as opposed to just A and B). In treatment 1, each participant would be assigned a price from the schedule $\{p_4=8,p_3=6,p_2=4\}$ with exclusivity. In treatment 2, participants A, B, and C would each receive $\bar{p}_{4,3} = (p_4+p_3+p_2)/3 = (8+6+4)/3 = 6$.
 
+Finally, suppose that in period $t$, just participant A decides to sell her asset (as opposed to A, B and C all selling). In treatment 1, she would be assigned the current market price $p_N = p_4 = 8$ with certainty\footnote{Participant A does not know that no one will also sell in period $t$. Rather, she knows that \textit{if} she is the only participant to sell in period $t$, she will receive $p_N$.}. In treatment 2, participant A would also receive $p_4 = 8$, so in the case of one market participant selling in a period, the price received is identical between treatment 1 and treatment 2. 
+
+\subsection{Data Collection}
+We used the oTree  Python package developed by \cite{otree} to program the experiment. We used the backend design of this program to collect experimental market data (selling prices, signals, payoffs, and market groupings). We also used it to collect survey responses, communication data (segments 3 and 4 only), and quiz answers. 
+
+We also collected data on the facial expressions and body language of participants throughout the entirety of the experiment. We used standard front-facing webcams on each computer monitor. Participants were informed that they could be filmed. All footage was uploaded to the Affectiva software at the conclusion of the experiment for post-processing.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,7 +307,7 @@ Table~\ref{tab:summary_demographics_traits} summarizes the subject pool. We recr
 
 \subsection{Selling Behavior}
 
-\subsubsection{Group-Round-level regression analysis}
+\subsubsection{Group-round-level regression analysis}
 
 % Tobit regression: number of sellers per group-round
 \begin{table}[H]
@@ -315,7 +321,7 @@ Table~\ref{tab:summary_demographics_traits} summarizes the subject pool. We recr
 Rank‐ordered logit model. individual ranks in a group (strata).  Traits. Emotions. Full sample and Sellers only
 
 
-\subsubsection{Player-Period-level regression analysis}
+\subsubsection{Player-period-level regression analysis}
 
 As a robustness check, we estimate Cox proportional hazards survival models with the same set of covariates as the logit regressions, treating the within-round period as the survival time axis and selling as the event. Table~\ref{tab:cox_survival_regression} in Appendix~B.2 reports hazard ratios from random-effects Cox models for all participants (Panel~A) and first sellers only (Panel~B). The results are qualitatively consistent with the logit specification reported in Appendix~B.1.
 
@@ -335,6 +341,26 @@ As a robustness check, we estimate Cox proportional hazards survival models with
 \input{unified_selling_regression}
 
 % Holdout liquidation regression (standalone)
+
+
+\subsection{First Sellers}
+
+Use this plot only for the presentation:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{first_seller_trait_robustness.pdf}
+  \caption{Mean trait scores with 95\% confidence intervals by first-seller frequency (0 times, 1--2 times, 3+ times). N = 95 individuals.}
+  \label{fig:first_seller_trait_robustness}
+\end{figure}
+
+
+
+\subsection{Communication}
+
+Sentiment
+
+\subsection{Behavioral Dynamics}
+
 \begin{table}[H]
   \centering
   \caption{Effect of holdout liquidation payoff on next-round selling}
@@ -352,25 +378,13 @@ As a robustness check, we estimate Cox proportional hazards survival models with
 \clearpage
 
 
-\subsection{First Sellers}
-
-Use this plot only for the presentation:
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\linewidth]{first_seller_trait_robustness.pdf}
-  \caption{Mean trait scores with 95\% confidence intervals by first-seller frequency (0 times, 1--2 times, 3+ times). N = 95 individuals.}
-  \label{fig:first_seller_trait_robustness}
-\end{figure}
-
-
-
-\subsection{Second Sellers}
-
-Herding.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion and Conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Disposition Effect
+
+Herding
 
 
 
@@ -506,7 +520,7 @@ Each segment consists of an uncertain number of \textbf{rounds}. The number of r
 
 \newpage
 
-Each round consists of an uncertain number of \textbf{market periods}. Each market period lasts 10 seconds. The number of market periods in a round is determined as follows: 
+Each round consists of an uncertain number of \textbf{market periods}. Each market period lasts 4 seconds. The number of market periods in a round is determined as follows: 
 \begin{itemize}
     \item   After each market period, the computer has randomly selected a number from 1 to 8, each with an equal chance (1/8 or 12.5\%), for the entire session to determine whether another market period of the same round will follow. 
     \item 	If the selected number is from 1 to 7, the next market period will immediately follow. If the selected number is 8, the round will end.
