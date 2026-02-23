@@ -19,7 +19,7 @@ run_logit_panel_b <- function(df, df_full) {
   cat("  Running Model 1 (Cascade RE logit)...\n")
   m1 <- run_logit_panel_b_m1(df_second)
 
-  cat("  Running Model 2 (Cascade + Emotions FE logit)...\n")
+  cat("  Running Model 2 (Cascade + Emotions RE logit)...\n")
   m2 <- run_logit_panel_b_m2(df_second)
 
   cat("  Running Model 3 (Cascade + Traits RE logit)...\n")
@@ -42,13 +42,16 @@ run_logit_panel_b_m1 <- function(df_second) {
 }
 
 run_logit_panel_b_m2 <- function(df_second) {
-  feglm(sold ~ dummy_prev_period +
+  glmer(sold ~ dummy_prev_period +
         fear_mean + anger_mean + contempt_mean + disgust_mean +
         joy_mean + sadness_mean + surprise_mean +
         engagement_mean + valence_mean +
-        signal + period + round + segment | player_id,
-        family = binomial, cluster = ~global_group_id,
-        data = df_second)
+        signal + period + round + segment +
+        treatment + age + gender_female +
+        (1 | player_id),
+        family = binomial, data = df_second,
+        control = glmerControl(optimizer = "bobyqa",
+                               optCtrl = list(maxfun = 100000)))
 }
 
 run_logit_panel_b_m3 <- function(df_second) {
