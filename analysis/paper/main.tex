@@ -189,15 +189,83 @@ Anxiety and Compulsiveness
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Design of the Experiment}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We experimentally implement the \cite{bernardo2004liquidity} framework in a laboratory setting. Our implementation is similar to that of \cite{magnani2020dynamic} and \cite{choi2022market}.
 
+\subsection{Market Model} \label{sec:market model}
+There are two types of agents in a market, a risk averse market-maker and individual investors. Each investor is endowed with a unit of an asset. There are $N=4$ investors\footnote{For a more general representation of the market model, see \cite{magnani2020dynamic}.} in each market. The market-maker is willing to absorb these assets upon demand. The market lasts for $T \in \mathbb{N}$ discrete time periods. Each investor has the choice to sell their asset in any discrete period $t < T$, but cannot repurchase, making the decision to sell final for that investor in the market. $T$ is a random variable following a geometric distribution with probability of termination $\lambda = 0.125$ in our case.
 
-Experiment: \cite{magnani2020dynamic} and \cite{choi2022market}
+There are two possible states of the world, good and bad. In the good state, any investor that still holds their asset at time $T$ receives the asset's ``final value'', $v$ ,which is interpretable as an asset return. In our case, $v=20$. In the bad state, investors face a liquidity shock at time $T$ and are forced to sell their asset at the market price.
 
+The market price is determined by a price schedule. Let $p_n$ be the market price of the asset when $n$ investors have not yet sold their asset. Then, $ v > p_4 > p_3 > p_2 > p_1$, meaning that a sale causes a fall in price, consistent with illiquidity. \cite{bernardo2004liquidity} show that the price schedule can be derived as linear with the assumption of a risk-averse competitive market-maker. Thus, we use the following price schedule $p_n = 8 - 2(4-n)$. In the event that multiple investors sell in period $t$, then the investors are randomly ordered with equal probability and receive the associated sale prices.
 
+The state of the world is uncertain. Let $z$ be the state of the world and G and B represent the good and bad states respectively. Each investor in a market begins with the common belief  $\pi(0) := P(z = G) = 0.5$\footnote{We define $\pi(t)$ slightly differently that \cite{magnani2020dynamic}. This is done to allow $\pi(t)$ to converge to 1 in the good state, which is more representative of our experimental implementation.}. At the beginning of a period $t$, each investor receives a binary public signal ($y(t)$, good ($y(t) = g$) or bad ($y(t) = b$). The likelihood of each signal depends of the quality of information. In our implementation, we use the HIGH information quality state from \cite{magnani2020dynamic} which sets $\mu_B = P(y(t) = b | z = B) = 0.675$ and $\mu_G = P(y(t) = g | z = B) = 0.325$. Thus, each investor's belief in period $t$ via Bayesian updating is
+\begin{equation}
+    \pi(t) := P(z = G|y(t), \pi(t-1)) =
+    \begin{cases}
+        \frac{\pi(t-1)(1-\mu_B)}{\pi(t-1)(1-\mu_B) + (1-\pi(t-1))\mu_B}, & \text{if   } y(t) = b \\
+        \frac{\pi(t-1)(1-\mu_G)}{\pi(t-1)(1-\mu_G) + (1-\pi(t-1))\mu_G}, & \text{if   } y(t) = g
+    \end{cases}
+    \label{eq:bayes}
+\end{equation}
 
-Our post-study survey questions consist of the six-item form of the state scale of the Spielberger State-Trait Anxiety Inventory developed by \cite{marteau1992development}, the ten-item form of the Big-Five Personality Inventory developed by \cite{gosling2003very}, and  the eight-item form of the Barratt Impulsiveness Scale developed by \cite{steinberg2013new}. To measure risk aversion, we use the technique adapted from the design in \cite{gneezy1997experiment}. Using a ${1}/{2}$ probability of success instead of ${1}/{3}$ avoids the problem of subjective over weighting of low-probability events.
+$\pi(t) \overset{a.s.}{\to} 1$ if the state of the market is good and $\pi(t) \overset{a.s.}{\to} 0 $ if the state of the market is bad.
+This model captures key components of a market run environment.
+\begin{itemize}
+    \item Investors can rapidly sell their assets and can do so at a time of their choosing.
+    \item There is uncertainty to the true state of the market that accrues over time.
+    \item Investors have incentive to sell before their market counterparts if the state of the market is bad.
+\end{itemize}
 
+\subsection{Experimental Implementation}
+We conducted six experimental sessions, each with 16 subjects in the TIDE Lab at the University of Alabama. Subjects were students at the university ranging in age from 18 to 34. Each session consisted of three parts, first subjects privately watched an instructions video on their computer with headphones\footnote{A typed version of the video is available in \ref{sec:app_instr}, and the video can be found in the online appendix.}. Then subjects proceeded to complete part 1, the market portion, of the experiment. Following, the conclusion of part 1, subjects completed part 2, the survey portion.
 
+In the market portion of the session we use a mixed design with 2 between-subjects treatments and 2 within-subjects treatments. Each participant was assigned an alphabet letter as an identifier that was constant throughout the session. Each entire session consisted of 4 segments. At the beginning of each segment, participants were grouped into four groups of four. Each segment grouping was designed such that no two participants are grouped together more than once. At the beginning of segments 1 and 2, participants did not interact with each other. At the beginning of segments 3 and 4, participants could communicate with members of their group through a virtual chat environment for 90 seconds.
+
+Each segment consisted of an uncertain number of rounds, equivalent to a market as described in \ref{sec:market model}. The number of rounds was randomly generated prior to the experiment according to a geometric distribution with probability of termination equal to $0.125$. At the beginning of each market (round), each participant was endowed with an asset and their initial belief about the state was set to 0.5, so $\pi(0) = 0.5$.
+
+In treatment 1, each of these markets followed the game described in \ref{sec:market model}. In treatment 2, the price schedule was modified in the event that multiple market participants sold in the same time period $t$. Suppose there are $N$ participants still holding their asset at time $t-1$ and $M \in \{1,2,...,N\}$ market participants sell in time period $t$. Then in treatment 2, each market participant who sold in $t$ receives \begin{equation}
+    \bar{p}_{N,M} = \dfrac{\sum_{m=1}^M p_{N-m+1}}{M}
+\end{equation}
+
+This modification includes the case where the bad state of the market forces liquidation at the terminal period $T$. Let $P_{i,t,N,M}$ be the set of payoffs when $M$ participants sell their assets in period $t$ in treatment $i$ when $N$ participants still held their asset in $t-1$. Then
+\begin{equation}
+    E(P_{1,t,N,M}) = E(P_{2,t,N,M}) \; \forall \, t\in\{1,2,...,T\}, N \in \{1,2,3,4\},M \in \{1,...,N\}
+\end{equation}
+\begin{equation}
+    Var(P_{1,t,N,M}) \ge Var(P_{2,t,N,M}) \; \forall \, t\in\{1,2,...,T\}, N \in \{1,2,3,4\},M \in \{1,...,N\}
+\end{equation}
+Note that $Var(P_{2,t,N,M}) = 0 \; \forall \, t\in\{1,2,...,T\}, N \in \{1,2,3,4\},M \in \{1,...,N\}$
+
+Each subject only participated in one treatment. Of our six experimental sessions, three were treatment 1 and three were treatment 2.
+
+At the beginning of each period within a round, each market participant could see $p_N$ and all previously market prices, $\pi(t)$ which has been calculated for them using Equation \ref{eq:bayes}, market participants who have sold, a ``SELL'' button, and their price received (if applicable). See Figure \ref{fig:interface}. Each period lasted 4 seconds. The number of periods in each round was randomly determined prior to the experiment, but the sequence of signals was randomly determined in real time.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{interface.jpeg}
+    \caption{An example of the participant market period interface}
+    \label{fig:interface}
+\end{figure}
+
+At the conclusion of a round, each participant was shown the true state of the market, the price they received, the current segment number, and current round number. The break in between rounds lasted 15 seconds.
+
+Following the conclusion of segment 2, participants were informed that they would be able to communicate with market participants prior to the start of each segment. They also received a set of rules restricting the use of profanity or the disclosure of identifying information. Other than that, participants were free to chat about any topic that they wished.
+
+Following the conclusion of segment 4, participants move onto the survey portion of the experiment. Our post-study survey questions consist of the six-item form of the state scale of the Spielberger State-Trait Anxiety Inventory developed by \cite{marteau1992development}, the ten-item form of the Big-Five Personality Inventory developed by \cite{gosling2003very}, and  the eight-item form of the Barratt Impulsiveness Scale developed by \cite{steinberg2013new}. To measure risk aversion, we use the technique adapted from the design in \cite{gneezy1997experiment}. Using a ${1}/{2}$ probability of success instead of ${1}/{3}$ avoids the problem of subjective over weighting of low-probability events.
+
+At the conclusion of the survey portion, each participants earnings were calculated. They received $\$7.50$ as a participation fee plus their earnings from part 1 plus their earnings from part 2. For part 1, one market from each segment was randomly selected and then summed. For part 2, participants receive 20 ECU's for completing the survey questions, and then have the opportunity to gamble those earnings in the risk aversion task. Earnings from part 1 and 2 were then converted at the rate of 4 Experimental Currency Units (ECU's) to \$1. Earnings from all six sessions ranged from \$11.00 to \$36.25 with a mean of \$23.57. Each session lasted approximately 75 minutes.
+
+\begin{table}[H]
+  \centering
+  \caption{Pre-randomized experimental parameters by segment}
+  \label{tab:randomized_params}
+  \input{randomized_params}
+\end{table}
+
+\subsubsection{A Liquidation Example, Treatment 1 vs. Treatment 2}
+Suppose that we are in a market with four participants. Suppose at time $t-1$, no market participant has sold. Then in period $t$, both participants A and B decide to sell their asset. In treatment 1, according to our specified price schedule, A receives $p_4 = 8$ with probability 0.5 and $p_3 = 6$ with probability 0.5. B then receives whichever price A does not. In treatment 2, both A and B would receive $\bar{p}_{4,2} = (p_4+p_3)/2 = (8+6)/2 = 7$.
+
+Now suppose that in period $t$, participants A, B, and C decided to sell their asset. In treatment 1, each participant would be assigned a price from the schedule $\{p_4=8,p_3=6,p_2=4\}$ with exclusivity. In treatment 2, participants A, B, and C would each receive $\bar{p}_{4,3} = (p_4+p_3+p_2)/3 = (8+6+4)/3 = 6$.
 
 
 
@@ -233,12 +301,27 @@ Table~\ref{tab:summary_demographics_traits} summarizes the subject pool. We recr
 
 \subsection{Selling Behavior}
 
-Round level estimations. Rank‐ordered logit model. Treatment effects. Batch treatment. Chat. Traits.
-Emotions
+\subsubsection{Group-Round-level regression analysis}
+
+% Tobit regression: number of sellers per group-round
+\begin{table}[H]
+  \centering
+  \caption{Tobit regression: number of sellers per group-round}
+  \label{tab:tobit_n_sellers}
+  \input{tobit_n_sellers}
+\end{table}
 
 
-Period level estimations. Logit model with FE/RE. Treatment effects. Batch treatment. Chat. Traits.
-Emotions. Signal. Period.
+Rank‐ordered logit model. individual ranks in a group (strata).  Traits. Emotions. Full sample and Sellers only (Appendix F)
+
+
+\subsubsection{Player-Period-level regression analysis}
+
+Cox survival regression with the same set of variables as the logit regression in Appendix B. Do it for all players and for First sellers only.
+
+
+Logit model with RE. Treatment effects. Batch treatment. Chat. Traits. Emotions. Signal. Period. (Appendix B)
+ Do it for all players and for First sellers only.
 
 
 
@@ -386,7 +469,7 @@ Herding.
 
 \newpage
 
-\section*{Appendix G. Instructions}
+\section*{Appendix G. Instructions} \label{sec:app_instr}
 
 
 
