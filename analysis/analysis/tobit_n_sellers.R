@@ -127,7 +127,7 @@ table_preamble <- function() {
 
 table_header <- function() {
   c("   \\tabularnewline \\midrule \\midrule",
-    "   Dependent Variable: & \\multicolumn{3}{c}{n\\_sellers}\\\\",
+    "   Dependent Variable: & \\multicolumn{3}{c}{Number of Sellers in Round}\\\\",
     "   Model:               & (1)  & (2)  & (3)\\\\",
     "   \\midrule",
     "   \\emph{Variables}\\\\")
@@ -183,7 +183,7 @@ fit_rows <- function(fits) {
 table_footer <- function() {
   c("   \\midrule \\midrule",
     paste0("   \\multicolumn{4}{l}{\\emph{Cluster-robust",
-           " (global\\_group\\_id) standard errors",
+           " standard errors clustered at the group level",
            " in parentheses}}\\\\"),
     paste0("   \\multicolumn{4}{l}{\\emph{Signif. Codes:",
            " ***: 0.01, **: 0.05, *: 0.1}}\\\\"),
