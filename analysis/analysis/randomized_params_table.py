@@ -22,13 +22,10 @@ CHAT_SEGMENTS = {1: 'No', 2: 'No', 3: 'Yes', 4: 'Yes'}
 # =====
 def main():
     """Parse oTree configs and write LaTeX table."""
-    segments = []
-    for i, dir_name in enumerate(SEGMENT_DIRS, start=1):
-        init_path = OTREE_DIR / dir_name / '__init__.py'
-        source = init_path.read_text()
-        num_rounds = parse_num_rounds(source)
-        periods = parse_periods_per_round(source)
-        segments.append(build_segment_data(i, num_rounds, periods))
+    segments = [
+        load_segment(i, dir_name)
+        for i, dir_name in enumerate(SEGMENT_DIRS, start=1)
+    ]
 
     latex = build_latex_table(segments)
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -57,6 +54,24 @@ def parse_periods_per_round(source):
     if not match:
         raise ValueError("PERIODS_PER_ROUND not found")
     return [int(x.strip()) for x in match.group(1).split(',')]
+
+
+def load_segment(seg_num, dir_name):
+    """Read and validate one segment's config, return segment data."""
+    init_path = OTREE_DIR / dir_name / '__init__.py'
+    if not init_path.exists():
+        raise FileNotFoundError(
+            f"Segment {seg_num} config not found: {init_path}"
+        )
+    source = init_path.read_text()
+    num_rounds = parse_num_rounds(source)
+    periods = parse_periods_per_round(source)
+    if num_rounds != len(periods):
+        raise ValueError(
+            f"Segment {seg_num} ({dir_name}): "
+            f"NUM_ROUNDS={num_rounds} != len(PERIODS)={len(periods)}"
+        )
+    return build_segment_data(seg_num, num_rounds, periods)
 
 
 # =====

@@ -190,16 +190,13 @@ class TestTableOutput:
         assert len(total_row) == 1, "Expected exactly one Total row"
         assert int(total_row[0][4]) == 168
 
-    def test_total_row_avg(self, tex):
-        """Total avg periods = 168 / 30 = 5.6."""
+    def test_average_row_avg_periods(self, tex):
+        """Average of per-segment avg periods should be ~5.6."""
         summary = parse_summary_rows(tex)
-        total_row = [r for r in summary if "total" in r[0].lower()]
-        assert len(total_row) == 1, "Expected exactly one Total row"
-        # Total row uses --- for avg, check Average row instead
         avg_row = [r for r in summary if "average" in r[0].lower()]
-        if avg_row:
-            actual_avg = float(avg_row[0][5])
-            assert actual_avg == pytest.approx(5.6, abs=0.1)
+        assert len(avg_row) == 1, "Expected exactly one Average row"
+        actual_avg = float(avg_row[0][5])
+        assert actual_avg == pytest.approx(5.6, abs=0.1)
 
 
 # %%
