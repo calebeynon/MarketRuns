@@ -5,7 +5,7 @@
 #
 # Outputs 2 LaTeX tables to analysis/output/tables/:
 #   summary_demographics_traits.tex — demographics + personality traits by treatment
-#   summary_seller_counts.tex — avg sellers per group-round, avg sell period, avg sell price by treatment x chat x state
+#   summary_seller_counts.tex — group-round counts, sellers, sell period, first-seller period by treatment x chat x state
 
 library(tidyverse)
 
@@ -112,19 +112,34 @@ wrap_combined_latex <- function(demo_rows, trait_rows) {
 }
 
 # =====
-# Table 2: Seller counts, avg sell period, avg sell price
+# Table 2: Group-round counts, sellers, sell period, first-seller period
 # =====
 write_seller_count_table <- function(panel) {
   panel <- panel %>%
     mutate(chat = if_else(segment %in% CHAT_SEGMENTS, "Chat", "No Chat"))
   sellers <- panel %>% filter(did_sell == 1)
-  seller_count_rows <- build_stat_block("Avg sellers per group-round", panel, stat_avg_sellers)
-  period_rows <- build_stat_block("Avg sell period", sellers, stat_avg_sell_period)
-  price_rows <- build_stat_block("Avg sell price", sellers, stat_avg_sell_price)
-  zero_seller_rows <- build_stat_block("Zero-seller group-rounds", panel, stat_zero_seller_groups)
-  rows <- c(seller_count_rows, "\\midrule", period_rows, "\\midrule", price_rows, "\\midrule", zero_seller_rows)
+  rows <- c(
+    build_stat_row("Total group-rounds", panel, stat_total_group_rounds),
+    build_stat_row("\\quad Good state", panel %>% filter(state == 1), stat_total_group_rounds),
+    build_stat_row("\\quad Bad state", panel %>% filter(state == 0), stat_total_group_rounds),
+    "\\midrule",
+    build_stat_block("Zero-seller group-rounds", panel, stat_zero_seller_groups),
+    "\\midrule",
+    build_stat_block("Avg sellers per group-round", panel, stat_avg_sellers),
+    "\\midrule",
+    build_stat_block("Avg sell period", sellers, stat_avg_sell_period),
+    "\\midrule",
+    build_stat_block("Avg sell period (first seller)", panel, stat_avg_first_seller_period)
+  )
   latex <- wrap_seller_count_latex(rows)
   write_table(latex, "summary_seller_counts.tex")
+}
+
+stat_total_group_rounds <- function(data) {
+  data %>%
+    distinct(session_id, segment, group_id, round) %>%
+    nrow() %>%
+    as.character()
 }
 
 stat_avg_sellers <- function(data) {
@@ -142,7 +157,15 @@ stat_zero_seller_groups <- function(data) {
 }
 
 stat_avg_sell_period <- function(data) sprintf("%.1f", mean(data$sell_period))
-stat_avg_sell_price <- function(data) sprintf("%.1f", mean(data$sell_price))
+
+stat_avg_first_seller_period <- function(data) {
+  first_periods <- data %>%
+    filter(did_sell == 1) %>%
+    group_by(session_id, segment, group_id, round) %>%
+    summarise(first_period = min(sell_period), .groups = "drop")
+  if (nrow(first_periods) == 0) return("--")
+  sprintf("%.1f", mean(first_periods$first_period))
+}
 
 build_stat_block <- function(label, data, stat_fn) {
   c(

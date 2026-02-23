@@ -1,11 +1,11 @@
 """
-Purpose: Validate seller count metrics against raw oTree session exports
+Purpose: Validate derived panel against raw oTree session exports
 Author: Claude Code
 Date: 2026-02-22
 
-Cross-validates the derived individual_round_panel.csv seller counts
-against the raw oTree segment CSVs. This catches bugs in the derivation
-pipeline that same-source tests would miss.
+Cross-validates the derived individual_round_panel.csv (seller counts,
+sell periods, sell prices) against the raw oTree segment CSVs. This
+catches bugs in the derivation pipeline that same-source tests would miss.
 """
 
 import pandas as pd
@@ -72,6 +72,37 @@ def get_state_from_raw(raw_df):
     )["player.state"].first().reset_index()
     states.columns = ["group_id", "round", "state"]
     return states
+
+
+def get_sell_periods_from_raw(raw_df):
+    """Extract sell period per player-round from raw oTree period-level data.
+
+    Sell period = first period where player.sold transitions from 0 to 1.
+    Returns DataFrame with group_id, round, player, sell_period (NaN if held).
+    """
+    sorted_df = raw_df.sort_values(
+        ["group.id_in_subsession", "player.round_number_in_segment",
+         "participant.label", "player.period_in_round"]
+    )
+    records = []
+    grouped = sorted_df.groupby(
+        ["group.id_in_subsession", "player.round_number_in_segment",
+         "participant.label"]
+    )
+    for (group_id, rnd, label), player_df in grouped:
+        sell_period = None
+        prev_sold = 0
+        for _, row in player_df.iterrows():
+            cur_sold = int(row["player.sold"]) if pd.notna(row["player.sold"]) else 0
+            if cur_sold == 1 and prev_sold == 0:
+                sell_period = int(row["player.period_in_round"])
+                break
+            prev_sold = cur_sold
+        records.append({
+            "group_id": group_id, "round": rnd,
+            "player": label, "sell_period": sell_period,
+        })
+    return pd.DataFrame(records)
 
 
 def get_derived_group_round(panel, session_id, seg_idx, group_id, round_num):
@@ -301,6 +332,121 @@ class TestAggregateMetricsVsRawData:
                     _assert_zero_counts_match(
                         raw_merged, derived, session_id, seg_idx, state
                     )
+
+
+# =====
+# Sell period and price validation
+# =====
+class TestSellPeriodsVsRawData:
+    """Compare derived sell_period and sell_price to raw oTree exports."""
+
+    def test_sell_periods_match_raw(self, panel, raw_segments):
+        """Every player's sell_period in derived panel matches raw data."""
+        mismatches = []
+        for session_id in VALIDATION_SESSIONS:
+            for seg_idx, raw_df in raw_segments[session_id].items():
+                raw_periods = get_sell_periods_from_raw(raw_df)
+                derived = get_derived_segment(panel, session_id, seg_idx)
+                for _, raw_row in raw_periods.iterrows():
+                    d = derived[
+                        (derived.group_id == raw_row["group_id"])
+                        & (derived["round"] == raw_row["round"])
+                        & (derived.player == raw_row["player"])
+                    ]
+                    if d.empty:
+                        continue
+                    d_period = d["sell_period"].iloc[0]
+                    r_period = raw_row["sell_period"]
+                    # Both NaN (held) or both equal
+                    if pd.isna(r_period) and pd.isna(d_period):
+                        continue
+                    if pd.isna(r_period) != pd.isna(d_period) or d_period != r_period:
+                        mismatches.append({
+                            "session": session_id, "segment": seg_idx,
+                            "group": raw_row["group_id"],
+                            "round": raw_row["round"],
+                            "player": raw_row["player"],
+                            "raw": r_period, "derived": d_period,
+                        })
+        assert not mismatches, (
+            f"{len(mismatches)} sell_period mismatches:\n"
+            + "\n".join(str(m) for m in mismatches[:10])
+        )
+
+    def test_sell_price_matches_raw(self, panel, raw_segments):
+        """Every seller's sell_price matches the price at their sell period."""
+        mismatches = []
+        for session_id in VALIDATION_SESSIONS:
+            for seg_idx, raw_df in raw_segments[session_id].items():
+                raw_periods = get_sell_periods_from_raw(raw_df)
+                sellers = raw_periods[raw_periods.sell_period.notna()]
+                derived = get_derived_segment(panel, session_id, seg_idx)
+                for _, raw_row in sellers.iterrows():
+                    # Get price at sell period from raw data
+                    raw_price_row = raw_df[
+                        (raw_df["group.id_in_subsession"] == raw_row["group_id"])
+                        & (raw_df["player.round_number_in_segment"] == raw_row["round"])
+                        & (raw_df["participant.label"] == raw_row["player"])
+                        & (raw_df["player.period_in_round"] == raw_row["sell_period"])
+                    ]
+                    if raw_price_row.empty:
+                        continue
+                    raw_price = raw_price_row["player.price"].iloc[0]
+                    d = derived[
+                        (derived.group_id == raw_row["group_id"])
+                        & (derived["round"] == raw_row["round"])
+                        & (derived.player == raw_row["player"])
+                    ]
+                    if d.empty:
+                        continue
+                    d_price = d["sell_price"].iloc[0]
+                    if pd.isna(d_price) or d_price != raw_price:
+                        mismatches.append({
+                            "session": session_id, "segment": seg_idx,
+                            "group": raw_row["group_id"],
+                            "round": raw_row["round"],
+                            "player": raw_row["player"],
+                            "raw": raw_price, "derived": d_price,
+                        })
+        assert not mismatches, (
+            f"{len(mismatches)} sell_price mismatches:\n"
+            + "\n".join(str(m) for m in mismatches[:10])
+        )
+
+    def test_first_seller_period_from_raw(self, panel, raw_segments):
+        """First-seller period per group-round matches between raw and derived."""
+        mismatches = []
+        for session_id in VALIDATION_SESSIONS:
+            for seg_idx, raw_df in raw_segments[session_id].items():
+                raw_periods = get_sell_periods_from_raw(raw_df)
+                raw_sellers = raw_periods[raw_periods.sell_period.notna()]
+                # Min sell_period per group-round from raw
+                raw_first = raw_sellers.groupby(
+                    ["group_id", "round"]
+                )["sell_period"].min().reset_index()
+                derived = get_derived_segment(panel, session_id, seg_idx)
+                d_sellers = derived[derived.did_sell == 1]
+                # Min sell_period per group-round from derived
+                d_first = d_sellers.groupby(
+                    ["group_id", "round"]
+                )["sell_period"].min().reset_index()
+                merged = raw_first.merge(
+                    d_first, on=["group_id", "round"],
+                    suffixes=("_raw", "_derived"),
+                )
+                for _, row in merged.iterrows():
+                    if row["sell_period_raw"] != row["sell_period_derived"]:
+                        mismatches.append({
+                            "session": session_id, "segment": seg_idx,
+                            "group": row["group_id"],
+                            "round": row["round"],
+                            "raw": row["sell_period_raw"],
+                            "derived": row["sell_period_derived"],
+                        })
+        assert not mismatches, (
+            f"{len(mismatches)} first-seller period mismatches:\n"
+            + "\n".join(str(m) for m in mismatches[:10])
+        )
 
 
 # %%
