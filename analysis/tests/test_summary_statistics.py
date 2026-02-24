@@ -1,7 +1,7 @@
 """
 Purpose: Verify summary_statistics.R output tables against raw input data
 Author: Claude Code
-Date: 2026-02-22
+Date: 2026-02-24
 
 Cross-validates each number in the 2 LaTeX tables by independently
 computing the same statistics from the CSV inputs.
@@ -190,16 +190,18 @@ class TestSellerCountsTable:
             subset=["session_id", "segment", "group_id", "round"]
         ).shape[0]
 
-    def _compute_first_seller_period(self, panel, treatment, segs, state=None):
-        """Compute mean of min sell_period per group-round (sellers only)."""
-        sub = self._filter_subset(panel, treatment, segs, state)
-        sellers = sub[sub.did_sell == 1]
+    def _compute_nth_seller_period(self, panel, treatment, segs, n):
+        """Compute mean sell_period for the nth seller (by dense rank)."""
+        sub = self._filter_subset(panel, treatment, segs)
+        sellers = sub[sub.did_sell == 1].copy()
         if sellers.empty:
             return None
-        first_periods = sellers.groupby(
-            ["session_id", "segment", "group_id", "round"]
-        )["sell_period"].min()
-        return first_periods.mean()
+        group_cols = ["session_id", "segment", "group_id", "round"]
+        sellers["rank"] = sellers.groupby(group_cols)["sell_period"].rank(method="min")
+        nth = sellers[sellers["rank"] == n]
+        if nth.empty:
+            return None
+        return nth["sell_period"].mean()
 
     def test_total_group_rounds(self, panel, seller_counts_tex):
         rows = parse_all_data_rows(seller_counts_tex)
@@ -208,30 +210,32 @@ class TestSellerCountsTable:
             expected = self._count_group_rounds(panel, tr, segs)
             assert int(overall_row[col]) == expected == 180
 
-    def test_state_counts(self, panel, seller_counts_tex):
+    def test_seller_count_header_row(self, seller_counts_tex):
         rows = parse_all_data_rows(seller_counts_tex)
-        good_row, bad_row = rows[1], rows[2]
-        for col, tr, segs in self.COMBOS:
-            expected_good = self._count_group_rounds(panel, tr, segs, state=1)
-            expected_bad = self._count_group_rounds(panel, tr, segs, state=0)
-            assert int(good_row[col]) == expected_good
-            assert int(bad_row[col]) == expected_bad
-            # Good + bad should equal total
-            assert expected_good + expected_bad == 180
+        header = rows[1]
+        assert "seller count" in header[0].lower()
+        for col in range(1, 5):
+            assert header[col] == ""
 
-    def test_zero_seller_groups_values(self, panel, seller_counts_tex):
+    def test_seller_count_rows(self, panel, seller_counts_tex):
         rows = parse_all_data_rows(seller_counts_tex)
-        block = rows[3:6]
-        overall_row, good_row, bad_row = block
-        for col, tr, segs in self.COMBOS:
-            for row, state in [(overall_row, None), (good_row, 1), (bad_row, 0)]:
-                counts = self._group_seller_counts(panel, tr, segs, state)
-                expected = int((counts == 0).sum())
+        for n in range(5):
+            row = rows[2 + n]
+            for col, tr, segs in self.COMBOS:
+                counts = self._group_seller_counts(panel, tr, segs)
+                expected = int((counts == n).sum())
                 assert int(row[col]) == expected
+
+    def test_seller_counts_sum_to_total(self, seller_counts_tex):
+        rows = parse_all_data_rows(seller_counts_tex)
+        for col in range(1, 5):
+            total = int(rows[0][col])
+            seller_sum = sum(int(rows[2 + n][col]) for n in range(5))
+            assert seller_sum == total
 
     def test_avg_sellers_values(self, panel, seller_counts_tex):
         rows = parse_all_data_rows(seller_counts_tex)
-        block = rows[6:9]
+        block = rows[7:10]
         overall_row, good_row, bad_row = block
         for col, tr, segs in self.COMBOS:
             for row, state in [(overall_row, None), (good_row, 1), (bad_row, 0)]:
@@ -241,7 +245,7 @@ class TestSellerCountsTable:
 
     def test_avg_sell_period_values(self, panel, seller_counts_tex):
         rows = parse_all_data_rows(seller_counts_tex)
-        block = rows[9:12]
+        block = rows[10:13]
         overall_row, good_row, bad_row = block
         for col, tr, segs in self.COMBOS:
             for row, state in [(overall_row, None), (good_row, 1), (bad_row, 0)]:
@@ -249,13 +253,19 @@ class TestSellerCountsTable:
                 expected = sub["sell_period"].mean()
                 assert float(row[col]) == pytest.approx(expected, abs=0.1)
 
-    def test_avg_first_seller_period_values(self, panel, seller_counts_tex):
+    def test_seller_position_header_row(self, seller_counts_tex):
         rows = parse_all_data_rows(seller_counts_tex)
-        block = rows[12:15]
-        overall_row, good_row, bad_row = block
-        for col, tr, segs in self.COMBOS:
-            for row, state in [(overall_row, None), (good_row, 1), (bad_row, 0)]:
-                expected = self._compute_first_seller_period(panel, tr, segs, state)
+        header = rows[13]
+        assert "seller position" in header[0].lower()
+        for col in range(1, 5):
+            assert header[col] == ""
+
+    def test_seller_position_period_rows(self, panel, seller_counts_tex):
+        rows = parse_all_data_rows(seller_counts_tex)
+        for n in range(1, 5):
+            row = rows[13 + n]
+            for col, tr, segs in self.COMBOS:
+                expected = self._compute_nth_seller_period(panel, tr, segs, n)
                 if expected is None:
                     assert row[col] == "--"
                 else:
@@ -263,7 +273,7 @@ class TestSellerCountsTable:
 
     def test_row_count(self, seller_counts_tex):
         rows = parse_all_data_rows(seller_counts_tex)
-        assert len(rows) == 15, f"Expected 15 data rows, got {len(rows)}"
+        assert len(rows) == 18, f"Expected 18 data rows, got {len(rows)}"
 
 
 # =====
