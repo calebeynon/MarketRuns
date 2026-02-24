@@ -208,7 +208,7 @@ col_headers <- function(end_cmd) {
 longtable_body <- function(coefs) {
   lines <- c()
   lines <- add_section(lines, DISCRETE_EMOTIONS, coefs, "emotions")
-  lines <- add_section(lines, "valence_p95", coefs, "valence")
+  lines <- add_section(lines, c("valence_p95"), coefs, "valence")
   lines <- add_section(lines, PERSONALITY_TRAITS, coefs, "all")
   lines <- add_section(lines, CONTROLS, coefs, "all")
   lines
@@ -243,22 +243,20 @@ build_row_values <- function(cells, type) {
 }
 
 longtable_fit <- function(fits) {
+  ns <- sapply(fits, function(f) format(f$n, big.mark = ","))
+  strata <- sapply(fits, function(f) format(f$n_strata, big.mark = ","))
+  conc <- sapply(fits, function(f) sprintf("%.3f", f$concordance))
+  lls <- sapply(fits, function(f) sprintf("%.1f", f$loglik))
+  fmt_row <- function(label, vals) {
+    sprintf("   %-25s& %s & %s & %s & %s \\\\",
+            label, vals[1], vals[2], vals[3], vals[4])
+  }
   c("   \\midrule",
     "   \\emph{Fit statistics} & & & & \\\\",
-    fit_row("Observations", sapply(fits, `[[`, "n"), "%s", big_mark = TRUE),
-    fit_row("Strata", sapply(fits, `[[`, "n_strata"), "%s", big_mark = TRUE),
-    fit_row("Concordance", sapply(fits, `[[`, "concordance"), "%.3f"),
-    fit_row("Log-lik.", sapply(fits, `[[`, "loglik"), "%.1f"))
-}
-
-fit_row <- function(label, values, fmt, big_mark = FALSE) {
-  if (big_mark) {
-    formatted <- sapply(values, function(x) format(x, big.mark = ","))
-  } else {
-    formatted <- sapply(values, function(x) sprintf(fmt, x))
-  }
-  sprintf("   %-25s& %s & %s & %s & %s \\\\",
-          label, formatted[1], formatted[2], formatted[3], formatted[4])
+    fmt_row("Observations", ns),
+    fmt_row("Strata", strata),
+    fmt_row("Concordance", conc),
+    fmt_row("Log-lik.", lls))
 }
 
 longtable_footer <- function() {
