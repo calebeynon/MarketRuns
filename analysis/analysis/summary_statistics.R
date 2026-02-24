@@ -5,7 +5,7 @@
 #
 # Outputs 2 LaTeX tables to analysis/output/tables/:
 #   summary_demographics_traits.tex — demographics + personality traits by treatment
-#   summary_seller_counts.tex — group-round counts, sellers, sell period, first-seller period by treatment x chat x state
+#   summary_seller_counts.tex — seller counts, avg sellers, sell period, sell period by position
 
 library(tidyverse)
 
@@ -112,7 +112,7 @@ wrap_combined_latex <- function(demo_rows, trait_rows) {
 }
 
 # =====
-# Table 2: Group-round counts, sellers, sell period, first-seller period
+# Table 2: Seller counts, avg sellers, sell period, sell period by position
 # =====
 write_seller_count_table <- function(panel) {
   panel <- panel %>%

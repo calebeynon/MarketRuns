@@ -191,7 +191,7 @@ class TestSellerCountsTable:
         ).shape[0]
 
     def _compute_nth_seller_period(self, panel, treatment, segs, n):
-        """Compute mean sell_period for the nth seller (by dense rank)."""
+        """Compute mean sell_period for the nth seller (by min rank)."""
         sub = self._filter_subset(panel, treatment, segs)
         sellers = sub[sub.did_sell == 1].copy()
         if sellers.empty:
