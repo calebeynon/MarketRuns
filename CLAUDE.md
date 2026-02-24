@@ -132,6 +132,13 @@ The paper compiles both locally and on Overleaf using path resolution:
 - Example: `\input{h2_regression_cluster}` not `\input{../output/tables/h2_regression_cluster.tex}`
 - Do NOT manually commit files to `analysis/paper/tables/` or `analysis/paper/plots/` — the Action manages these on Overleaf
 
+### Viewing the Paper
+```bash
+# Open the compiled PDF in the default viewer
+open analysis/paper/main.pdf
+```
+Always use `open` to show PDFs to the user — never read them inline.
+
 ### Compiling the Paper
 ```bash
 cd analysis/paper

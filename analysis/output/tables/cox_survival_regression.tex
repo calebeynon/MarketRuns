@@ -1,8 +1,10 @@
 
 \begingroup
+\centering
 \scriptsize
+\setlength{\LTcapwidth}{\textwidth}
 \begin{longtable}{l*{4}{>{\centering\arraybackslash}p{2.2cm}}}
-\caption{Determinants of selling probability --- Cox survival regression (hazard ratios)} \label{tab:cox_survival_regression} \\
+\caption{Cox survival regression (hazard ratios)} \label{tab:cox_survival_regression} \\
    \midrule \midrule
    & \multicolumn{2}{c}{All Sellers} & \multicolumn{2}{c}{First Sellers} \\
    \cmidrule(lr){2-3} \cmidrule(lr){4-5}
@@ -78,10 +80,11 @@
    Events                    & 659 & 659 & 467 & 467 \\
    Participants              & 95 & 95 & 83 & 83 \\
    Log-likelihood            & -4402.7 & -4406.7 & -2228.1 & -2230.3 \\
+   \midrule \midrule
    \multicolumn{5}{l}{\emph{Hazard ratios reported. All models: random-intercept Cox (coxme).}} \\
-   \multicolumn{5}{l}{\emph{HR $>$ 1: increased hazard of selling (sells sooner). HR $<$ 1: decreased hazard (sells later or not at all).}} \\
+   \multicolumn{5}{l}{\emph{HR $>$ 1: increased hazard of selling. HR $<$ 1: decreased hazard.}} \\
    \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}} \\
 \end{longtable}
-\endgroup
+\par\endgroup
 
 

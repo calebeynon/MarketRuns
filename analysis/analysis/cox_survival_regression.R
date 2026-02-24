@@ -171,10 +171,11 @@ build_cox_table <- function(panel_a, panel_b) {
 }
 
 build_preamble <- function() {
-  caption <- paste0("Determinants of selling probability --- ",
-                    "Cox survival regression (hazard ratios)")
-  c("", "\\begingroup", "\\scriptsize",
-    "\\begin{longtable}{l*{4}{>{\\centering\\arraybackslash}p{2.2cm}}}",
+  caption <- "Cox survival regression (hazard ratios)"
+  c("", "\\begingroup", "\\centering", "\\scriptsize",
+    "\\setlength{\\LTcapwidth}{\\textwidth}",
+    paste0("\\begin{longtable}{l",
+           "*{4}{>{\\centering\\arraybackslash}p{2.2cm}}}"),
     sprintf("\\caption{%s} \\label{tab:cox_survival_regression} \\\\",
             caption))
 }
@@ -213,13 +214,14 @@ format_cox_fit_rows <- function(fits) {
 }
 
 build_footer <- function() {
-  c(paste0("   \\multicolumn{5}{l}{\\emph{Hazard ratios reported.",
+  c("   \\midrule \\midrule",
+    paste0("   \\multicolumn{5}{l}{\\emph{Hazard ratios reported.",
            " All models: random-intercept Cox (coxme).}} \\\\"),
-    paste0("   \\multicolumn{5}{l}{\\emph{HR $>$ 1: increased hazard of",
-           " selling (sells sooner). HR $<$ 1: decreased hazard",
-           " (sells later or not at all).}} \\\\"),
-    "   \\multicolumn{5}{l}{\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}} \\\\",
-    "\\end{longtable}", "\\endgroup", "", "")
+    paste0("   \\multicolumn{5}{l}{\\emph{HR $>$ 1: increased",
+           " hazard of selling. HR $<$ 1: decreased hazard.}} \\\\"),
+    paste0("   \\multicolumn{5}{l}{\\emph{Signif. Codes:",
+           " ***: 0.01, **: 0.05, *: 0.1}} \\\\"),
+    "\\end{longtable}", "\\par\\endgroup", "", "")
 }
 
 # %%
