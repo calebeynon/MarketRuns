@@ -16,10 +16,10 @@ source("analysis/analysis/unified_selling_regression_panel_c.R")
 source("analysis/analysis/cox_survival_panel_a.R")
 source("analysis/analysis/cox_survival_panel_b.R")
 
-# Non-valence emotions (joy intentionally excluded)
-NONVALENCE_EMOTIONS <- c("fear_mean", "anger_mean", "contempt_mean",
-                         "disgust_mean", "sadness_mean", "surprise_mean",
-                         "engagement_mean")
+# Discrete emotions (excludes composite valence metric)
+DISCRETE_EMOTIONS <- c("fear_mean", "anger_mean", "contempt_mean",
+                        "disgust_mean", "joy_mean", "sadness_mean",
+                        "surprise_mean", "engagement_mean")
 
 # Controls to display (no period — it is the survival time axis)
 CONTROLS <- c("signal", "round", "segment2", "segment3", "segment4",
@@ -118,7 +118,7 @@ extract_cox_fit <- function(model) {
 get_var_order <- function() {
   cascade <- c("dummy_1_cum", "dummy_2_cum", "dummy_3_cum")
   int_vars <- INTERACTION_VARS
-  c(cascade, int_vars, NONVALENCE_EMOTIONS,
+  c(cascade, int_vars, DISCRETE_EMOTIONS,
     "valence_mean", CONTROLS)
 }
 

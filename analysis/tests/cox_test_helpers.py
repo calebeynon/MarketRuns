@@ -30,9 +30,9 @@ ALL_EMOTIONS = [
     "joy_mean", "sadness_mean", "surprise_mean",
     "engagement_mean", "valence_mean",
 ]
-NONVALENCE_EMOTIONS = [
+DISCRETE_EMOTIONS = [
     "fear_mean", "anger_mean", "contempt_mean", "disgust_mean",
-    "sadness_mean", "surprise_mean", "engagement_mean",
+    "joy_mean", "sadness_mean", "surprise_mean", "engagement_mean",
 ]
 COX_CONTROLS = [
     "signal", "round", "segment", "treatment", "age", "gender_female",
