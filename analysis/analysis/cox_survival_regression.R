@@ -47,6 +47,12 @@ main <- function() {
 prepare_base_data <- function(file_path) {
   df <- fread(file_path)
   df <- df[already_sold == 0]
+  df <- add_id_columns(df)
+  df <- add_regression_variables(df)
+  df
+}
+
+add_id_columns <- function(df) {
   df[, player_id := paste(session_id, player, sep = "_")]
   df[, global_group_id := paste(session_id, segment, group_id, sep = "_")]
   df[, group_round_id := paste(session_id, segment, group_id, round,
@@ -54,6 +60,10 @@ prepare_base_data <- function(file_path) {
   df[, player_group_round_id := paste(player_id, segment, group_id,
                                        round, sep = "_")]
   df[, time_id := paste(segment, round, period, sep = "_")]
+  df
+}
+
+add_regression_variables <- function(df) {
   df[, dummy_1_cum := as.integer(prior_group_sales == 1)]
   df[, dummy_2_cum := as.integer(prior_group_sales == 2)]
   df[, dummy_3_cum := as.integer(prior_group_sales == 3)]
@@ -62,6 +72,8 @@ prepare_base_data <- function(file_path) {
   df[, gender_female := as.integer(gender == "Female")]
   df[, segment := as.factor(segment)]
   df[, treatment := as.factor(treatment)]
+  # Counting process start time: each row covers interval (period-1, period]
+  df[, period_start := period - 1L]
   df
 }
 

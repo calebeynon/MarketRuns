@@ -28,7 +28,7 @@ run_cox_panel_a <- function(df) {
 run_cox_panel_a_no_valence <- function(df) {
   cat("[Panel A M1] Non-valence emotions RE Cox (coxme)...\n")
   coxme(
-    Surv(period, sold) ~ dummy_1_cum + dummy_2_cum + dummy_3_cum +
+    Surv(period_start, period, sold) ~ dummy_1_cum + dummy_2_cum + dummy_3_cum +
       int_1_1 + int_2_1 + int_2_2 + int_3_1 + int_3_2 + int_3_3 +
       fear_mean + anger_mean + contempt_mean + disgust_mean +
       sadness_mean + surprise_mean + engagement_mean +
@@ -44,7 +44,7 @@ run_cox_panel_a_no_valence <- function(df) {
 run_cox_panel_a_valence_only <- function(df) {
   cat("[Panel A M2] Valence-only RE Cox (coxme)...\n")
   coxme(
-    Surv(period, sold) ~ dummy_1_cum + dummy_2_cum + dummy_3_cum +
+    Surv(period_start, period, sold) ~ dummy_1_cum + dummy_2_cum + dummy_3_cum +
       int_1_1 + int_2_1 + int_2_2 + int_3_1 + int_3_2 + int_3_3 +
       valence_mean +
       signal + round + segment + treatment + age + gender_female +
