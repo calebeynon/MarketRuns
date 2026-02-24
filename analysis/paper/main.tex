@@ -322,13 +322,8 @@ Rank‐ordered logit model. individual ranks in a group (strata).  Traits. Emoti
 
 
 \clearpage
-% Ranked-order logit table (standalone)
-\begin{table}[H]
-  \centering
-  \caption{Ranked-order logit: selling position within group-round}
-  \label{tab:ro_logit_selling_position}
-  \input{ro_logit_selling_position}
-\end{table}
+% Ranked-order logit table (longtable with built-in caption/label)
+\input{ro_logit_selling_position}
 
 \subsubsection{Player-period-level regression analysis}
 
@@ -338,9 +333,6 @@ We estimate Cox proportional hazards survival models treating the within-round p
 
 
 
-
-% Unified selling regression (two-column layout)
-\input{unified_selling_regression}
 
 % Holdout liquidation regression (standalone)
 
@@ -444,6 +436,11 @@ Herding
 
 \newpage
 
+\section*{Appendix C. Unified Selling Regression}
+
+\input{unified_selling_regression}
+
+\newpage
 
 \section*{Appendix D. First Seller vs.\ Non-First Seller Trait Differences}
 
@@ -469,12 +466,8 @@ Herding
 
 \section*{Appendix F. CLM Robustness Check}
 
-\begin{table}[H]
-  \centering
-  \caption{Ordinal logit (CLM): selling position within group-round}
-  \label{tab:ordinal_logit_selling_position}
-  \input{ordinal_logit_selling_position}
-\end{table}
+% Ordinal logit table (longtable with built-in caption/label)
+\input{ordinal_logit_selling_position}
 
 \newpage
 

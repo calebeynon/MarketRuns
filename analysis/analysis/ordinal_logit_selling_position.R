@@ -1,9 +1,8 @@
 # Purpose: Ordinal logit regressions for selling position (rank 1-4)
-#          Model 1: Full sample, clm (non-sellers = rank 4, no random effects)
-#          Model 2: Sellers only, clm (did_sell == 1, no random effects)
-#          Output: Two-column minipage AME table with all controls displayed
+#          4 CLM models: Full/Sellers x AllEmotions/Valence
+#          Output: 4-column longtable with AMEs on P(rank=1)
 # Author: Claude Code
-# Date: 2026-02-19
+# Date: 2026-02-24
 
 library(data.table)
 library(ordinal)
@@ -23,11 +22,20 @@ CONTINUOUS_VARS <- c("state_anxiety", "impulsivity", "conscientiousness",
 EMOTION_COLS <- c("fear_p95", "anger_p95", "contempt_p95", "disgust_p95",
                   "joy_p95", "sadness_p95", "surprise_p95",
                   "engagement_p95", "valence_p95")
-ALL_PREDICTORS <- c("state_anxiety", "impulsivity", "conscientiousness",
-                    EMOTION_COLS, "extraversion", "agreeableness",
-                    "neuroticism", "openness", "risk_tolerance",
-                    "age", "gender_female", "treatment_2",
-                    "segment2", "segment3", "segment4", "round")
+DISCRETE_EMOTIONS <- c("fear_p95", "anger_p95", "contempt_p95", "disgust_p95",
+                        "joy_p95", "sadness_p95", "surprise_p95",
+                        "engagement_p95")
+
+PREDICTORS_EMOTIONS <- c("state_anxiety", "impulsivity", "conscientiousness",
+                          DISCRETE_EMOTIONS, "extraversion", "agreeableness",
+                          "neuroticism", "openness", "risk_tolerance",
+                          "age", "gender_female", "treatment_2",
+                          "segment2", "segment3", "segment4", "round")
+PREDICTORS_VALENCE <- c("state_anxiety", "impulsivity", "conscientiousness",
+                         "valence_p95", "extraversion", "agreeableness",
+                         "neuroticism", "openness", "risk_tolerance",
+                         "age", "gender_female", "treatment_2",
+                         "segment2", "segment3", "segment4", "round")
 
 # Display labels for all predictors
 VAR_DICT <- c(
@@ -47,8 +55,9 @@ VAR_DICT <- c(
 )
 
 # Ordered variable groups for display
-KEY_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness", "risk_tolerance")
-OTHER_TRAITS <- c("extraversion", "agreeableness", "neuroticism", "openness")
+PERSONALITY_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness",
+                        "risk_tolerance", "extraversion", "agreeableness",
+                        "neuroticism", "openness")
 CONTROLS <- c("age", "gender_female", "treatment_2", "segment2",
               "segment3", "segment4", "round")
 
@@ -58,19 +67,17 @@ CONTROLS <- c("age", "gender_female", "treatment_2", "segment2",
 main <- function() {
   cat("Loading data from:", INPUT_PATH, "\n")
   df <- load_and_prepare(INPUT_PATH)
-
-  cat("\n--- Fitting Model 1: Full Sample (clm, no RE) ---\n")
-  model1 <- fit_clm(df, "Full Sample")
-
   df_sellers <- df[did_sell == 1]
-  cat("\n--- Fitting Model 2: Sellers Only (clm, no RE) ---\n")
-  model2 <- fit_clm(df_sellers, "Sellers Only")
 
-  cat("\n--- Computing AMEs on P(rank=1) ---\n")
-  ame1 <- compute_ames(model1)
-  ame2 <- compute_ames(model2)
+  m1 <- fit_clm(df, PREDICTORS_EMOTIONS, "Full Sample - All Emotions")
+  m2 <- fit_clm(df, PREDICTORS_VALENCE, "Full Sample - Valence")
+  m3 <- fit_clm(df_sellers, PREDICTORS_EMOTIONS, "Sellers Only - All Emotions")
+  m4 <- fit_clm(df_sellers, PREDICTORS_VALENCE, "Sellers Only - Valence")
 
-  build_minipage_table(model1, model2, ame1, ame2, OUTPUT_PATH)
+  ames <- lapply(list(m1, m2, m3, m4), compute_ames)
+  fits <- lapply(list(m1, m2, m3, m4), extract_fit)
+  lines <- build_longtable(ames, fits)
+  write_table(lines, OUTPUT_PATH)
   cat("\nDone!\n")
 }
 
@@ -104,11 +111,11 @@ standardize_continuous <- function(df) {
 # =====
 # Model fitting
 # =====
-fit_clm <- function(df, label) {
-  fml <- paste("sell_rank ~", paste(ALL_PREDICTORS, collapse = " + "))
+fit_clm <- function(df, predictors, label) {
+  fml <- paste("sell_rank ~", paste(predictors, collapse = " + "))
+  cat("\n--- Fitting:", label, "---\n")
   cat("Formula:", fml, "\nN observations:", nrow(df), "\n")
   model <- clm(as.formula(fml), data = df)
-  cat("\n--- Summary:", label, "---\n")
   print(summary(model))
   return(model)
 }
@@ -133,111 +140,104 @@ get_sig_stars <- function(pval) {
   return("")
 }
 
-format_coef_cell <- function(coefs_dt, varname) {
-  row <- coefs_dt[var == varname]
-  if (nrow(row) == 0) return(c("", ""))
-  val <- sprintf("%.4f%s", row$est, get_sig_stars(row$pval))
-  se <- sprintf("(%.4f)", row$se)
-  c(val, se)
-}
-
 get_var_label <- function(v) {
   if (v %in% names(VAR_DICT)) return(VAR_DICT[v])
   gsub("_", "\\_", v, fixed = TRUE)
 }
 
-# =====
-# Build single minipage tabular for one model
-# =====
-build_single_tabular <- function(title, ame_dt) {
-  col_spec <- ">{\\raggedright\\arraybackslash}p{2.8cm}>{\\centering\\arraybackslash}p{1.8cm}"
-  lines <- c(
-    sprintf("\\begin{tabular}[t]{%s}", col_spec),
-    sprintf("\\multicolumn{2}{@{}l}{\\emph{%s}} \\\\", title),
-    "   \\midrule \\midrule")
-  lines <- append_section(lines, "Key traits", KEY_TRAITS, ame_dt)
-  lines <- append_section(lines, "Facial emotions", EMOTION_COLS, ame_dt)
-  lines <- append_section(lines, "Other personality traits", OTHER_TRAITS, ame_dt)
-  lines <- append_section(lines, "Controls", CONTROLS, ame_dt)
-  c(lines, "   \\midrule", "\\end{tabular}")
-}
-
-append_section <- function(lines, header, vars, ame_dt) {
-  lines <- c(lines, sprintf("   \\emph{%s} & \\\\", header))
-  for (v in vars) {
-    cell <- format_coef_cell(ame_dt, v)
-    label <- get_var_label(v)
-    lines <- c(lines,
-      sprintf("   %-25s& %s\\\\", label, cell[1]),
-      sprintf("   %-25s& %s\\\\", "", cell[2]))
+format_4col_cells <- function(var_name, ames_list) {
+  vals <- ses <- character(4)
+  for (i in seq_along(ames_list)) {
+    row <- ames_list[[i]][var == var_name]
+    if (nrow(row) == 0) next
+    vals[i] <- paste0(sprintf("%.4f", row$est), get_sig_stars(row$pval))
+    ses[i] <- paste0("(", sprintf("%.4f", row$se), ")")
   }
+  list(v = vals, s = ses)
+}
+
+format_coef_row <- function(var_name, ames_list) {
+  label <- get_var_label(var_name)
+  cells <- format_4col_cells(var_name, ames_list)
+  c(sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            label, cells$v[1], cells$v[2], cells$v[3], cells$v[4]),
+    sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            "", cells$s[1], cells$s[2], cells$s[3], cells$s[4]))
+}
+
+# =====
+# Longtable structure
+# =====
+build_longtable <- function(ames, fits) {
+  lines <- c(build_preamble(), build_col_header())
+  lines <- append_section(lines, c(DISCRETE_EMOTIONS, "valence_p95"), ames)
+  lines <- append_section(lines, PERSONALITY_TRAITS, ames)
+  lines <- append_section(lines, CONTROLS, ames)
+  c(lines, format_fit_rows(fits), build_footer())
+}
+
+build_preamble <- function() {
+  c("",
+    "\\begingroup", "\\centering", "\\scriptsize",
+    "\\setlength{\\LTcapwidth}{\\textwidth}",
+    paste0("\\begin{longtable}{l",
+           "*{4}{>{\\centering\\arraybackslash}p{2.2cm}}}"),
+    paste0("\\caption{Ordinal logit (CLM): selling position ",
+           "within group-round}",
+           " \\label{tab:ordinal_logit_selling_position} \\\\"))
+}
+
+build_col_header <- function() {
+  hdr <- c(
+    "   \\midrule \\midrule",
+    paste0("   & \\multicolumn{2}{c}{Full Sample}",
+           " & \\multicolumn{2}{c}{Sellers Only} \\\\"),
+    "   \\cmidrule(lr){2-3} \\cmidrule(lr){4-5}",
+    "   & (1) & (2) & (3) & (4) \\\\",
+    "   & All Emotions & Valence & All Emotions & Valence \\\\",
+    "   \\midrule")
+  c(hdr, "\\endfirsthead",
+    "\\multicolumn{5}{l}{\\emph{(continued)}} \\\\",
+    hdr, "\\endhead",
+    "   \\midrule",
+    "   \\multicolumn{5}{r}{\\emph{continued on next page}} \\\\",
+    "\\endfoot", "\\endlastfoot")
+}
+
+append_section <- function(lines, vars, ames) {
+  for (v in vars) lines <- c(lines, format_coef_row(v, ames))
   lines
-}
-
-# =====
-# Build two-column minipage table
-# =====
-build_minipage_table <- function(m1, m2, ame1, ame2, output_path) {
-  f1 <- extract_fit(m1)
-  f2 <- extract_fit(m2)
-  lines <- build_table_preamble()
-  lines <- c(lines, build_minipages(ame1, ame2))
-  lines <- c(lines, "", build_fit_line(f1, f2))
-  lines <- c(lines, build_footer())
-  write_table(lines, output_path)
-}
-
-build_table_preamble <- function() {
-  c("", "\\begin{center}", "\\begingroup", "\\tiny",
-    "\\renewcommand{\\arraystretch}{0.7}",
-    "\\setlength{\\tabcolsep}{2pt}")
-}
-
-build_minipages <- function(ame1, ame2) {
-  left <- build_single_tabular("(1) Full Sample CLM", ame1)
-  right <- build_single_tabular("(2) Sellers Only CLM", ame2)
-  c("\\begin{minipage}[t]{0.42\\linewidth}",
-    "\\centering",
-    left,
-    "\\end{minipage}%",
-    "\\hspace{1.5em}",
-    "\\begin{minipage}[t]{0.42\\linewidth}",
-    "\\centering",
-    right,
-    "\\end{minipage}")
 }
 
 extract_fit <- function(model) {
   list(n = nobs(model), loglik = logLik(model), aic = AIC(model))
 }
 
-build_fit_line <- function(f1, f2) {
-  c("\\vspace{0.1em}",
-    "\\begin{center}",
-    "\\begin{tabular}{lcc}",
-    "   \\emph{Fit statistics} & (1) Full Sample & (2) Sellers Only \\\\",
-    "   \\midrule",
-    "   Model & CLM & CLM \\\\",
-    sprintf("   Observations & %s & %s \\\\",
-            format(f1$n, big.mark = ","), format(f2$n, big.mark = ",")),
-    sprintf("   Log-lik. & %.1f & %.1f \\\\",
-            as.numeric(f1$loglik), as.numeric(f2$loglik)),
-    sprintf("   AIC & %.1f & %.1f \\\\", f1$aic, f2$aic),
-    "\\end{tabular}",
-    "\\end{center}")
+format_fit_rows <- function(fits) {
+  ns <- sapply(fits, function(f) format(f$n, big.mark = ","))
+  lls <- sapply(fits, function(f) sprintf("%.1f", as.numeric(f$loglik)))
+  aics <- sapply(fits, function(f) sprintf("%.1f", f$aic))
+  c("   \\midrule",
+    "   \\emph{Fit statistics} & & & & \\\\",
+    sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            "Model", "CLM", "CLM", "CLM", "CLM"),
+    sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            "Observations", ns[1], ns[2], ns[3], ns[4]),
+    sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            "Log-lik.", lls[1], lls[2], lls[3], lls[4]),
+    sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            "AIC", aics[1], aics[2], aics[3], aics[4]))
 }
 
 build_footer <- function() {
-  c("\\vspace{0.1em}",
-    "\\begin{minipage}{0.95\\linewidth}",
-    "\\tiny",
-    paste0("\\emph{All coefficients are average marginal effects on ",
-           "P(selling first), standardized (z-scored).} "),
-    paste0("\\emph{Both models are cumulative link models (CLM) ",
-           "without random effects.} "),
-    "\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}",
-    "\\end{minipage}",
-    "\\endgroup", "\\end{center}", "", "")
+  c("   \\midrule \\midrule",
+    paste0("   \\multicolumn{5}{l}{\\emph{Average marginal effects",
+           " on P(selling first). Cumulative link model (CLM).}} \\\\"),
+    paste0("   \\multicolumn{5}{l}{\\emph{All predictors",
+           " standardized (z-scored).}} \\\\"),
+    paste0("   \\multicolumn{5}{l}{\\emph{Signif. Codes:",
+           " ***: 0.01, **: 0.05, *: 0.1}} \\\\"),
+    "\\end{longtable}", "\\par\\endgroup", "", "")
 }
 
 write_table <- function(lines, output_path) {
