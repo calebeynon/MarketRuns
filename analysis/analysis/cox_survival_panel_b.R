@@ -26,25 +26,27 @@ run_cox_panel_b <- function(df) {
 # Model 1: Discrete emotions RE Cox (no cascade for first sellers)
 # =====
 run_cox_panel_b_m1 <- function(df_first) {
-  coxme(
-    Surv(period_start, period, sold) ~ fear_mean + anger_mean + contempt_mean +
-      disgust_mean + joy_mean + sadness_mean + surprise_mean + engagement_mean +
-      signal + round + segment + treatment + risk_tolerance +
-      age + gender_female +
-      (1 | player_id),
-    data = df_first
-  )
+  f <- Surv(period_start, period, sold) ~ fear_mean + anger_mean + contempt_mean +
+    disgust_mean + joy_mean + sadness_mean + surprise_mean + engagement_mean +
+    state_anxiety + impulsivity + conscientiousness +
+    extraversion + agreeableness + neuroticism + openness +
+    risk_tolerance +
+    signal + round + segment + treatment +
+    age + gender_female +
+    (1 | player_id)
+  coxme(f, data = df_first, init = get_coxph_init(f, df_first))
 }
 
 # =====
 # Model 2: Valence only RE Cox (no cascade for first sellers)
 # =====
 run_cox_panel_b_m2 <- function(df_first) {
-  coxme(
-    Surv(period_start, period, sold) ~ valence_mean +
-      signal + round + segment + treatment + risk_tolerance +
-      age + gender_female +
-      (1 | player_id),
-    data = df_first
-  )
+  f <- Surv(period_start, period, sold) ~ valence_mean +
+    state_anxiety + impulsivity + conscientiousness +
+    extraversion + agreeableness + neuroticism + openness +
+    risk_tolerance +
+    signal + round + segment + treatment +
+    age + gender_female +
+    (1 | player_id)
+  coxme(f, data = df_first, init = get_coxph_init(f, df_first))
 }

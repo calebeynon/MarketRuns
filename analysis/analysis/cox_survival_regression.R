@@ -23,15 +23,15 @@ DISCRETE_EMOTIONS <- c("fear_mean", "anger_mean", "contempt_mean",
 
 # Controls to display (no period — it is the survival time axis)
 CONTROLS <- c("signal", "round", "segment2", "segment3", "segment4",
-              "treatmenttr2", "risk_tolerance", "age", "gender_female")
+              "treatmenttr2", "age", "gender_female")
 
 # =====
 # Main function
 # =====
 main <- function() {
   df <- prepare_base_data(INPUT_PATH)
-  df_em <- df[complete.cases(df[, .SD, .SDcols = ALL_EMOTIONS])]
-  cat("Base:", nrow(df), "| Emotion-complete:", nrow(df_em), "\n")
+  df_em <- df[complete.cases(df[, .SD, .SDcols = c(ALL_EMOTIONS, ALL_TRAITS)])]
+  cat("Base:", nrow(df), "| Emotion+trait-complete:", nrow(df_em), "\n")
 
   panel_a <- run_cox_panel_a(df_em)
   panel_b <- run_cox_panel_b(df_em)
@@ -78,6 +78,23 @@ add_regression_variables <- function(df) {
 }
 
 # =====
+# coxph starting values to stabilize coxme convergence
+# =====
+get_coxph_init <- function(formula, data, cap = 5) {
+  fe_formula <- remove_random_effect(formula)
+  m <- coxph(fe_formula, data = data)
+  init <- coef(m)
+  init[abs(init) > cap] <- sign(init[abs(init) > cap]) * cap
+  init
+}
+
+remove_random_effect <- function(formula) {
+  terms <- as.character(formula)
+  rhs <- gsub("\\+\\s*\\(1\\s*\\|\\s*\\w+\\)", "", terms[3])
+  as.formula(paste(terms[2], "~", rhs))
+}
+
+# =====
 # Coefficient extraction (hazard ratios via delta method)
 # =====
 extract_cox_coefs <- function(model) {
@@ -119,7 +136,7 @@ get_var_order <- function() {
   cascade <- c("dummy_1_cum", "dummy_2_cum", "dummy_3_cum")
   int_vars <- INTERACTION_VARS
   c(cascade, int_vars, DISCRETE_EMOTIONS,
-    "valence_mean", CONTROLS)
+    "valence_mean", TRAIT_HEADER, ALL_TRAITS, CONTROLS)
 }
 
 # =====
