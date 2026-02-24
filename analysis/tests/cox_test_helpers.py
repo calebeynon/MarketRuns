@@ -35,7 +35,8 @@ DISCRETE_EMOTIONS = [
     "joy_mean", "sadness_mean", "surprise_mean", "engagement_mean",
 ]
 COX_CONTROLS = [
-    "signal", "round", "segment", "treatment", "age", "gender_female",
+    "signal", "round", "segment", "treatment", "risk_tolerance",
+    "age", "gender_female",
 ]
 CASCADE_DUMMIES = ["dummy_1_cum", "dummy_2_cum", "dummy_3_cum"]
 INTERACTION_VARS = [

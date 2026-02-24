@@ -23,7 +23,7 @@ DISCRETE_EMOTIONS <- c("fear_mean", "anger_mean", "contempt_mean",
 
 # Controls to display (no period — it is the survival time axis)
 CONTROLS <- c("signal", "round", "segment2", "segment3", "segment4",
-              "treatmenttr2", "age", "gender_female")
+              "treatmenttr2", "risk_tolerance", "age", "gender_female")
 
 # =====
 # Main function

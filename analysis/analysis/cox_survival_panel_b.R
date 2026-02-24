@@ -29,7 +29,8 @@ run_cox_panel_b_m1 <- function(df_first) {
   coxme(
     Surv(period_start, period, sold) ~ fear_mean + anger_mean + contempt_mean +
       disgust_mean + joy_mean + sadness_mean + surprise_mean + engagement_mean +
-      signal + round + segment + treatment + age + gender_female +
+      signal + round + segment + treatment + risk_tolerance +
+      age + gender_female +
       (1 | player_id),
     data = df_first
   )
@@ -41,7 +42,8 @@ run_cox_panel_b_m1 <- function(df_first) {
 run_cox_panel_b_m2 <- function(df_first) {
   coxme(
     Surv(period_start, period, sold) ~ valence_mean +
-      signal + round + segment + treatment + age + gender_female +
+      signal + round + segment + treatment + risk_tolerance +
+      age + gender_female +
       (1 | player_id),
     data = df_first
   )
