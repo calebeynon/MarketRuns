@@ -1,6 +1,6 @@
-# Purpose: Cox proportional hazards survival regression (robustness check)
+# Purpose: Cox proportional hazards survival regression (Section 4.2.2)
 # Author: Claude Code
-# Date: 2026-02-22
+# Date: 2026-02-23
 
 library(data.table)
 library(survival)
@@ -16,9 +16,14 @@ source("analysis/analysis/unified_selling_regression_panel_c.R")
 source("analysis/analysis/cox_survival_panel_a.R")
 source("analysis/analysis/cox_survival_panel_b.R")
 
+# Discrete emotions (excludes composite valence metric)
+DISCRETE_EMOTIONS <- c("fear_mean", "anger_mean", "contempt_mean",
+                        "disgust_mean", "joy_mean", "sadness_mean",
+                        "surprise_mean", "engagement_mean")
+
 # Controls to display (no period — it is the survival time axis)
 CONTROLS <- c("signal", "round", "segment2", "segment3", "segment4",
-              "age", "gender_female")
+              "treatmenttr2", "age", "gender_female")
 
 # =====
 # Main function
@@ -42,6 +47,12 @@ main <- function() {
 prepare_base_data <- function(file_path) {
   df <- fread(file_path)
   df <- df[already_sold == 0]
+  df <- add_id_columns(df)
+  df <- add_regression_variables(df)
+  df
+}
+
+add_id_columns <- function(df) {
   df[, player_id := paste(session_id, player, sep = "_")]
   df[, global_group_id := paste(session_id, segment, group_id, sep = "_")]
   df[, group_round_id := paste(session_id, segment, group_id, round,
@@ -49,6 +60,10 @@ prepare_base_data <- function(file_path) {
   df[, player_group_round_id := paste(player_id, segment, group_id,
                                        round, sep = "_")]
   df[, time_id := paste(segment, round, period, sep = "_")]
+  df
+}
+
+add_regression_variables <- function(df) {
   df[, dummy_1_cum := as.integer(prior_group_sales == 1)]
   df[, dummy_2_cum := as.integer(prior_group_sales == 2)]
   df[, dummy_3_cum := as.integer(prior_group_sales == 3)]
@@ -57,6 +72,8 @@ prepare_base_data <- function(file_path) {
   df[, gender_female := as.integer(gender == "Female")]
   df[, segment := as.factor(segment)]
   df[, treatment := as.factor(treatment)]
+  # Counting process start time: each row covers interval (period-1, period]
+  df[, period_start := period - 1L]
   df
 }
 
@@ -71,7 +88,6 @@ extract_cox_coefs <- function(model) {
   hr_se <- hr * sqrt(diag(v))
   z <- beta / sqrt(diag(v))
   pval <- 2 * pnorm(-abs(z))
-  # Map factor names to match VAR_LABELS
   nms <- normalize_cox_names(names(beta))
   data.table(var = nms, est = hr, se = hr_se, pval = pval)
 }
@@ -89,7 +105,6 @@ normalize_cox_names <- function(nms) {
 # Fit statistics extraction
 # =====
 extract_cox_fit <- function(model) {
-  # coxme$n is c(events, n_obs)
   events <- model$n[1]
   n <- model$n[2]
   n_groups <- length(ranef(model)$player_id)
@@ -98,68 +113,87 @@ extract_cox_fit <- function(model) {
 }
 
 # =====
-# Table builder
+# Variable order for flat 4-column table
+# =====
+get_var_order <- function() {
+  cascade <- c("dummy_1_cum", "dummy_2_cum", "dummy_3_cum")
+  int_vars <- INTERACTION_VARS
+  c(cascade, int_vars, DISCRETE_EMOTIONS,
+    "valence_mean", CONTROLS)
+}
+
+# =====
+# 4-column LaTeX coefficient formatting (local — does not modify shared helpers)
+# =====
+format_cox_coef_row <- function(var_name, coefs_list) {
+  label <- if (var_name %in% names(VAR_LABELS)) {
+    VAR_LABELS[var_name]
+  } else {
+    gsub("_", "\\\\_", var_name)
+  }
+  cells <- format_cox_coef_cells(var_name, coefs_list)
+  c(sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            label, cells$v[1], cells$v[2], cells$v[3], cells$v[4]),
+    sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            "", cells$s[1], cells$s[2], cells$s[3], cells$s[4]))
+}
+
+format_cox_coef_cells <- function(var_name, coefs_list) {
+  vals <- ses <- character(4)
+  for (i in seq_along(coefs_list)) {
+    row <- coefs_list[[i]][var == var_name]
+    if (nrow(row) == 0) next
+    vals[i] <- paste0(sprintf("%.4f", row$est), get_stars(row$pval))
+    ses[i] <- paste0("(", sprintf("%.4f", row$se), ")")
+  }
+  list(v = vals, s = ses)
+}
+
+# =====
+# Table builder (single flat table, 4 columns)
 # =====
 build_cox_table <- function(panel_a, panel_b) {
-  vars_a <- get_panel_a_vars()
-  vars_b <- get_panel_b_vars()
-  c(
-    build_preamble(),
-    build_col_header(),
-    build_panel("Panel A: All Participants", panel_a, vars_a),
-    build_panel("Panel B: First Sellers", panel_b, vars_b),
-    build_footer()
-  )
-}
+  all_models <- list(panel_a$m1, panel_a$m2, panel_b$m1, panel_b$m2)
+  coefs <- lapply(all_models, extract_cox_coefs)
+  fits <- lapply(all_models, extract_cox_fit)
+  var_order <- get_var_order()
 
-get_panel_a_vars <- function() {
-  cascade <- c("dummy_1_cum", "dummy_2_cum", "dummy_3_cum")
-  int_vars <- c(INTERACTION_HEADER, INTERACTION_VARS)
-  c(cascade, int_vars, ALL_PERSON_VARS, CONTROLS)
-}
-
-get_panel_b_vars <- function() {
-  c(ALL_PERSON_VARS, CONTROLS)
+  lines <- c(build_preamble(), build_col_header())
+  for (v in var_order) {
+    if (startsWith(v, "__header__")) {
+      label <- sub("__header__", "", v)
+      lines <- c(lines, sprintf("   \\emph{%s} & & & & \\\\", label))
+    } else {
+      lines <- c(lines, format_cox_coef_row(v, coefs))
+    }
+  }
+  c(lines, format_cox_fit_rows(fits), build_footer())
 }
 
 build_preamble <- function() {
-  caption <- paste0("Determinants of selling probability --- ",
-                     "Cox survival regression (hazard ratios)")
-  c("", "\\begingroup", "\\scriptsize",
-    "\\begin{longtable}{l*{3}{>{\\centering\\arraybackslash}p{3.2cm}}}",
+  caption <- "Cox survival regression (hazard ratios)"
+  c("", "\\begingroup", "\\centering", "\\scriptsize",
+    "\\setlength{\\LTcapwidth}{\\textwidth}",
+    paste0("\\begin{longtable}{l",
+           "*{4}{>{\\centering\\arraybackslash}p{2.2cm}}}"),
     sprintf("\\caption{%s} \\label{tab:cox_survival_regression} \\\\",
             caption))
 }
 
 build_col_header <- function() {
-  hdr <- c("   \\midrule \\midrule",
-           "   & (1) & (2) & (3) \\\\",
-           "   & RE Cox & RE Cox & RE Cox \\\\",
-           "   \\midrule")
+  hdr <- c(
+    "   \\midrule \\midrule",
+    "   & \\multicolumn{2}{c}{All Sellers} & \\multicolumn{2}{c}{First Sellers} \\\\",
+    "   \\cmidrule(lr){2-3} \\cmidrule(lr){4-5}",
+    "   & (1) & (2) & (3) & (4) \\\\",
+    "   & All Emotions & Valence & All Emotions & Valence \\\\",
+    "   \\midrule")
   c(hdr, "\\endfirsthead",
-    "\\multicolumn{4}{l}{\\emph{(continued)}} \\\\",
+    "\\multicolumn{5}{l}{\\emph{(continued)}} \\\\",
     hdr, "\\endhead",
     "   \\midrule",
-    "   \\multicolumn{4}{r}{\\emph{continued on next page}} \\\\",
+    "   \\multicolumn{5}{r}{\\emph{continued on next page}} \\\\",
     "\\endfoot", "\\endlastfoot")
-}
-
-build_panel <- function(title, models, var_order) {
-  coefs <- lapply(models, extract_cox_coefs)
-  fits <- lapply(models, extract_cox_fit)
-  lines <- c(
-    sprintf("\\multicolumn{4}{l}{\\emph{%s}} \\\\", title),
-    "   \\midrule")
-  for (v in var_order) {
-    if (startsWith(v, "__header__")) {
-      label <- sub("__header__", "", v)
-      lines <- c(lines, sprintf("   \\emph{%s} & & & \\\\", label))
-    } else {
-      lines <- c(lines, format_coef_row(v, coefs))
-    }
-  }
-  lines <- c(lines, format_cox_fit_rows(fits))
-  c(lines, "   \\midrule")
 }
 
 format_cox_fit_rows <- function(fits) {
@@ -168,25 +202,26 @@ format_cox_fit_rows <- function(fits) {
   ngs <- sapply(fits, function(f) format(f$n_groups, big.mark = ","))
   lls <- sapply(fits, function(f) sprintf("%.1f", f$log_lik))
   c("   \\midrule",
-    "   \\emph{Fit statistics} & & & \\\\",
-    sprintf("   %-25s & %s & %s & %s \\\\",
-            "Observations", ns[1], ns[2], ns[3]),
-    sprintf("   %-25s & %s & %s & %s \\\\",
-            "Events", evts[1], evts[2], evts[3]),
-    sprintf("   %-25s & %s & %s & %s \\\\",
-            "Participants", ngs[1], ngs[2], ngs[3]),
-    sprintf("   %-25s & %s & %s & %s \\\\",
-            "Log-likelihood", lls[1], lls[2], lls[3]))
+    "   \\emph{Fit statistics} & & & & \\\\",
+    sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            "Observations", ns[1], ns[2], ns[3], ns[4]),
+    sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            "Events", evts[1], evts[2], evts[3], evts[4]),
+    sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            "Participants", ngs[1], ngs[2], ngs[3], ngs[4]),
+    sprintf("   %-25s & %s & %s & %s & %s \\\\",
+            "Log-likelihood", lls[1], lls[2], lls[3], lls[4]))
 }
 
 build_footer <- function() {
-  c(paste0("   \\multicolumn{4}{l}{\\emph{Hazard ratios reported.",
+  c("   \\midrule \\midrule",
+    paste0("   \\multicolumn{5}{l}{\\emph{Hazard ratios reported.",
            " All models: random-intercept Cox (coxme).}} \\\\"),
-    paste0("   \\multicolumn{4}{l}{\\emph{HR $>$ 1: increased hazard of",
-           " selling (sells sooner). HR $<$ 1: decreased hazard",
-           " (sells later or not at all).}} \\\\"),
-    "   \\multicolumn{4}{l}{\\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}} \\\\",
-    "\\end{longtable}", "\\endgroup", "", "")
+    paste0("   \\multicolumn{5}{l}{\\emph{HR $>$ 1: increased",
+           " hazard of selling. HR $<$ 1: decreased hazard.}} \\\\"),
+    paste0("   \\multicolumn{5}{l}{\\emph{Signif. Codes:",
+           " ***: 0.01, **: 0.05, *: 0.1}} \\\\"),
+    "\\end{longtable}", "\\par\\endgroup", "", "")
 }
 
 # %%

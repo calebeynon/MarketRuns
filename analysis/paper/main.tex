@@ -323,7 +323,9 @@ Rank‐ordered logit model. individual ranks in a group (strata).  Traits. Emoti
 
 \subsubsection{Player-period-level regression analysis}
 
-As a robustness check, we estimate Cox proportional hazards survival models with the same set of covariates as the logit regressions, treating the within-round period as the survival time axis and selling as the event. Table~\ref{tab:cox_survival_regression} in Appendix~B.2 reports hazard ratios from random-effects Cox models for all participants (Panel~A) and first sellers only (Panel~B). The results are qualitatively consistent with the logit specification reported in Appendix~B.1.
+We estimate Cox proportional hazards survival models treating the within-round period as the survival time axis and selling as the failure event. Table~\ref{tab:cox_survival_regression} reports hazard ratios from random-effects Cox models (coxme) for all sellers and first sellers, separating facial emotions from the composite valence measure. Columns~(1) and~(3) include seven discrete emotions (fear, anger, contempt, disgust, sadness, surprise, engagement), while columns~(2) and~(4) include only valence.
+
+\input{cox_survival_regression}
 
 
 
@@ -439,12 +441,6 @@ Herding
 \subsection*{B.1 Logit Specification}
 
 \input{unified_selling_logit_full}
-
-\subsection*{B.2 Cox Survival Specification}
-
-The following table replicates the selling regression analysis using Cox proportional hazards models. The within-round period serves as the survival time axis, with selling as the failure event. All models include participant-level random intercepts estimated via \texttt{coxme}. Coefficients are reported as hazard ratios: values greater than one indicate an increased hazard of selling, and values less than one indicate a decreased hazard.
-
-\input{cox_survival_regression}
 
 \newpage
 
