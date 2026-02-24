@@ -136,7 +136,7 @@ get_var_order <- function() {
   cascade <- c("dummy_1_cum", "dummy_2_cum", "dummy_3_cum")
   int_vars <- INTERACTION_VARS
   c(cascade, int_vars, DISCRETE_EMOTIONS,
-    "valence_mean", TRAIT_HEADER, ALL_TRAITS, CONTROLS)
+    "valence_mean", ALL_TRAITS, CONTROLS)
 }
 
 # =====
