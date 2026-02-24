@@ -321,15 +321,6 @@ Table~\ref{tab:summary_demographics_traits} summarizes the subject pool. We recr
 Rank‐ordered logit model. individual ranks in a group (strata).  Traits. Emotions. Full sample and Sellers only
 
 
-\subsubsection{Player-period-level regression analysis}
-
-We estimate Cox proportional hazards survival models treating the within-round period as the survival time axis and selling as the failure event. Table~\ref{tab:cox_survival_regression} reports hazard ratios from random-effects Cox models (coxme) for all sellers and first sellers, separating facial emotions from the composite valence measure. Columns~(1) and~(3) include seven discrete emotions (fear, anger, contempt, disgust, sadness, surprise, engagement), while columns~(2) and~(4) include only valence.
-
-\input{cox_survival_regression}
-
-
-
-
 \clearpage
 % Ranked-order logit table (standalone)
 \begin{table}[H]
@@ -338,6 +329,15 @@ We estimate Cox proportional hazards survival models treating the within-round p
   \label{tab:ro_logit_selling_position}
   \input{ro_logit_selling_position}
 \end{table}
+
+\subsubsection{Player-period-level regression analysis}
+
+We estimate Cox proportional hazards survival models treating the within-round period as the survival time axis and selling as the failure event. Table~\ref{tab:cox_survival_regression} reports hazard ratios from random-effects Cox models (coxme) for all sellers and first sellers, separating facial emotions from the composite valence measure. Columns~(1) and~(3) include seven discrete emotions (fear, anger, contempt, disgust, sadness, surprise, engagement), while columns~(2) and~(4) include only valence.
+
+\input{cox_survival_regression}
+
+
+
 
 % Unified selling regression (two-column layout)
 \input{unified_selling_regression}
@@ -444,11 +444,6 @@ Herding
 
 \newpage
 
-\section*{Appendix C. Treatment-Period Interaction Regression}
-
-\input{selling_timing_treatment_interactions}
-
-\newpage
 
 \section*{Appendix D. First Seller vs.\ Non-First Seller Trait Differences}
 
