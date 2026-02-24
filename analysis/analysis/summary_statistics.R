@@ -156,14 +156,23 @@ stat_zero_seller_groups <- function(data) {
   as.character(sum(group_counts$n_sellers == 0))
 }
 
-stat_avg_sell_period <- function(data) sprintf("%.1f", mean(data$sell_period))
+stat_avg_sell_period <- function(data) {
+  if (nrow(data) == 0) {
+    message("stat_avg_sell_period: no sellers found, returning '--'")
+    return("--")
+  }
+  sprintf("%.1f", mean(data$sell_period))
+}
 
 stat_avg_first_seller_period <- function(data) {
   first_periods <- data %>%
     filter(did_sell == 1) %>%
     group_by(session_id, segment, group_id, round) %>%
     summarise(first_period = min(sell_period), .groups = "drop")
-  if (nrow(first_periods) == 0) return("--")
+  if (nrow(first_periods) == 0) {
+    message("stat_avg_first_seller_period: no sellers found, returning '--'")
+    return("--")
+  }
   sprintf("%.1f", mean(first_periods$first_period))
 }
 
