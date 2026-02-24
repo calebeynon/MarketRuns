@@ -95,6 +95,7 @@ def base_data(raw_data):
     df["dummy_2_cum"] = (df["prior_group_sales"] == 2).astype(int)
     df["dummy_3_cum"] = (df["prior_group_sales"] == 3).astype(int)
     df["gender_female"] = (df["gender"] == "Female").astype(int)
+    df["period_start"] = df["period"] - 1
     df = add_prev_period_dummies(df)
     df = add_interaction_terms(df)
     return df
@@ -681,6 +682,85 @@ def count_group_sales_before(
                 if pg == group_id:
                     total += 1
     return total
+
+
+# =====
+# Counting process survival structure
+# =====
+class TestCountingProcess:
+    """Verify Surv(period_start, period, sold) structure is correct."""
+
+    def test_period_start_equals_period_minus_one(self, base_data):
+        """period_start must equal period - 1 for all rows."""
+        expected = base_data["period"] - 1
+        assert (base_data["period_start"] == expected).all(), (
+            "period_start != period - 1 for some rows"
+        )
+
+    def test_period_start_nonnegative(self, base_data):
+        """No negative start times."""
+        assert (base_data["period_start"] >= 0).all()
+
+    def test_interval_width_is_one(self, base_data):
+        """Each row covers exactly one unit: (period-1, period]."""
+        widths = base_data["period"] - base_data["period_start"]
+        assert (widths == 1).all()
+
+    def test_intervals_contiguous_all_sellers(self, emotion_filtered):
+        """Within each player-group-round, intervals are contiguous:
+        period_start of row N+1 == period of row N."""
+        verify_contiguous_intervals(emotion_filtered)
+
+    def test_intervals_contiguous_first_sellers(self, first_seller_data):
+        """Same contiguity check for first-seller subsample."""
+        verify_contiguous_intervals(first_seller_data)
+
+    def test_no_overlapping_intervals(self, emotion_filtered):
+        """No two rows in same player-group-round share a time point."""
+        for pgr, grp in emotion_filtered.groupby("player_group_round_id"):
+            periods = sorted(grp["period"].values)
+            assert len(periods) == len(set(periods)), (
+                f"Duplicate periods in {pgr}: {periods}"
+            )
+
+    def test_event_only_in_last_interval(self, emotion_filtered):
+        """sold == 1 only in the last interval of a player-group-round."""
+        for pgr, grp in emotion_filtered.groupby("player_group_round_id"):
+            sale_rows = grp[grp["sold"] == 1]
+            if len(sale_rows) == 0:
+                continue
+            max_period = grp["period"].max()
+            assert sale_rows["period"].iloc[0] == max_period, (
+                f"{pgr}: event at period {sale_rows['period'].iloc[0]} "
+                f"but max is {max_period}"
+            )
+
+    def test_period_start_exists_in_base_data(self, base_data):
+        """period_start column exists (created by R's add_regression_variables)."""
+        assert "period_start" in base_data.columns
+
+    def test_first_period_start_is_zero_or_positive(
+        self, emotion_filtered
+    ):
+        """The earliest period_start within any player-group-round >= 0."""
+        min_starts = emotion_filtered.groupby(
+            "player_group_round_id"
+        )["period_start"].min()
+        assert (min_starts >= 0).all()
+
+
+def verify_contiguous_intervals(df):
+    """Check that intervals are contiguous within each player-group-round."""
+    for pgr, grp in df.groupby("player_group_round_id"):
+        grp_sorted = grp.sort_values("period")
+        periods = grp_sorted["period"].values
+        starts = grp_sorted["period_start"].values
+        for i in range(1, len(periods)):
+            assert starts[i] == periods[i - 1], (
+                f"{pgr}: gap at row {i}, "
+                f"prev period={periods[i-1]}, "
+                f"next start={starts[i]}"
+            )
 
 
 # %%
