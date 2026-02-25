@@ -125,9 +125,9 @@ write_seller_count_table <- function(panel) {
     "\\midrule",
     build_stat_block("Avg sellers per group-round", panel, stat_avg_sellers),
     "\\midrule",
-    build_stat_block("Avg sell period", sellers, stat_avg_sell_period),
+    build_seller_position_block(panel),
     "\\midrule",
-    build_seller_position_block(panel)
+    build_stat_block("Avg sell period", sellers, stat_avg_sell_period)
   )
   latex <- wrap_seller_count_latex(rows)
   write_table(latex, "summary_seller_counts.tex")
