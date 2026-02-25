@@ -192,22 +192,33 @@ def select_output_columns(df: pd.DataFrame) -> pd.DataFrame:
 def validate_dataset(df: pd.DataFrame):
     """Validate sell_rank values and trait completeness."""
     print("\nValidation:")
+    validate_rank_values(df)
+    validate_no_phantom_ranks(df)
+    validate_trait_completeness(df)
+
+
+def validate_rank_values(df: pd.DataFrame):
+    """Assert ranks are in {1,2,3,4} and non-sellers have rank 4."""
     rank_values = set(df["sell_rank"].unique())
     print(f"  sell_rank values: {sorted(rank_values)}")
     assert rank_values <= {1, 2, 3, 4}, f"Unexpected ranks: {rank_values}"
 
-    non_sellers = df[df["did_sell"] == 0]
-    bad_ranks = non_sellers[non_sellers["sell_rank"] != 4]
+    bad_ranks = df[(df["did_sell"] == 0) & (df["sell_rank"] != 4)]
     assert len(bad_ranks) == 0, "Non-sellers with rank != 4 found"
     print("  OK: All non-sellers have sell_rank == 4")
 
-    # Every group-round with sellers must have a rank-1 seller
+
+def validate_no_phantom_ranks(df: pd.DataFrame):
+    """Assert every group-round with sellers has a rank-1 seller."""
     for keys, grp in df.groupby(GROUP_ROUND_KEYS):
         sellers = grp[grp["did_sell"] == 1]
         if len(sellers) > 0:
             assert sellers["sell_rank"].min() == 1, f"Phantom rank in {keys}"
     print("  OK: All seller group-rounds have a rank-1 seller")
 
+
+def validate_trait_completeness(df: pd.DataFrame):
+    """Assert no missing values in trait and demographic columns."""
     trait_cols = [
         "extraversion", "agreeableness", "conscientiousness",
         "neuroticism", "openness", "impulsivity", "state_anxiety",
