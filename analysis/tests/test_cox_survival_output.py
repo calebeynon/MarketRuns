@@ -6,10 +6,17 @@ Author: Claude Code
 Date: 2026-02-24
 """
 
-import re
 from pathlib import Path
 
 import pytest
+
+from tex_table_parser import (
+    find_row_by_label,
+    has_value,
+    label_position,
+    parse_coef_rows,
+    parse_fit_rows,
+)
 
 # FILE PATHS
 TEX_PATH = Path("analysis/output/tables/cox_survival_regression.tex")
@@ -35,8 +42,8 @@ CONTROL_LABELS = [
 ]
 TRAIT_LABELS = [
     "State anxiety", "Impulsivity", "Risk tolerance",
-    "Extraversion", "Agreeableness", "Neuroticism",
-    "Openness", "Conscientiousness",
+    "Conscientiousness", "Extraversion", "Agreeableness",
+    "Neuroticism", "Openness",
 ]
 FIT_STAT_LABELS = [
     "Observations", "Events", "Participants", "Log-likelihood",
@@ -63,95 +70,13 @@ def tex():
 @pytest.fixture(scope="module")
 def coef_rows(tex):
     """Extract coefficient rows as list of (label, [col1..col4])."""
-    return parse_coef_rows(tex)
+    return parse_coef_rows(tex, FIT_STAT_LABELS)
 
 
 @pytest.fixture(scope="module")
 def fit_rows(tex):
     """Extract fit statistic rows as list of (label, [col1..col4])."""
     return parse_fit_rows(tex)
-
-
-# =====
-# Parsing helpers
-# =====
-def parse_coef_rows(tex):
-    """Parse coefficient rows with their 4 column values.
-
-    Returns list of (label, [val1, val2, val3, val4]).
-    """
-    body = extract_table_body(tex)
-    rows = []
-    for line in body.split("\n"):
-        parsed = parse_single_line(line)
-        if parsed is not None:
-            rows.append(parsed)
-    return rows
-
-
-def parse_single_line(line):
-    """Parse one line into (label, values) or None if not a coef row."""
-    line = line.strip().rstrip("\\\\").strip()
-    if not line or line.startswith("\\") or line.startswith("\\emph"):
-        return None
-    cells = [c.strip() for c in line.split("&")]
-    if len(cells) < 5:
-        return None
-    label = cells[0].strip()
-    if not label or label.startswith("(") or label in FIT_STAT_LABELS:
-        return None
-    return (label, [c.strip() for c in cells[1:5]])
-
-
-def extract_table_body(tex):
-    """Extract content between first \\endlastfoot and \\midrule before fit."""
-    start = tex.find("\\endlastfoot")
-    if start == -1:
-        return ""
-    fit_marker = tex.find("\\emph{Fit statistics}", start)
-    if fit_marker == -1:
-        return tex[start:]
-    return tex[start:fit_marker]
-
-
-def parse_fit_rows(tex):
-    """Parse fit statistic rows into list of (label, [val1..val4])."""
-    match = re.search(
-        r"\\emph\{Fit statistics\}.*?\n(.+?)\\midrule\s*\\midrule",
-        tex, re.DOTALL,
-    )
-    if not match:
-        return []
-    rows = []
-    for line in match.group(1).strip().split("\n"):
-        line = line.strip().rstrip("\\\\").strip()
-        if not line or line.startswith("\\"):
-            continue
-        cells = [c.strip() for c in line.split("&")]
-        if len(cells) >= 5:
-            rows.append((cells[0].strip(), cells[1:5]))
-    return rows
-
-
-def find_row_by_label(coef_rows, label):
-    """Find a coefficient row by its label text."""
-    for row_label, vals in coef_rows:
-        if row_label == label:
-            return vals
-    return None
-
-
-def has_value(cell):
-    """Check if a cell contains a numeric coefficient value."""
-    return bool(re.search(r"\d", cell))
-
-
-def label_position(coef_rows, label):
-    """Return the index position of a label in the row list."""
-    for i, (row_label, _) in enumerate(coef_rows):
-        if row_label == label:
-            return i
-    return -1
 
 
 # =====
