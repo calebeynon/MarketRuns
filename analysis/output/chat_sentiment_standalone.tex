@@ -1,0 +1,25 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[margin=1in]{geometry}
+\usepackage{float}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{table}[H]
+  \centering
+  \caption*{Chat Sentiment Summary Statistics}
+  \input{tables/chat_sentiment_summary_stats}
+\end{table}
+
+\vspace{1em}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\linewidth]{plots/chat_sentiment_by_treatment.pdf}
+  \caption*{Mean VADER Compound Sentiment by Treatment and Segment}
+\end{figure}
+
+\end{document}
