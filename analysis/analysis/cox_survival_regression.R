@@ -22,8 +22,13 @@ DISCRETE_EMOTIONS <- c("fear_mean", "anger_mean", "contempt_mean",
                         "surprise_mean", "engagement_mean")
 
 # Controls to display (no period — it is the survival time axis)
-CONTROLS <- c("signal", "round", "segment2", "segment3", "segment4",
-              "treatmenttr2", "age", "gender_female")
+COX_CONTROLS <- c("signal", "round", "segment2", "segment3", "segment4",
+                  "treatmenttr2", "age", "gender_female")
+
+# Personality traits (only in With Traits columns)
+COX_TRAITS <- c("state_anxiety", "impulsivity", "risk_tolerance",
+                "conscientiousness", "extraversion", "agreeableness",
+                "neuroticism", "openness")
 
 # =====
 # Main function
@@ -134,9 +139,8 @@ extract_cox_fit <- function(model) {
 # =====
 get_var_order <- function() {
   cascade <- c("dummy_1_cum", "dummy_2_cum", "dummy_3_cum")
-  int_vars <- INTERACTION_VARS
-  c(cascade, int_vars, DISCRETE_EMOTIONS,
-    "valence_mean", ALL_TRAITS, CONTROLS)
+  c(cascade, INTERACTION_VARS, DISCRETE_EMOTIONS,
+    "valence_mean", COX_CONTROLS, COX_TRAITS)
 }
 
 # =====
@@ -170,7 +174,8 @@ format_cox_coef_cells <- function(var_name, coefs_list) {
 # Table builder (single flat table, 4 columns)
 # =====
 build_cox_table <- function(panel_a, panel_b) {
-  all_models <- list(panel_a$m1, panel_a$m2, panel_b$m1, panel_b$m2)
+  all_models <- list(panel_a$no_traits, panel_a$with_traits,
+                     panel_b$no_traits, panel_b$with_traits)
   coefs <- lapply(all_models, extract_cox_coefs)
   fits <- lapply(all_models, extract_cox_fit)
   var_order <- get_var_order()
@@ -203,7 +208,7 @@ build_col_header <- function() {
     "   & \\multicolumn{2}{c}{All Sellers} & \\multicolumn{2}{c}{First Sellers} \\\\",
     "   \\cmidrule(lr){2-3} \\cmidrule(lr){4-5}",
     "   & (1) & (2) & (3) & (4) \\\\",
-    "   & All Emotions & Valence & All Emotions & Valence \\\\",
+    "   & No Traits & With Traits & No Traits & With Traits \\\\",
     "   \\midrule")
   c(hdr, "\\endfirsthead",
     "\\multicolumn{5}{l}{\\emph{(continued)}} \\\\",
