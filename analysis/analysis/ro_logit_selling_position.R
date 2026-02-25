@@ -1,5 +1,5 @@
 # Purpose: Ranked-order logit (Cox PH with strata) for selling position.
-#          4 models (Full/Sellers x Emotions/Valence), 4-column longtable.
+#          4 models (Full/Sellers x No Traits/With Traits), 4-column longtable.
 # Author: Claude Code  |  Date: 2026-02-24
 
 library(data.table)
@@ -23,14 +23,13 @@ EMOTION_COLS <- c("fear_p95", "anger_p95", "contempt_p95", "disgust_p95",
 DISCRETE_EMOTIONS <- c("fear_p95", "anger_p95", "contempt_p95", "disgust_p95",
                         "joy_p95", "sadness_p95", "surprise_p95",
                         "engagement_p95")
-PREDICTORS_EMOTIONS <- c("state_anxiety", "impulsivity", "conscientiousness",
-                          DISCRETE_EMOTIONS, "extraversion", "agreeableness",
-                          "neuroticism", "openness", "risk_tolerance",
-                          "age", "gender_female")
-PREDICTORS_VALENCE <- c("state_anxiety", "impulsivity", "conscientiousness",
-                         "valence_p95", "extraversion", "agreeableness",
-                         "neuroticism", "openness", "risk_tolerance",
-                         "age", "gender_female")
+EMOTIONS_AND_VALENCE <- c(DISCRETE_EMOTIONS, "valence_p95")
+DEMOGRAPHICS <- c("age", "gender_female")
+PERSONALITY_TRAITS <- c("state_anxiety", "impulsivity", "risk_tolerance",
+                         "extraversion", "agreeableness", "conscientiousness",
+                         "neuroticism", "openness")
+PREDICTORS_NO_TRAITS <- c(EMOTIONS_AND_VALENCE, DEMOGRAPHICS)
+PREDICTORS_WITH_TRAITS <- c(PREDICTORS_NO_TRAITS, PERSONALITY_TRAITS)
 
 VAR_DICT <- c(
   state_anxiety = "State anxiety", impulsivity = "Impulsivity",
@@ -46,10 +45,7 @@ VAR_DICT <- c(
   age = "Age", gender_female = "Female"
 )
 
-PERSONALITY_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness",
-                        "risk_tolerance", "extraversion", "agreeableness",
-                        "neuroticism", "openness")
-CONTROLS <- c("age", "gender_female")
+# Display groups for table sections (DEMOGRAPHICS defined above)
 
 # =====
 # Main function (FIRST - shows high-level flow)
@@ -59,10 +55,10 @@ main <- function() {
   df <- load_and_prepare(INPUT_PATH)
   df_sellers <- prepare_sellers(df)
 
-  m1 <- fit_cox(df, PREDICTORS_EMOTIONS, "Full Sample - All Emotions")
-  m2 <- fit_cox(df, PREDICTORS_VALENCE, "Full Sample - Valence")
-  m3 <- fit_cox(df_sellers, PREDICTORS_EMOTIONS, "Sellers Only - All Emotions")
-  m4 <- fit_cox(df_sellers, PREDICTORS_VALENCE, "Sellers Only - Valence")
+  m1 <- fit_cox(df, PREDICTORS_NO_TRAITS, "Full Sample - No Traits")
+  m2 <- fit_cox(df, PREDICTORS_WITH_TRAITS, "Full Sample - With Traits")
+  m3 <- fit_cox(df_sellers, PREDICTORS_NO_TRAITS, "Sellers Only - No Traits")
+  m4 <- fit_cox(df_sellers, PREDICTORS_WITH_TRAITS, "Sellers Only - With Traits")
 
   coefs <- lapply(list(m1, m2, m3, m4), extract_coefs)
   n_str <- c(uniqueN(df$stratum), uniqueN(df$stratum),
@@ -201,16 +197,15 @@ col_headers <- function(end_cmd) {
     "   & \\multicolumn{2}{c}{Full Sample} & \\multicolumn{2}{c}{Sellers Only} \\\\",
     "   \\cmidrule(lr){2-3} \\cmidrule(lr){4-5}",
     "   & (1) & (2) & (3) & (4) \\\\",
-    "   & All Emotions & Valence & All Emotions & Valence \\\\",
+    "   & No Traits & With Traits & No Traits & With Traits \\\\",
     "   \\midrule", end_cmd)
 }
 
 longtable_body <- function(coefs) {
   lines <- c()
-  lines <- add_section(lines, DISCRETE_EMOTIONS, coefs, "emotions")
-  lines <- add_section(lines, c("valence_p95"), coefs, "valence")
-  lines <- add_section(lines, PERSONALITY_TRAITS, coefs, "all")
-  lines <- add_section(lines, CONTROLS, coefs, "all")
+  lines <- add_section(lines, EMOTIONS_AND_VALENCE, coefs, "all")
+  lines <- add_section(lines, DEMOGRAPHICS, coefs, "all")
+  lines <- add_section(lines, PERSONALITY_TRAITS, coefs, "traits")
   lines
 }
 
@@ -232,10 +227,8 @@ format_var_row <- function(varname, coefs, type) {
 build_row_values <- function(cells, type) {
   est <- sapply(cells, `[`, 1)
   se <- sapply(cells, `[`, 2)
-  if (type == "emotions") {
-    est[c(2, 4)] <- ""
-    se[c(2, 4)] <- ""
-  } else if (type == "valence") {
+  # Big Five rows blank in no-traits columns (1 and 3)
+  if (type == "traits") {
     est[c(1, 3)] <- ""
     se[c(1, 3)] <- ""
   }
@@ -266,6 +259,7 @@ longtable_footer <- function() {
   c("   \\midrule \\midrule",
     note("Coefficients are log-hazard ratios (positive = earlier selling), standardized (z-scored)."),
     note("Standard errors clustered at the player level. Strata: session-segment-group-round."),
+    note("Round, segment, and treatment absorbed by strata (session-segment-group-round)."),
     note("Sellers Only restricted to strata with $\\geq$ 2 sellers."),
     note("Signif. Codes: ***: 0.01, **: 0.05, *: 0.1"),
     "\\end{longtable}", "\\par\\endgroup", "", "")
