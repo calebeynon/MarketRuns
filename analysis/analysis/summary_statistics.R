@@ -229,6 +229,8 @@ wrap_seller_count_latex <- function(rows) {
     "\\midrule",
     rows,
     "\\bottomrule", "\\end{tabular}",
+    "\\par", "\\vspace{2pt}",
+    "\\parbox{\\linewidth}{\\footnotesize \\textit{Note: We used competition ranking, so it is possible to have 4 sellers but no one ranked 4th. For example, the following ranking is possible: \\{1, 2, 3, 3\\}. This explains the dashes in the table.}}",
     "\\endgroup"
   ) %>% paste(collapse = "\n")
 }
