@@ -23,12 +23,18 @@ CONTINUOUS_VARS = [
     "joy_p95", "sadness_p95", "surprise_p95", "engagement_p95",
     "valence_p95", "risk_tolerance", "age",
 ]
-# 19 predictors in Cox PH formula (segment/round absorbed by strata)
-RO_PREDICTORS = [
-    "state_anxiety", "impulsivity", "conscientiousness", *EMOTION_COLS,
-    "extraversion", "agreeableness", "neuroticism", "openness",
-    "risk_tolerance", "age", "gender_female",
+# Predictor lists matching the No Traits / With Traits restructure
+# (segment/round absorbed by strata in Cox PH)
+PERSONALITY_TRAITS = [
+    "extraversion", "agreeableness", "conscientiousness",
+    "neuroticism", "openness", "impulsivity",
+    "state_anxiety", "risk_tolerance",
 ]
+RO_PREDICTORS_NO_TRAITS = [
+    *EMOTION_COLS,
+    "age", "gender_female",
+]
+RO_PREDICTORS_WITH_TRAITS = [*RO_PREDICTORS_NO_TRAITS, *PERSONALITY_TRAITS]
 
 CSV_EXISTS = pytest.mark.skipif(
     not OUTPUT_CSV.exists(), reason="Output CSV not yet built",
@@ -183,24 +189,33 @@ def test_z_scoring_no_new_nans():
 # Category E: Predictor Completeness
 # =====
 def test_ro_predictor_count():
-    """RO logit uses exactly 19 predictors (no segment/round)."""
-    assert len(RO_PREDICTORS) == 19
+    """RO logit: 11 no-traits, 19 with-traits (no segment/round)."""
+    assert len(RO_PREDICTORS_NO_TRAITS) == 11
+    assert len(RO_PREDICTORS_WITH_TRAITS) == 19
 
 
 @CSV_EXISTS
 def test_ro_predictors_present_and_complete():
-    """All 19 predictors exist in CSV and are non-NA after emotion filter."""
+    """All predictors in both sets exist in CSV and are non-NA."""
     df = load_filtered()
-    for pred in RO_PREDICTORS:
+    for pred in RO_PREDICTORS_WITH_TRAITS:
         assert pred in df.columns, f"Missing: {pred}"
         assert df[pred].isna().sum() == 0, f"{pred} has NAs"
 
 
 @CSV_EXISTS
 def test_excluded_vars_not_in_ro_formula():
-    """segment2/3/4 and round are NOT in the RO predictor list."""
+    """segment2/3/4 and round are NOT in either RO predictor list."""
     excluded = {"segment2", "segment3", "segment4", "round"}
-    assert not (excluded & set(RO_PREDICTORS))
+    assert not (excluded & set(RO_PREDICTORS_NO_TRAITS))
+    assert not (excluded & set(RO_PREDICTORS_WITH_TRAITS))
+
+
+def test_personality_traits_only_in_with_traits():
+    """Personality traits appear only in with-traits list, not no-traits."""
+    for trait in PERSONALITY_TRAITS:
+        assert trait not in RO_PREDICTORS_NO_TRAITS, f"{trait} in no-traits"
+        assert trait in RO_PREDICTORS_WITH_TRAITS, f"{trait} missing from with-traits"
 
 
 # =====
@@ -272,9 +287,10 @@ def test_raw_csv_row_count():
 
 @CSV_EXISTS
 def test_ordinal_predictors_superset_of_ro():
-    """Ordinal logit predictors are a superset of RO predictors."""
-    ordinal_preds = set(RO_PREDICTORS) | {"segment2", "segment3", "segment4", "round"}
-    assert set(RO_PREDICTORS).issubset(ordinal_preds)
+    """Ordinal logit with-traits = RO with-traits + segment/round/treatment."""
+    ordinal_extras = {"segment2", "segment3", "segment4", "round", "treatment_2"}
+    ordinal_preds = set(RO_PREDICTORS_WITH_TRAITS) | ordinal_extras
+    assert set(RO_PREDICTORS_WITH_TRAITS).issubset(ordinal_preds)
 
 
 # %%

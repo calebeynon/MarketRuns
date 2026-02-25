@@ -1,5 +1,5 @@
 # Purpose: Ordinal logit regressions for selling position (rank 1-4)
-#          4 CLM models: Full/Sellers x AllEmotions/Valence
+#          4 CLM models: Full/Sellers x No Traits/With Traits
 #          Output: 4-column longtable with AMEs on P(rank=1)
 # Author: Claude Code
 # Date: 2026-02-24
@@ -26,16 +26,14 @@ DISCRETE_EMOTIONS <- c("fear_p95", "anger_p95", "contempt_p95", "disgust_p95",
                         "joy_p95", "sadness_p95", "surprise_p95",
                         "engagement_p95")
 
-PREDICTORS_EMOTIONS <- c("state_anxiety", "impulsivity", "conscientiousness",
-                          DISCRETE_EMOTIONS, "extraversion", "agreeableness",
-                          "neuroticism", "openness", "risk_tolerance",
-                          "age", "gender_female", "treatment_2",
-                          "segment2", "segment3", "segment4", "round")
-PREDICTORS_VALENCE <- c("state_anxiety", "impulsivity", "conscientiousness",
-                         "valence_p95", "extraversion", "agreeableness",
-                         "neuroticism", "openness", "risk_tolerance",
-                         "age", "gender_female", "treatment_2",
-                         "segment2", "segment3", "segment4", "round")
+EMOTIONS_AND_VALENCE <- c(DISCRETE_EMOTIONS, "valence_p95")
+DEMOGRAPHICS_AND_DESIGN <- c("age", "gender_female", "treatment_2",
+                              "segment2", "segment3", "segment4", "round")
+PERSONALITY_TRAITS <- c("extraversion", "agreeableness", "conscientiousness",
+                         "neuroticism", "openness", "impulsivity",
+                         "state_anxiety", "risk_tolerance")
+PREDICTORS_NO_TRAITS <- c(EMOTIONS_AND_VALENCE, DEMOGRAPHICS_AND_DESIGN)
+PREDICTORS_WITH_TRAITS <- c(PREDICTORS_NO_TRAITS, PERSONALITY_TRAITS)
 
 # Display labels for all predictors
 VAR_DICT <- c(
@@ -55,9 +53,6 @@ VAR_DICT <- c(
 )
 
 # Ordered variable groups for display
-PERSONALITY_TRAITS <- c("state_anxiety", "impulsivity", "conscientiousness",
-                        "risk_tolerance", "extraversion", "agreeableness",
-                        "neuroticism", "openness")
 CONTROLS <- c("age", "gender_female", "treatment_2", "segment2",
               "segment3", "segment4", "round")
 
@@ -69,10 +64,10 @@ main <- function() {
   df <- load_and_prepare(INPUT_PATH)
   df_sellers <- df[did_sell == 1]
 
-  m1 <- fit_clm(df, PREDICTORS_EMOTIONS, "Full Sample - All Emotions")
-  m2 <- fit_clm(df, PREDICTORS_VALENCE, "Full Sample - Valence")
-  m3 <- fit_clm(df_sellers, PREDICTORS_EMOTIONS, "Sellers Only - All Emotions")
-  m4 <- fit_clm(df_sellers, PREDICTORS_VALENCE, "Sellers Only - Valence")
+  m1 <- fit_clm(df, PREDICTORS_NO_TRAITS, "Full Sample - No Traits")
+  m2 <- fit_clm(df, PREDICTORS_WITH_TRAITS, "Full Sample - With Traits")
+  m3 <- fit_clm(df_sellers, PREDICTORS_NO_TRAITS, "Sellers Only - No Traits")
+  m4 <- fit_clm(df_sellers, PREDICTORS_WITH_TRAITS, "Sellers Only - With Traits")
 
   ames <- lapply(list(m1, m2, m3, m4), compute_ames)
   fits <- lapply(list(m1, m2, m3, m4), extract_fit)
@@ -156,9 +151,13 @@ format_4col_cells <- function(var_name, ames_list) {
   list(v = vals, s = ses)
 }
 
-format_coef_row <- function(var_name, ames_list) {
+format_coef_row <- function(var_name, ames_list, type = "all") {
   label <- get_var_label(var_name)
   cells <- format_4col_cells(var_name, ames_list)
+  if (type == "traits") {
+    cells$v[c(1, 3)] <- ""
+    cells$s[c(1, 3)] <- ""
+  }
   c(sprintf("   %-25s & %s & %s & %s & %s \\\\",
             label, cells$v[1], cells$v[2], cells$v[3], cells$v[4]),
     sprintf("   %-25s & %s & %s & %s & %s \\\\",
@@ -170,9 +169,9 @@ format_coef_row <- function(var_name, ames_list) {
 # =====
 build_longtable <- function(ames, fits) {
   lines <- c(build_preamble(), build_col_header())
-  lines <- append_section(lines, c(DISCRETE_EMOTIONS, "valence_p95"), ames)
-  lines <- append_section(lines, PERSONALITY_TRAITS, ames)
-  lines <- append_section(lines, CONTROLS, ames)
+  lines <- append_section(lines, EMOTIONS_AND_VALENCE, ames, "all")
+  lines <- append_section(lines, CONTROLS, ames, "all")
+  lines <- append_section(lines, PERSONALITY_TRAITS, ames, "traits")
   c(lines, format_fit_rows(fits), build_footer())
 }
 
@@ -194,7 +193,7 @@ build_col_header <- function() {
            " & \\multicolumn{2}{c}{Sellers Only} \\\\"),
     "   \\cmidrule(lr){2-3} \\cmidrule(lr){4-5}",
     "   & (1) & (2) & (3) & (4) \\\\",
-    "   & All Emotions & Valence & All Emotions & Valence \\\\",
+    "   & No Traits & With Traits & No Traits & With Traits \\\\",
     "   \\midrule")
   c(hdr, "\\endfirsthead",
     "\\multicolumn{5}{l}{\\emph{(continued)}} \\\\",
@@ -204,8 +203,8 @@ build_col_header <- function() {
     "\\endfoot", "\\endlastfoot")
 }
 
-append_section <- function(lines, vars, ames) {
-  for (v in vars) lines <- c(lines, format_coef_row(v, ames))
+append_section <- function(lines, vars, ames, type = "all") {
+  for (v in vars) lines <- c(lines, format_coef_row(v, ames, type))
   lines
 }
 
