@@ -22,13 +22,13 @@ DISCRETE_EMOTIONS <- c("fear_mean", "anger_mean", "contempt_mean",
                         "surprise_mean", "engagement_mean")
 
 # Controls to display (no period — it is the survival time axis)
-COX_CONTROLS <- c("signal", "round", "segment2", "segment3", "segment4",
+COX_CONTROLS <- c("round", "segment2", "segment3", "segment4",
                   "treatmenttr2", "age", "gender_female")
 
 # Personality traits (only in With Traits columns)
-COX_TRAITS <- c("state_anxiety", "impulsivity", "risk_tolerance",
-                "conscientiousness", "extraversion", "agreeableness",
-                "neuroticism", "openness")
+COX_TRAITS <- c("extraversion", "agreeableness", "conscientiousness",
+                "neuroticism", "openness", "impulsivity",
+                "state_anxiety", "risk_tolerance")
 
 # =====
 # Main function
@@ -139,7 +139,7 @@ extract_cox_fit <- function(model) {
 # =====
 get_var_order <- function() {
   cascade <- c("dummy_1_cum", "dummy_2_cum", "dummy_3_cum")
-  c(cascade, INTERACTION_VARS, DISCRETE_EMOTIONS,
+  c(cascade, INTERACTION_VARS, "signal", DISCRETE_EMOTIONS,
     "valence_mean", COX_CONTROLS, COX_TRAITS)
 }
 

@@ -29,9 +29,9 @@ DISCRETE_EMOTIONS <- c("fear_p95", "anger_p95", "contempt_p95", "disgust_p95",
 EMOTIONS_AND_VALENCE <- c(DISCRETE_EMOTIONS, "valence_p95")
 DEMOGRAPHICS_AND_DESIGN <- c("age", "gender_female", "treatment_2",
                               "segment2", "segment3", "segment4", "round")
-PERSONALITY_TRAITS <- c("state_anxiety", "impulsivity", "risk_tolerance",
-                         "extraversion", "agreeableness", "conscientiousness",
-                         "neuroticism", "openness")
+PERSONALITY_TRAITS <- c("extraversion", "agreeableness", "conscientiousness",
+                         "neuroticism", "openness", "impulsivity",
+                         "state_anxiety", "risk_tolerance")
 PREDICTORS_NO_TRAITS <- c(EMOTIONS_AND_VALENCE, DEMOGRAPHICS_AND_DESIGN)
 PREDICTORS_WITH_TRAITS <- c(PREDICTORS_NO_TRAITS, PERSONALITY_TRAITS)
 

@@ -26,9 +26,9 @@ CONTINUOUS_VARS = [
 # Predictor lists matching the No Traits / With Traits restructure
 # (segment/round absorbed by strata in Cox PH)
 PERSONALITY_TRAITS = [
-    "state_anxiety", "impulsivity", "risk_tolerance",
     "extraversion", "agreeableness", "conscientiousness",
-    "neuroticism", "openness",
+    "neuroticism", "openness", "impulsivity",
+    "state_anxiety", "risk_tolerance",
 ]
 RO_PREDICTORS_NO_TRAITS = [
     *EMOTION_COLS,
