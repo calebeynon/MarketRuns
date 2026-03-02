@@ -66,6 +66,8 @@ jobs:
             human_files=$(echo "$human_files" | tr ' ' '\n' | sort -u | sed '/^$/d')
 
             for file in $human_files; do
+              # Skip action-managed directories (synced TO Overleaf, not from)
+              case "$file" in tables/*|plots/*) continue ;; esac
               repo_file="${GITHUB_WORKSPACE}/analysis/paper/${file}"
               if [ ! -f "$file" ]; then
                 continue
