@@ -40,6 +40,8 @@
 \addtolength{\voffset}{-1.5cm} \addtolength{\hoffset}{-1cm}
 \addtolength{\textwidth}{2.5cm} \addtolength{\textheight}{2.5cm}
 
+\newtheorem{hypothesis}{Hypothesis}
+
 
 \pgfplotsset{compat=1.17}
 \renewcommand{\baselinestretch}{1.5}
@@ -53,11 +55,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\title{The Effects of Emotions and Communication on\\Coordination during Market Runs\thanks{Grant number xxx, IRB number xxx, We thank}}
+\title{Market Run Psychology\thanks{Grant number xxx, IRB number xxx, We thank}}
 
 
-\author{Caleb Eynon\thanks{University of Alabama, Email} 
-~and  Paan Jindapon\thanks{University of Alabama, Email}  }
+\author{Caleb Eynon\thanks{University of Alabama, ceynon@crimson.ua.edu} 
+~and  Paan Jindapon\thanks{University of Alabama, pjindapon@ua.edu}  }
 
 
 
@@ -68,6 +70,14 @@
 \maketitle
 
 
+\section*{\centering\textbf{Abstract}}
+\noindent
+\begin{singlespace}
+
+\noindent
+We investigate the psychological predictors of market runs in an experimental setting. Specifically, we examine the effect of emotions, personality traits, luck, communication, and peer liquidation on the probability of a run occurring in a financial market. We conduct a laboratory experiment with a 2x2 design, varying the liquidation value distribution and the availability of pre-play communication. The participants act as investors with incentive to beat the market by preempting other investors when the fundamental value is sufficiently low. We use facial reading technology and surveys to measure emotions and personality traits among participants during the experiment. We find that traits and emotions associated with worry or negativity increase the likelihood of an investor entering a market run while investors that get ``lucky'' are less likely to sell in subsequent markets. Our results suggest that individual psychological factors are significant predictors of participation in financial market runs. 
+
+\end{singlespace}
 \newpage
 
 
@@ -75,7 +85,7 @@
 
 
 
-\epigraph{``Quote about emotions''}{\textit{-Warren Buffett}}
+\epigraph{``Until you can manage your emotions, don’t expect to manage money.''}{\textit{-Warren Buffett}}
 
 
 
@@ -83,88 +93,69 @@
 \section{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\cite{bracha2012psychological}
+Financial volatility has been a concern since the inception of markets\footnote{See, for example, the Dutch Tulip Bulb Crisis of 1630}. Panic induced liquidation has been a symptom of recent financial crises. For example, in March 2020 the Dow Jones Industrial Average fell by 26\% in just four days at the beginning of the COVID recession. Another example is Black Monday in 1987, where the Dow Jones Industrial Average fell by 22.6\% in just one day. While much of these sales and subsequent drops in prices were based on fundamentals of the economy, there is debate as to how much investors overreact to bad economic news. \cite{thaler1985} shows that most people overreact to unexpected and dramatic news events in a financial market setting. 
 
-Market clearing process
+Ever since the seminal paper on bank runs, \cite{diamond1983bank}, the literature on financial runs has largely focused on bank runs. However, market runs, as described in \cite{bernardo2004liquidity}, are also a significant source of financial runs and differ from bank runs in several ways. First, the source of fragility for a bank run comes from the investment in long terms assets and then too many depositors seeking to withdraw before the return can be realized. However, the source of fragility in market runs is the liquidity of the market, the demand for shares on the buy side. Second, each withdrawal in a bank run depletes an asset pool which can pay out full deposits until it is depleted. In the market run setting, each sale immediately impacts price, so order of sale matters for the price received by an investor. Finally, and arguably most importantly, the model of bank runs allows for deposit insurance to prevent the run equilibrium, whereas this is impossible in the model of market runs. This is because deposits have an easily observable fundamental value, but it can be difficult to determine the fundamental value of an asset. Additionally, the Bayesian belief about fundamental value of the asset changes as signals are added. Therefore, it is important to study the drivers of these market runs, and what solutions are available to combat instability.
 
-Disposition effect
+It is of interest to policymakers and economists to determine what might cause overreactions to unexpected and dramatic news, specifically the psychological aspect. \cite{bracha2012psychological} proposes a psychological account of financial panics in which a rational slow system competes with a fast emotional system. We use an experimental approach to test which emotions and personality traits predict the sale of assets in a financial market, specifically, a market where runs are possible. We also test other panic-inducing factors such as unluckiness and cascade effects. By understanding the factors that contribute to overreactions in financial markets, businesses and governments can be better prepared with tools to prevent panic and financial instability.
 
+We set up an environment consistent with \cite{bernardo2004liquidity}, where investors face some liquidity need in the future and own an asset. They can hold this asset to an uncertain terminal period or sell at any time prior. If the state of the world is bad, then the investor must sell their asset at the market price at the terminal period, whereas in the good state of the world, investors can earn some long term rate of return at the terminal period. Investors observe public, stochastic signals about the state of the world as time goes on, with the Bayesian probability converging to the 1 for the true state. In the good state, investors have incentive to hold until the terminal period, but in the bad state, investors have incentive to preempt other investors by selling before them. These sales generate a negative externality for other investors, lowering the liquidation price of their asset. Since players do not know the state of the world ex ante, if the signal is sufficiently bad, equilibrium is when the investors run on the market. Since these signals are stochastic, there will be some good state markets that end in a market run because of a poor start for the signal. This ultimately decreases welfare for investors. %This is a similar set up to \cite{magnani2020dynamic} and \cite{choi2022market}.
+
+Importantly, investors can observe the signal, price, and sales in the asset market in order to inform their selling decision. In an experimental setting, this allows us to set up facial recognition technology to observe investor emotions prior to sales while they use the information to make their decision. In addition to creating an environment where observing emotions is possible, we also add treatments to the experiment to assess other factors in market runs. We implement a treatment where liquidation payoffs are decided randomly vs averaged across remaining investors. In the average treatment, investors may feel more cooperative nature since they are guaranteed the same liquidation value at the terminal period if they don't sell prior to that. This allows us to test whether this joint sense of responsibility can help reduce the occurrence of market runs. Additionally, we introduce communication in some markets. This provides a different approach to cooperation, allowing investors to potentially derive a strategy or reassure each other. This can help determine if communication channels, such as online chat rooms, could decrease the occurrence of market runs.
+
+We implement an experiment consistent with what is listed above. Our experiment compares markets in a mixed design settings, where liquidation payoffs are between subjects and market communications are within subjects. We then derive hypotheses based on the model put forth by \cite{bernardo2004liquidity} and first placed in an experimental setting by \cite{magnani2020dynamic}.
+
+We contribute to the literature by bridging a gap between bank run psychology and market run psychology. To our knowledge, we are the first to measure emotions as they relate to investors in this market run model. Additionally, we add to the literature detailing financial behavior as it relates to personality traits. Finally, we contribute to the literature on cascading and herding effects in financial markets. 
+
+We find evidence of several factors that affect an investor's likelihood to sell her asset. First, cascade effects are present, a different investor selling in a time period very shortly before the current one causes an increase in the likelihood of selling for other investors. Second, an investor receiving an ``unlucky'' liquidation payoff in the bad state is much more likely to sell in a future market than an investor that received a ``lucky'' payoff in the same exact market. Third, emotions that are typically associated with worry or negativity are positive predictors of an investor selling. Finally, certain time-invariant personality traits cause an increase in selling probability while one trait, risk tolerance, causes a decrease in selling probability.
+
+The remainder of the paper is organized as follows. In section 2, we summarize the relevant literature. In section 3, we state our hypotheses. In section 4, we describe our experimental design and market model. Section 5, presents the results from the experiment. Section 6 discusses the results and concludes. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Literature}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Theory and Experiment}
+\subsection{Market Runs Experiments}
 
-\cite{bernardo2004liquidity}
-
-\cite{magnani2020dynamic}
-
-\cite{choi2022market}
+\cite{bernardo2004liquidity} provides the original theoretical background for our experiment. They model runs in financial markets similar to bank runs. Importantly, each risk neutral investor has incentive to beat the market by selling before other investors. Investors fear being forced to sell at the post run price, each investor may prefer to sell early to avoid the possibility of being stuck on the wrong side of a run. This causes runs to be caused by the fear of future liquidity shocks. \cite{magnani2020dynamic} is the first paper to implement this model experimentally. They specifically look at a ``circuit-breaker'' policy as a potential intervention to stop market runs and restore stability in some cases. They find that circuit-breakers are effective when information quality is high enough, otherwise the break in trading does not aggregate enough information for seller behavior to change. This paper examines a response to a market run, not the causes or prevention of them. \cite{choi2022market} also implements this model experimentally. They examine the role of liquidity in investor sensitivity to information. They find that lower liquidity markets are more susceptible to over-sensitivity and that herding behavior is more prominent. 
 
 
 
 
-\subsection{Bank Runs Experiment}
+\subsection{Bank Runs Experiments}
 
-\cite{diamond1983bank}
+As mentioned in Section 1, market runs are related to bank runs. \cite{diamond1983bank} provide the original theory for bank runs, demonstrating that coordination failure among depositors can lead to runs. Several papers implement their model in an experimental setting. \cite{madies2006experimental} studies a static model and find that bank runs are persistent. \cite{garratt2009bank} show that bank runs are more likely to occur in environments where there is significant uncertainty about fundamental withdrawal demand and depositors receive information about the behavior of other depositors when there are multiple opportunities to withdraw. In particular,  uncertainty regarding the number of impatient depositors increases the likelihood of a bank run.  \cite{schotter2009dynamics} show that depositors are willing to restrain themselves from withdrawing when they can learn from additional information and the existence of an insider who has informational advantage exists can delay the decision to withdraw.
 
-\cite{garratt2009bank}
 
-\cite{schotter2009dynamics}
 
-\cite{kiss2014social}
+\cite{kiss2014social} and \cite{kiss2018panic} focus on observability of other player's action. \cite{chakravarty2014experiment} and \cite{brown2017understanding} design experiments with two banks and examine bank-run contagion. They find that withdrawals on one bank can trigger panic bank-run at another bank despite liquidity independence between the two banks.
 
-\cite{arifovic2013experimental}
-
-\cite{kiss2018panic}
-
-\cite{chakravarty2014experiment}
-
-\cite{brown2017understanding}
-
-Closest to us:
-
-\cite{dijk2017bank}
-
-\cite{shakina2018coordination}
+Two papers implement analyses similar to ours. First, \cite{dijk2017bank} induces fear, sadness, or happiness in each treatment in an emotional task prior to playing the game. They find that the inducement of fear causes a large increase in the probability of withdrawal and subsequent run. While we also examine an emotional effect, we do not induce the emotion but rather use software recognize emotions as they occur throughout the experiment. \cite{shakina2018coordination} use chat and no-chat between-subjects treatments and find that communication, especially positive messages, can slow down withdrawals. While we also use chat and no-chat treatments, we do it within-subjects. 
 
 
 
 \subsection{Psychological Factors}
 
-Personality traits 
+
+
+Neuroticism is related to attitudes towards risk, with higher neuroticism associated with lower risk tolerance \citep{rustichini2016toward}.  \cite{oehler2018investors} find that extraverted individuals are willing to pay higher prices for financial assets and more neurotic individuals hold less risky assets. \cite{de2019personality} find that people who have a high degree of openness to experience have the greatest probability of taking higher levels of risk in their investment decisions.
+
+
+
+Using a questionnaire based on the State-Trait Anger Expression Inventory (STAXI) and the State-Trait Anxiety Inventory (STAI), \cite{gambetti2012effect} find that trait anger is positively associated with the willingness to invest in risky assets, while trait anxiety predicts conservative financial decisions. Using the Sixteen Personality Factor (16PF) questionnaire, \cite{gambetti2019personality} also find that anxious people tend to save money and avoid investments.
+
+
+
+\cite{cecchini2019individual}  find that, as an asset price in increasing,  extroverted subjects sell the asset too quickly while conscientious subjects are more patient and sell the asset at a higher price. \cite{bajo2023psychological} also find a significant effect of  conscientiousness in explaining higher trading volume and greater risk taking.
+
+
+
+
 
 %\cite{nyhus2001role}
-
 %\cite{donnelly2012big}
 %\cite{brown2014household}
 %\cite{tauni2020investor}
-
-Experiment 
-
-Neuroticism \cite{rustichini2016toward}  \cite{oehler2018investors}
-
-
-\cite{de2019personality} find that people who have a high degree of openness to experience have the greatest probability of taking higher levels of risk in their investment decisions.
-
-\cite{gambetti2019personality}
-
-\cite{durand2008intimate}  \cite{oehler2018investors} extraversion and neuroticism.
-
-
-Like \cite{gutsche2023determinants}, we use the Ten Item Personality Inventory (TIPI) according to \cite{gosling2003very} to capture these five personality traits. The resulting variables ‘extraversion,’ ‘agreeableness,’  ‘conscientiousness,’ ‘neuroticism,’ and ‘openness to experiences’ range between one and five, with a higher value associated with a higher degree of the corresponding personality trait.
-
-
-Conscientiousness and risky investment \cite{bajo2023psychological}
-
-
-Conscientiousness and disposition effect  \cite{cecchini2019individual} and \cite{bajo2023psychological}
-
-
-
-Anxiety and Compulsiveness
-
 %\cite{barratt1959anxiety}
 %\cite{fowles1987application}
 %\cite{whiteside2001five}
@@ -175,11 +166,48 @@ Anxiety and Compulsiveness
 
 
 
-\cite{stanford2009fifty}
 
-\cite{shapiro2012measuring}
 
-\cite{gambetti2012effect}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Hypotheses}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{hypothesis}\label{price_treatment}
+    Subjects are less likely to sell in the average-price treatment than in the random-price treatment.   
+\end{hypothesis}
+
+\begin{hypothesis}\label{chat_treatment}
+    Subjects are less likely to sell in the chat treatment than in the no-chat treatment.  
+\end{hypothesis}
+
+\begin{hypothesis}\label{chat_treatment}
+    Subjects with the following traits are less likely to sell. 
+    \begin{itemize}
+        \item Agreeableness: Participants who are more agreeable may be more passive in their action and willing to accept the outcome regardless of state.
+        \item Risk tolerance: Participants with a higher risk tolerance may be willing to go into the terminal period with a lower probability of being in the good state.
+        \item Openness: Similar to the agreeableness hypothesis, participants who are more open may be willing to accept either outcome and might view the mental energy required to make a decision to be too high.
+    \end{itemize}
+    Subjects with the following traits are more likely to sell.
+    \begin{itemize}
+        \item Impulsivity: Participants who are more impulsive make decisions with little reasoning. This may cause them to prematurely click the sell button.
+        \item Anxiety: Participants who are more anxious may be more sensitive to downward changes in the signal. They may have a high desire to avoid forced liquidation.
+        \item Conscientiousness: Participants who are more conscientious may feel they have a duty to sell at the ``correct'' moment. This may cause them to click sell early in markets if the signal starts in the downward direction.
+    \end{itemize}
+\end{hypothesis}
+
+\begin{hypothesis}\label{chat_treatment}
+    Subjects with the following emotions are less likely to sell:
+    \begin{itemize}
+        \item Joy: Participants who express joy may feel more optimistic about the market's state making them less likely to sell.
+    \end{itemize}
+    Subjects with the following emotions are more likely to sell.
+    \begin{itemize}
+        \item Fear: Participants who express fear may feel more pessimistic about the market's state making them more likely to sell to preempt the forced liquidation.
+        \item Anger: Participants who express anger may attempt to reduce fellow group member payoffs by selling, therefore decreasing the liquidation value of assets in the bad state.
+        \item Engagement: Participants who are more engaged with the experiment may pay closer attention to changes in the signal and be more sensitive to downward updates.
+    \end{itemize}
+\end{hypothesis}
 
 
 
@@ -235,7 +263,7 @@ Note that $Var(P_{2,t,N,M}) = 0 \; \forall \, t\in\{1,2,...,T\}, N \in \{1,2,3,4
 
 Each subject only participated in one treatment. Of our six experimental sessions, three were treatment 1 and three were treatment 2.
 
-At the beginning of each period within a round, each market participant could see $p_N$ and all previously market prices, $\pi(t)$ which has been calculated for them using Equation \ref{eq:bayes}, market participants who have sold, a ``SELL'' button, and their price received (if applicable). See Figure \ref{fig:interface}. Each period lasted 4 seconds. The number of periods in each round was randomly determined prior to the experiment, but the sequence of signals was randomly determined in real time.
+At the beginning of each period within a round, each market participant could see $p_N$ and all previously market prices, $\pi(t)$ which has been calculated for them\footnote{This slightly differs from \cite{magnani2020dynamic} who do not compute the Bayesian updated probabilities for participants.} using Equation \ref{eq:bayes}, market participants who have sold, a ``SELL'' button, and their price received (if applicable). See Figure \ref{fig:interface}. Each period lasted 4 seconds. The number of periods in each round was randomly determined prior to the experiment, but the sequence of signals was randomly determined in real time.
 
 \begin{figure}
     \centering
@@ -248,7 +276,7 @@ At the conclusion of a round, each participant was shown the true state of the m
 
 Following the conclusion of segment 2, participants were informed that they would be able to communicate with market participants prior to the start of each segment. They also received a set of rules restricting the use of profanity or the disclosure of identifying information. Other than that, participants were free to chat about any topic that they wished.
 
-Following the conclusion of segment 4, participants move onto the survey portion of the experiment. Our post-study survey questions consist of the six-item form of the state scale of the Spielberger State-Trait Anxiety Inventory developed by \cite{marteau1992development}, the ten-item form of the Big-Five Personality Inventory developed by \cite{gosling2003very}, and  the eight-item form of the Barratt Impulsiveness Scale developed by \cite{steinberg2013new}. To measure risk aversion, we use the technique adapted from the design in \cite{gneezy1997experiment}. Using a ${1}/{2}$ probability of success instead of ${1}/{3}$ avoids the problem of subjective over weighting of low-probability events.
+Following the conclusion of segment 4, participants move onto the survey portion of the experiment. Like \cite{gutsche2023determinants}, we use the Ten Item Personality Inventory (TIPI) according to \cite{gosling2003very} to capture these five personality traits. The resulting variables ‘extraversion,’ ‘agreeableness,’  ‘conscientiousness,’ ‘neuroticism,’ and ‘openness to experiences’ range between one and five, with a higher value associated with a higher degree of the corresponding personality trait.  We elicited individual risk preferences using a task similar to \cite{gneezy1997experiment}. Each participant received 20 points and decided how much to invest in a risky option. The risky option had a 50\% chance of success. If the investment failed, the participant lost the invested amount; if successful, the payoff was 2.5 times the invested amount. 
 
 At the conclusion of the survey portion, each participants earnings were calculated. They received $\$7.50$ as a participation fee plus their earnings from part 1 plus their earnings from part 2. For part 1, one market from each segment was randomly selected and then summed. Participants were not aware of the selected market from each segment until the conclusion of part 2. For part 2, participants receive 20 ECU's for completing the survey questions, and then have the opportunity to gamble those earnings in the risk aversion task. Earnings from part 1 and 2 were then converted at the rate of 4 Experimental Currency Units (ECU's) to \$1. Earnings from all six sessions ranged from \$11.00 to \$36.25 with a mean of \$23.57. Each session lasted approximately 75 minutes.
 
@@ -273,12 +301,17 @@ We also collected data on the facial expressions and body language of participan
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Results}
+\section{Main Results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Summary Statistics}
 
-Table~\ref{tab:summary_demographics_traits} summarizes the subject pool. We recruited 96 subjects across 6 sessions (3 per treatment), with balanced demographics and personality traits across treatments (two-sample $t$-tests yield no significant differences at the 5\% level for any trait except conscientiousness). Table~\ref{tab:trait_correlations} presents the pairwise correlations among the eight trait measures. Table~\ref{tab:summary_seller_counts} reports the average number of sellers per group-round, average sell periods, average sell prices, and the number of zero-seller group-rounds across treatment and chat conditions.
+Table~\ref{tab:summary_demographics_traits} summarizes the subject pool across 6 sessions and 96 participants. Each treatment had 3 sessions and 48 participants each. Participant characteristics are balanced across the two treatments (no significant differences exist between traits at the 5\% level, except for conscientiousness). Table~\ref{tab:trait_correlations} presents the pairwise correlations among the eight trait measures. Somewhat intuitively, neuroticism and impulsivity  are negatively correlated with agreeableness and conscientiousness. Additionally, anxiety and neuroticism are positively correlated. 
+
+
+Table~\ref{tab:summary_seller_counts} reports the average number of sellers per group-round, average sell periods, average sell prices, and the number of zero-seller group-rounds across treatment and chat conditions. The number of group-rounds is monotonically decreasing in the number of sellers. About $47\%$ of group-rounds consist of zero sellers, meaning that all four participants in the market held to the terminal period. Additionally, we observe only $1\%$ of group-rounds ending with four sellers. Given that a participant is the last remaining in the market, selling is weakly dominated by holding the asset until the terminal period. However, they could be the fourth seller if all remaining participants sell in the same period, and this would not be weakly dominated by holding. In this experiment, there were only two observed instances where a participant sold fourth and did not tie with other sellers. In the chat-available segments, the distribution of group-rounds with respect to the number sellers shifts towards 0. In treatment 1 this is especially pronounced with the number of zero seller group-rounds nearly doubling.
+
+As expected, more sales occur in bad state markets than good state markets. We also observe more sellers per group-round in the markets where chat is available. Further, in treatment 1, at every seller position, sales tend to occur during later periods during the chat-available market. This indicates that participants are more patient in the chat-available markets. However, this is not the case for treatment 2, as there is very little difference between the chat and no chat markets. When broken down by state, sales tend to occur later in bad state markets. This makes sense when the flow of information is accounted for, particularly how the signals affect participant sales. Suppose that there is an initial bad signal, a patient participant is willing to wait longer for a potential signal rebound, whereas an impatient participant does not wait and sells immediately. In the good state, the signal likely rebounds up and patient investors never sell, and thus are not accounted for in the good state sellers statistic. Therefore, the bad state average sell period statistic includes both patient and impatient participants, whereas the good state statistic includes just impatient participants.
 
 \begin{table}[H]
   \centering
@@ -304,7 +337,43 @@ Table~\ref{tab:summary_demographics_traits} summarizes the subject pool. We recr
 
 \subsection{Selling Behavior}
 
+
 \subsubsection{Group-round-level regression analysis}
+Table \ref{tab:tobit_n_sellers} reports results from a Tobit regression specification with number of sellers in a group-round as the output variable. Equation \ref{eq:tobit} is the regression specification with $n\_sellers^*_{gr}$ is the censored number of sellers at 0 and 4.
+  \begin{equation}                                                                                                                                                              
+  \begin{split}                                                                               
+      n\_sellers^*_{gr} = \beta_0 &+ \beta_1 \cdot \text{BadState}_r + \beta_2 \cdot \text{Treatment2}_g \\                                                                           
+      &+ \sum_{s=2}^{4} \gamma_s \cdot \mathbf{1}[\text{Segment} = s] + \delta \cdot \text{Round}_r + \varepsilon_{gr}
+  \end{split}
+  \label{eq:tobit}
+  \end{equation}
+
+
+Treatment 2 (the average liquidation treatment) causes an increase in 0.4952 sellers per group-round from Treatment 1 (the random liquidation treatment). This indicates that participants are more likely to sell when their liquidation payoffs are pooled as an average instead of randomly assigned. This holds even after controlling for round, segment, and state effects. These results would seemingly contradict hypothesis 1. 
+
+Segments 3 and 4, where chat is available, are associated with a significant decrease in the number of sellers per group-round, while Segment 2 is not significant. On average, Segments 3 and 4 cause a decrease in 1.07 and 1.29 sellers per group round respectively. This would indicate support for hypothesis 2.
+
+Although not mentioned in a hypothesis, it is worth noting that the binary state variable is associated with a significant increase in the number of sellers. This indicates that the participants understood the value of the signal, and reacted accordingly. Additionally, the Round variable was significantly negative, suggesting that participants were less likely to sell as they progressed through a segment.
+
+Table \ref{tab:ro_logit_selling_position} presents results from several rank-ordered logit specifications with the hazard rate for selling within the group-round as the outcome variable. Equation \ref{eq:ro_logit} presents the specification.
+  \begin{equation}                                                                                                                                                                    
+  \begin{split}                                                                                                                                                                       
+      \lambda_i(t \mid s) = \lambda_{0s}(t) \exp\bigl(                                                                                                                                
+      & \boldsymbol{\beta}_{\text{emo}}^{\prime} \mathbf{Emotion}_i + \boldsymbol{\beta}_{\text{demo}}^{\prime} \mathbf{Demo}_i \\
+      & + \boldsymbol{\beta}_{\text{trait}}^{\prime} \mathbf{Trait}_i \bigr)
+  \end{split}
+  \label{eq:ro_logit}
+  \end{equation}
+where $i$ indexes players, and $s$ indexes the group-round strata. $\lambda_{0s}(t)$ is the baseline hazard function for that stratum. $\mathbf{Emotion}_i$ is the matrix of emotion measurements, $\mathbf{Demo}_i$ is the matrix of age and genders, and $\mathbf{Trait}_i$ is the matrix of time-invariant personality trait measurements. This results in coefficients that are log-hazard ratios.
+
+The data was split into strata at the session-segment-group-round level and then a hazard function was estimated for the ``survival'' of a participant holding their asset through the round. This is advantageous because it only uses within group-round variation, absorbing round, segment, and treatment effects, isolating the emotional and personality traits effects. 
+
+In the full sample (sellers and non-sellers), the only emotion with a significant effect is Joy, with a positive, but marginally significant, effect of 0.034 increase in selling hazard with an increase in one unit of Joy. Interestingly, this effect becomes significantly negative when we condition on the participant being a seller. This means that a happy seller tends to hold for longer than a non-happy seller, while in the entire sample, happy people tend to sell slightly earlier than non-happy people. One reason for this, stated by \cite{forman2020capturing} and \cite{hoque2012exploring}, is that joy may be sarcastic which cannot be detected by our facial reading software. The emotion of disgust is associated with a higher selling hazard, but just for the selling sub-sample. Although not noted in our hypotheses, this may operate in a similar way to how anger or fear were hypothesized to. Participants who express disgust could either want to punish group members or may feel pessimistic about the market state.
+In the full sample, multiple personality traits have significant effects on selling position. It is also worth noting that the valence emotion is significantly associated with a decreased selling hazard. Valence is considered to be an aggregate measure of happiness, or positivity. This may be capturing the non-sarcastic piece of the joy reading. 
+
+In the full sample, conscientiousness, neuroticism, and anxiety are all associated with an increased hazard of selling. Conscientiousness has the largest effect, while anxiety is the most significant. Both the anxiety and conscientiousness effects are in line with what is expected in hypothesis 3. The increased hazard from neuroticism could be explained by the increased tendency to feel negative emotions, thus causing a neurotic participant to be more pessimistic about the market state. Risk tolerance is marginally significant and associated with a decrease in the selling hazard rate. This is also in line with hypothesis 3. 
+In the sellers only sample, conscientiousness and anxiety both experience around a three times increase in effect and become more significant. This means that the effects of these traits are amplified within the seller sub-sample. Additionally, agreeableness has a significant negative effect on selling hazard rate. All of these effects are in line with hypothesis 3. 
+
 
 % Tobit regression: number of sellers per group-round
 \begin{table}[H]
@@ -314,24 +383,37 @@ Table~\ref{tab:summary_demographics_traits} summarizes the subject pool. We recr
   \input{tobit_n_sellers}
 \end{table}
 
-
-Rank‐ordered logit model. individual ranks in a group (strata).  Traits. Emotions. Full sample and Sellers only
-
-
-\clearpage
 % Ranked-order logit table (
 %longtable with built-in caption/label)
 \input{ro_logit_selling_position}
 
 \subsubsection{Player-period-level regression analysis}
 
-We estimate Cox proportional hazards survival models treating the within-round period as the survival time axis and selling as the failure event. Table~\ref{tab:cox_survival_regression} reports hazard ratios from random-effects Cox models (coxme) for two samples---All Sellers and First Sellers---each estimated with and without personality traits. All specifications include eight discrete emotions (fear, anger, contempt, disgust, joy, sadness, surprise, engagement) and a composite valence measure. Columns~(1) and~(3) present the base specification; columns~(2) and~(4) add personality traits (state anxiety, impulsivity, risk tolerance, and the Big Five: extraversion, agreeableness, neuroticism, openness, conscientiousness) as additional covariates.
+We estimate Cox proportional hazards survival models treating the within-round period as the survival time axis and selling as the failure event. Table~\ref{tab:cox_survival_regression} reports hazard ratios from random-effects Cox models (coxme) for two samples, All Sellers and First Seller, each estimated with and without personality traits. All specifications include eight discrete emotions (fear, anger, contempt, disgust, joy, sadness, surprise, engagement) and a composite valence measure. Columns~(1) and~(3) present the base specification; columns~(2) and~(4) add personality traits as additional covariates. Equation \ref{eq:coxph} presents the specification for the all sellers model with traits included. 
 
-\clearpage
+  \begin{equation}                                                                                                                                                                    
+  \begin{split}                                                                                                                                                                       
+      \lambda_{it}(t) = \lambda_0(t) \exp\bigl(                                                                                                                                       
+      & \beta_1 D_{1,it} + \beta_2 D_{2,it} + \beta_3 D_{3,it} \\                                 
+      & + \boldsymbol{\gamma}^{\prime} \mathbf{Cascade}_{it} + \beta_s \, \text{Signal}_{it} \\
+      & + \boldsymbol{\beta}_{\text{emo}}^{\prime} \mathbf{Emotion}_{it} + \boldsymbol{\beta}_{\text{trait}}^{\prime} \mathbf{Trait}_i \\
+      & + \boldsymbol{\beta}_{\text{ctrl}}^{\prime} \mathbf{Controls}_{it} + u_i \bigr)
+  \end{split}
+  \label{eq:coxph}
+  \end{equation}
+
+where  $t$ is the period within the round and $D_{j,it}$ is a dummy for $j$ prior group sales. $\mathbf{Cascade}_{it}$ are the interaction terms for prior and immediately previous group sales, $\mathbf{Emotion}_{it}$ are the measurements of emotions, $\mathbf{Trait}_{i}$ are the time-invariant personality traits, and $\mathbf{Controls}_{it}$ are the round, segments, treatment, age and gender. $u_i$ is the player random intercept.  Notice that a coefficient of less than 1 indicates a decreased probability of selling, while a coefficient greater than 1 indicates an increased probability of selling.
+
+In the full seller sample, we include coefficients for the number of previous sellers and how many of those sellers were in the immediately prior period ($t-1$). While 1 prior sale is not significant, both 2 and 3 prior sales are significant, and decrease the probability of selling. Since prior sales are perfectly collinear with the market price of the asset, the number of overall prior sales pushes the value of selling down. However, when looking at the case where there are two prior sales, with one of them being in the immediately prior period, or two prior sales with both of them being in the immediately prior period, the probability of selling significantly increases, more so with the latter scenario. This strongly suggests a cascade effect, where participants panic or like to mirror the actions of their fellow group members. This result may make sense in a setting where signals private, but in our case, the signal is public, and the prior sales provide no additional information about the state of the market. Even more interestingly, increasing number of prior sales would actually decrease the opportunity cost of a participant holding their asset to the terminal period. Therefore, our cascade result contradicts the expected behavior, in relation to prior group sales, of an individual investor in the outlined model framework.
+
+In terms of emotions and personality traits, results at the individual-period level are mostly consistent with the group-round level results. Joy significantly increases the probability of an individual selling when looking at just the full sample. However, no other emotions are significant in either sample at this level of observation. Conscientiousness and anxiety remain significant positive predictors of selling in the full sample while risk tolerance is a negative predictor of selling probability. However, when looking at just participants who were the first sellers in their group, conscientiousness is the only personality trait that remains significant. This remains in line with the relevant parts of hypotheses 3 and 4. 
+
+This level of observation allows us to also view the effect of signal and round on selling probability. These results indicate that an increase in signal causes a significant and large decrease in selling probability. This provides evidence that the participants both understood what the signal meant, and act in accordance with the model as it relates to signal. If this effect had not been a significant decrease, it would cast doubt onto the subjects' understanding. We also observe a significant decrease in selling probability as the round number increases. This indicates that participants are less likely to sell later in a segment, suggesting that they may be learning the patterns of their group mates, or started by ``playing it safe'' and adjusted upward as they tried to earn the higher liquidation value.
+
+We also observe significant decreases in selling probability in segment 3 and 4, but not in segment 2, relative to segment 1. Recall that communication is permitted in segments 3 and 4. This provides evidence that communication causes a decrease in selling probability. This provides support for hypothesis 2. However, we do not observe any significant effect from the average liquidation vs random liquidation. This does not support hypothesis 1. 
+
 
 \input{cox_survival_regression}
-
-Regarding detected emotions, ww find that Valence decreases the likelihood of selling while Joy increases it. Both effects are significant at the 1\% level.  However, iMotions may have misconstrued smiles during negative emotions as signals of Joy \citep{forman2020capturing}. \cite{hoque2012exploring} find that people also smile in frustration. 
 
 
 % Holdout liquidation regression (standalone)
@@ -356,21 +438,18 @@ Regarding detected emotions, ww find that Valence decreases the likelihood of se
 %   \label{fig:holdout_payoff_coefficients}
 % \end{figure}
 
-\clearpage
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Discussion}
+\section{Additional Results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Disposition Effect
+Relative income effects occur when investor judge their earnings relative to their peers. Our experimental set up in treatment 1 (random liquidation) provides an environment where two individuals who make the same decisions can end up with drastically different market earnings. For example, if four participants remain in the market during a bad state, one participant will receive 8 while one of the other participants will receive 2. Since this is known to them, it is possible that some emotional effect from being lucky or unlucky may predict selling behavior in future markets. 
 
-
-Herding
-
-
-Relative Income Effect
-
+We use a difference-in-differences style regression specification to test whether a relative income effect exists.
+\begin{equation}
+\text{Sold}_{i,g,r+1} = \sum_{k \in \{4,6,8\}} \beta_k \cdot \mathbf{1}[\text{Payoff}_{i,g,r} = k] + \gamma \cdot \text{PriorSales}_{i,g,r} + \alpha_{g \times r} + \varepsilon_{i,g,r}
+\end{equation}
+where $i$ indexes players, $g$ indexes groups, $r$ indexes rounds, and $\alpha_{g\times r}$ are group-round fixed effects. The outcome variable here is the binary sold status of a participant in the round following a round where random liquidation occurred. The payoff coefficients represent the difference in selling probability in round $r+1$ between a player who received 4, 6, or 8 and one who received just 2 in the random liquidation in round $r$. Fixed effects are implemented at the group-round level so that we are only comparing individuals who are observing the same sales and signals. Prior sales represents the number of sales made by that participant since the beginning of the experiment. This allows us to control for a participant's propensity to sell.  Since participants must remain in the market until the end of a round to be included in the sample, any effects found would be conditional on being someone who tends to hold their asset longer. However, by including some measure of a participant's likelihood to sell, we can control for that confounder. Prior sales represents the number of sales made by that participant since the beginning of the experiment. This allows us to control for a participant's propensity to sell. Due to the randomization and sufficiently large sample, once that is conditioned upon, effects are independent of individual characteristics. This allows us to extract causal estimates for the effect of being ``unlucky'' compared to group mates in the same market on selling likelihood in future rounds. 
 
 \begin{table}[H]
   \centering
@@ -379,15 +458,29 @@ Relative Income Effect
   \input{holdout_liquidation_regression}
 \end{table}
 
+Table \ref{tab:holdout_liquidation_regression} displays results from this regression. We find that there is a significant effect on future selling probability for receiving liquidation earnings of 8 vs receiving liquidation earnings of 2. Specifically, when a participant receives 8 in a random liquidation market, on average, they are 9.23\% less likely to sell their asset in the next round than their group mate that received 2.
 
+Although the coefficients on the differences for a payoff of 4 and a payoff of 6 are not significant, the coefficients are monotonically decreasing. This is intuitive to the explanation, suggesting that as participants get luckier, they are less and less likely to sell. However, nothing causal can be stated due to the lack of significance on the first two coefficients.
+
+We can conclude though, that there is a relative income effect for participants who received 8 versus 2 in the random liquidation event. Participants who are unlucky during these events are more likely to sell in future events, holding all else equal.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Conclusion}
+\section{Discussion and Conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In this paper we explore the psychological factors driving financial market runs. More specifically, we analyze the effect of traits, emotions, and luck on investors' propensity to liquidate assets and contribute to a run. We implement a laboratory experiment where participants receive a random public signal about the state of the market. In these markets, a sufficiently bad signal can cause a run on the market, potentially decreasing investor welfare. 
 
+We show that there are several emotions and personality traits that are predictors of a participant selling their asset. Emotions typically associated with negativity or pessimism increase the likelihood of selling. We measure these emotions using the Affectiva face reading technology in the lab. Additionally, personality traits associated with worry (neuroticism and anxiety) increase the likelihood of selling. We find that one personality trait, risk tolerance, is associated with a decrease in the probability of selling. 
 
+We find evidence of cascade effects, or herding behavior. In general, when participants observe other sales in previous rounds, their likelihood of selling decreases. This is caused by the decrease in market price associated with sales. However, when a participant observes sales in the immediately previous period, they have an increased probability of selling. According to the model, these sales should not have a differing effect. However, we observe that there is some panic or herding resulting from participant sales. 
 
+We also find evidence that luck in previous market affects participants’ likelihood of selling in subsequent markets. Specifically, when a participant earns a ``lucky’’ liquidation payoff, they are much less likely to sell than participants who received the ``unlucky’’ liquidation payoff in future rounds, which are independent of past rounds. 
+
+Our paper has important implications for understanding individual investor behavior. Specifically, we provide contradictory evidence to the claim that changes in asset prices are solely due to changes in fundamental value. This has applications for communication to investors from governments or businesses. Our results would suggest that communication increases stability in markets, and also communication that avoids language that stimulates certain emotions may be beneficial in preventing runs.
+
+We also bridge a gap between bank run psychology and market run psychology. Although we don’t find that fear specifically induces runs as in \cite{dijk2017bank}, we do find that disgust induces more sales. Additionally, we provide suggestive evidence that sarcastic joy may also be an indicator of early selling. We also find similar effects of communication as \cite{shakina2018coordination}. Specifically, that communication slows down the rate of sales (withdrawals). 
+
+This paper provides multiple avenues of future exploration. First, understanding the psychology of professional traders could provide insight into whether trading at an institutional level maximizes welfare according to the model. This could be done by providing an online survey to investors about their personality traits and job functions, and then using the sufficient statistics from our experimental results to determine similarity to panic sellers. Second, businesses may be interested in how they can minimize the adverse emotional reactions that cause the premature sale of assets. Implementing an experiment that tests interventions to mitigate negative emotions and maximize positive emotions in a market setting could be informative to businesses. Finally, allowing signals to be semi-private may be a more accurate representation of actual markets, specifically for institutional investors with strong connections. In this case, the sales of other participants would provide additional information, beyond just a price change.
 
 
 
@@ -425,58 +518,58 @@ Relative Income Effect
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% \newpage
+
+% \section*{Appendix A. Full Regression Results}
+
+% \input{unified_selling_regression_full}
+
+% \newpage
+
+% \section*{Appendix B. Robustness Checks}
+
+% \subsection*{B.1 Logit Specification}
+
+% \input{unified_selling_logit_full}
+
+% \newpage
+
+% \section*{Appendix C. Unified Selling Regression}
+
+% \input{unified_selling_regression}
+
+% \newpage
+
+% \section*{Appendix D. First Seller vs.\ Non-First Seller Trait Differences}
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.8\linewidth]{first_seller_trait_ci_diff.pdf}
+%   \caption{Difference in mean trait scores between first sellers and non-first sellers with 95\% confidence intervals. First seller defined as selling first at least once across all rounds (83 first sellers, 12 non-first sellers).}
+%   \label{fig:first_seller_trait_ci_diff}
+% \end{figure}
+
+% \newpage
+
+% \section*{Appendix E. First Seller Trait Comparisons}
+
+% \begin{table}[H]
+%   \centering
+%   \caption{Personality trait comparisons between first sellers and non-first sellers (individual-level, N = 95)}
+%   \label{tab:first_seller_trait_comparisons}
+%   \input{first_seller_trait_comparisons}
+% \end{table}
+
+% \newpage
+
+% \section*{Appendix F. CLM Robustness Check}
+
+% % Ordinal logit table (longtable with built-in caption/label)
+% \input{ordinal_logit_selling_position}
+
 \newpage
 
-\section*{Appendix A. Full Regression Results}
-
-\input{unified_selling_regression_full}
-
-\newpage
-
-\section*{Appendix B. Robustness Checks}
-
-\subsection*{B.1 Logit Specification}
-
-\input{unified_selling_logit_full}
-
-\newpage
-
-\section*{Appendix C. Unified Selling Regression}
-
-\input{unified_selling_regression}
-
-\newpage
-
-\section*{Appendix D. First Seller vs.\ Non-First Seller Trait Differences}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\linewidth]{first_seller_trait_ci_diff.pdf}
-  \caption{Difference in mean trait scores between first sellers and non-first sellers with 95\% confidence intervals. First seller defined as selling first at least once across all rounds (83 first sellers, 12 non-first sellers).}
-  \label{fig:first_seller_trait_ci_diff}
-\end{figure}
-
-\newpage
-
-\section*{Appendix E. First Seller Trait Comparisons}
-
-\begin{table}[H]
-  \centering
-  \caption{Personality trait comparisons between first sellers and non-first sellers (individual-level, N = 95)}
-  \label{tab:first_seller_trait_comparisons}
-  \input{first_seller_trait_comparisons}
-\end{table}
-
-\newpage
-
-\section*{Appendix F. CLM Robustness Check}
-
-% Ordinal logit table (longtable with built-in caption/label)
-\input{ordinal_logit_selling_position}
-
-\newpage
-
-\section*{Appendix G. Instructions} \label{sec:app_instr}
+\section*{Appendix. Instructions} \label{sec:app_instr}
 
 
 
