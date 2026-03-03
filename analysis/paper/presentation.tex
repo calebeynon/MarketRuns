@@ -20,6 +20,7 @@
 \usepackage{comment}
 \usepackage{float}
 \usepackage{csvsimple}
+\usepackage[authoryear,round]{natbib}
 \usepackage{hyperref}
 \usepackage{threeparttable}
 \usepackage{booktabs}
@@ -37,6 +38,7 @@
     linkcolor=blue,
     filecolor=magenta,
     urlcolor=blue,
+    citecolor=blue,
 }
 
 \graphicspath{{plots/}{../output/plots/}{images/}}
@@ -75,7 +77,7 @@
         \item Black Monday 1987: Dow fell 22.6\% in one day
     \end{itemize}
     \item Debate: How much do investors \textbf{overreact} to bad news?
-    \item Market runs differ from bank runs (Bernardo \& Welch, 2004):
+    \item Market runs differ from bank runs \citep{bernardo2004liquidity}:
     \begin{itemize}
         \item Source of fragility: market liquidity, not asset pools
         \item Each sale \textbf{immediately} impacts price
@@ -89,7 +91,7 @@
 \begin{frame}{This Paper}
 \begin{itemize}
     \item We bridge \textbf{bank run psychology} and \textbf{market run psychology}
-    \item Experimental approach implementing Bernardo \& Welch (2004) framework
+    \item Experimental approach implementing \cite{bernardo2004liquidity} framework
     \item Measure \textbf{emotions} via facial reading technology (Affectiva)
     \item Measure \textbf{personality traits} via validated surveys (TIPI, BIS-11, STAI)
     \item 2$\times$2 mixed design:
@@ -119,22 +121,22 @@
 \begin{frame}{Related Literature}
 \textbf{Market runs experiments:}
 \begin{itemize}
-    \item Bernardo \& Welch (2004): Theoretical model of market runs
-    \item Magnani \& Munro (2020): First experimental implementation; circuit-breakers
-    \item Choi \& Kim (2022): Role of liquidity in investor sensitivity
+    \item \cite{bernardo2004liquidity}: Theoretical model of market runs
+    \item \cite{magnani2020dynamic}: First experimental implementation; circuit-breakers
+    \item \cite{choi2022market}: Role of liquidity in investor sensitivity
 \end{itemize}
 \vspace{0.3cm}
 \textbf{Bank run psychology:}
 \begin{itemize}
-    \item Dijk (2017): Fear inducement increases withdrawal probability
-    \item Shakina (2018): Communication slows withdrawals
+    \item \cite{dijk2017bank}: Fear inducement increases withdrawal probability
+    \item \cite{shakina2018coordination}: Communication slows withdrawals
 \end{itemize}
 \vspace{0.3cm}
 \textbf{Personality and finance:}
 \begin{itemize}
-    \item Neuroticism $\rightarrow$ lower risk tolerance (Rustichini et al., 2016)
-    \item Anxiety $\rightarrow$ conservative financial decisions (Gambetti \& Giusberti, 2012)
-    \item Conscientiousness $\rightarrow$ higher trading volume (Bajo et al., 2023)
+    \item Neuroticism $\rightarrow$ lower risk tolerance \citep{rustichini2016toward}
+    \item Anxiety $\rightarrow$ conservative financial decisions \citep{gambetti2012effect}
+    \item Conscientiousness $\rightarrow$ higher trading volume \citep{bajo2023psychological}
 \end{itemize}
 \end{frame}
 
@@ -850,5 +852,11 @@ H4: Joy & Fewer sellers & \textcolor{orange}{Mixed} \\
 \Large Thank you!
 \end{frame}
 
+
+\begin{frame}[allowframebreaks]{References}
+\bibliographystyle{aea}
+\scriptsize
+\bibliography{refs}
+\end{frame}
 
 \end{document}
