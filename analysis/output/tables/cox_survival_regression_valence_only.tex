@@ -1,0 +1,92 @@
+
+\begingroup
+\centering
+\scriptsize
+\setlength{\LTcapwidth}{\textwidth}
+\begin{longtable}{l*{4}{>{\centering\arraybackslash}p{2.2cm}}}
+\caption{Cox survival regression --- valence only (hazard ratios)} \label{tab:cox_survival_regression_valence_only} \\
+   \midrule \midrule
+   & \multicolumn{2}{c}{All Sellers} & \multicolumn{2}{c}{First Sellers} \\
+   \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+   & (1) & (2) & (3) & (4) \\
+   & No Traits & With Traits & No Traits & With Traits \\
+   \midrule
+\endfirsthead
+\multicolumn{5}{l}{\emph{(continued)}} \\
+   \midrule \midrule
+   & \multicolumn{2}{c}{All Sellers} & \multicolumn{2}{c}{First Sellers} \\
+   \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+   & (1) & (2) & (3) & (4) \\
+   & No Traits & With Traits & No Traits & With Traits \\
+   \midrule
+\endhead
+   \midrule
+   \multicolumn{5}{r}{\emph{continued on next page}} \\
+\endfoot
+\endlastfoot
+   1 prior sale              & 0.8131 & 0.8195 &  &  \\
+                             & (0.1259) & (0.1266) &  &  \\
+   2 prior sales             & 0.2346$^{***}$ & 0.2406$^{***}$ &  &  \\
+                             & (0.0753) & (0.0772) &  &  \\
+   3 prior sales             & 0.0495$^{***}$ & 0.0505$^{***}$ &  &  \\
+                             & (0.0503) & (0.0513) &  &  \\
+   1 prior $\times$ 1 prev.  & 1.1601 & 1.1605 &  &  \\
+                             & (0.2069) & (0.2068) &  &  \\
+   2 prior $\times$ 1 prev.  & 2.7392$^{***}$ & 2.7197$^{***}$ &  &  \\
+                             & (1.0566) & (1.0488) &  &  \\
+   2 prior $\times$ 2 prev.  & 3.2662$^{***}$ & 3.2221$^{***}$ &  &  \\
+                             & (1.4132) & (1.3937) &  &  \\
+   3 prior $\times$ 1 prev.  & 0.0000 & 0.0000 &  &  \\
+                             & (0.0003) & (0.0000) &  &  \\
+   3 prior $\times$ 2 prev.  & 0.0000 & 0.0000 &  &  \\
+                             & (0.0006) & (0.0001) &  &  \\
+   3 prior $\times$ 3 prev.  & 10.8707$^{*}$ & 10.6876$^{*}$ &  &  \\
+                             & (15.5089) & (15.2437) &  &  \\
+   Signal                    & 0.0034$^{***}$ & 0.0035$^{***}$ & 0.0023$^{***}$ & 0.0024$^{***}$ \\
+                             & (0.0010) & (0.0010) & (0.0011) & (0.0011) \\
+   Valence                   & 0.9989 & 0.9991 & 1.0018 & 1.0022 \\
+                             & (0.0034) & (0.0034) & (0.0037) & (0.0037) \\
+   Round                     & 0.9388$^{***}$ & 0.9394$^{***}$ & 0.9508$^{**}$ & 0.9491$^{**}$ \\
+                             & (0.0157) & (0.0157) & (0.0215) & (0.0214) \\
+   Segment 2                 & 0.8459 & 0.8421 & 0.6143$^{***}$ & 0.6080$^{***}$ \\
+                             & (0.1016) & (0.1010) & (0.0967) & (0.0953) \\
+   Segment 3                 & 0.3303$^{***}$ & 0.3321$^{***}$ & 0.3929$^{***}$ & 0.3959$^{***}$ \\
+                             & (0.0430) & (0.0432) & (0.0644) & (0.0648) \\
+   Segment 4                 & 0.3310$^{***}$ & 0.3306$^{***}$ & 0.4214$^{***}$ & 0.4128$^{***}$ \\
+                             & (0.0385) & (0.0384) & (0.0654) & (0.0645) \\
+   Treatment 2               & 1.4764 & 1.1359 & 0.9945 & 0.8451 \\
+                             & (0.3912) & (0.2498) & (0.2205) & (0.1819) \\
+   Age                       & 1.0165 & 1.0258 & 1.0527 & 1.1016$^{***}$ \\
+                             & (0.0432) & (0.0373) & (0.0351) & (0.0380) \\
+   Female                    & 1.4948 & 0.9495 & 1.1102 & 0.9849 \\
+                             & (0.4241) & (0.2390) & (0.2624) & (0.2435) \\
+   Extraversion              &  & 0.9432 &  & 1.0624 \\
+                             &  & (0.0751) &  & (0.0853) \\
+   Agreeableness             &  & 0.8840 &  & 0.8308$^{*}$ \\
+                             &  & (0.1008) &  & (0.0929) \\
+   Conscientiousness         &  & 1.4340$^{***}$ &  & 1.3851$^{**}$ \\
+                             &  & (0.1990) &  & (0.1867) \\
+   Neuroticism               &  & 1.0592 &  & 1.0554 \\
+                             &  & (0.1004) &  & (0.1006) \\
+   Openness                  &  & 1.0745 &  & 1.0570 \\
+                             &  & (0.1086) &  & (0.1040) \\
+   Impulsivity               &  & 1.2015 &  & 1.2695 \\
+                             &  & (0.1984) &  & (0.2030) \\
+   State anxiety             &  & 1.5704$^{**}$ &  & 1.3162 \\
+                             &  & (0.3250) &  & (0.2727) \\
+   Risk tolerance            &  & 0.9637$^{**}$ &  & 1.0132 \\
+                             &  & (0.0164) &  & (0.0173) \\
+   \midrule
+   \emph{Fit statistics} & & & & \\
+   Observations              & 13,590 & 13,590 & 1,183 & 1,183 \\
+   Events                    & 659 & 659 & 467 & 467 \\
+   Participants              & 95 & 95 & 83 & 83 \\
+   Log-likelihood            & -4406.7 & -4398.4 & -2230.3 & -2223.0 \\
+   \midrule \midrule
+   \multicolumn{5}{l}{\emph{Hazard ratios reported. All models: random-intercept Cox (coxme).}} \\
+   \multicolumn{5}{l}{\emph{HR $>$ 1: increased hazard of selling. HR $<$ 1: decreased hazard.}} \\
+   \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}} \\
+\end{longtable}
+\par\endgroup
+
+
