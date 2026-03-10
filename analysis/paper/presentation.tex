@@ -57,7 +57,10 @@
 }
 
 \date[] % (optional)
-{}
+{
+M.A. Quantitative Economics\\
+Thesis Defense
+}
 
 \logo{\includegraphics[height=1.0cm]{A-Square.eps}}
 
@@ -108,7 +111,7 @@
 \begin{enumerate}
     \item \textbf{Cascade effects:} Sales in the immediately prior period increase selling probability, despite providing no new information
     \item \textbf{Luck matters:} ``Lucky'' liquidation payoffs decrease future selling
-    \item \textbf{Negative emotions predict selling:} Disgust increases selling hazard
+    \item \textbf{Negative emotions predict selling:} Some negative emotions increases selling hazard
     \item \textbf{Personality traits:} Conscientiousness and anxiety increase selling; risk tolerance decreases it
     \item \textbf{Communication reduces runs:} Chat segments have significantly fewer sellers
 \end{enumerate}
@@ -187,7 +190,7 @@
     \end{tabular}
     \end{center}
     \item Each period: public binary signal about state
-    \item Signal accuracy: $\mu = 0.675$ (Bayesian updating)
+    \item Signal accuracy: $\mu_G = P(state = B | signal = bad) = 0.675$
     \item Termination probability: $\lambda = 0.125$ per period
 \end{itemize}
 \end{frame}
@@ -214,7 +217,7 @@ Each investor's belief in period $t$:
 \begin{frame}{Experimental Implementation}
 \begin{itemize}
     \item 6 sessions $\times$ 16 subjects = \textbf{96 participants}
-    \item TIDE Lab, University of Alabama
+    \item TIDE Lab, University of Alabama, IRB approved and preregistered
     \item Each session: 4 segments $\times$ uncertain number of rounds
     \item Groups of 4, reshuffled each segment (no repeat pairings)
 \end{itemize}
@@ -233,8 +236,8 @@ Treatment 2 (Average) & No chat & Chat \\
 
 \vspace{0.3cm}
 \begin{itemize}
-    \item \textbf{Treatment 1:} Random liquidation ordering
-    \item \textbf{Treatment 2:} Average liquidation price for simultaneous sellers
+    \item Utilized video instructions: \href{https://youtu.be/5h83uTS_RMc}{link} (show 0:29 to 1:24) 
+    \item Subjects then complete a quiz, average of 85\% correct first attempt
     \item Facial reading via Affectiva webcams throughout
 \end{itemize}
 \end{frame}
@@ -262,12 +265,7 @@ Suppose at time $t-1$, no one has sold. In period $t$, A and B both sell.
 \end{itemize}
 
 \vspace{0.3cm}
-Key properties:
-\begin{itemize}
-    \item $E(P_1) = E(P_2)$ (same expected payoff)
-    \item $Var(P_1) \geq Var(P_2)$ (Treatment 2 removes payoff uncertainty)
-    \item $Var(P_2) = 0$ when multiple sell simultaneously
-\end{itemize}
+Treatment 1 is a mean-preserving spread
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -362,16 +360,16 @@ Key properties:
 
 \begin{frame}{Tobit Takeaways}
 \begin{itemize}
-    \item \textbf{Treatment 2} (average liquidation) \textit{increases} sellers by $\approx 0.5$ per group-round
+    \item \textbf{Treatment 2} (average liquidation) \textit{increases} sellers by $\approx 0.5$ per group-round 
     \begin{itemize}
-        \item Contradicts H1 --- pooling payoffs does not reduce runs
+        \item Contradicts H1 --- pooling payoffs does not reduce runs (two competing channels)
     \end{itemize}
     \item \textbf{Chat segments} (3 \& 4) significantly decrease sellers by $\approx 1.1$--$1.3$
     \begin{itemize}
         \item Supports H2 --- communication reduces market runs
     \end{itemize}
     \item \textbf{Bad state} increases sellers by $\approx 1.0$ (participants understood signals)
-    \item \textbf{Round} has a negative effect: learning within segments
+    \item \textbf{Round} has a negative effect
 \end{itemize}
 \end{frame}
 
@@ -444,9 +442,11 @@ Key properties:
     \end{itemize}
     \item \textbf{Valence}: overall positivity $\rightarrow$ later selling in full sample
     \begin{itemize}
-        \item Captures non-sarcastic piece of joy reading
+        \item May capture non-sarcastic piece of joy reading
     \end{itemize}
     \item \textbf{Engagement}: significant among sellers (more attentive $\rightarrow$ more sensitive to downward updates)
+    \item \textbf{Anger}: marginally significant negative effect, opposite of expected.
+    \item \textbf{Surprise}: marginally significant positive effect among sellers, not in hypotheses, but makes intuitive sense.
 \end{itemize}
 \end{frame}
 
@@ -503,7 +503,6 @@ Key properties:
    \midrule
    Observations  & 2,845 & 486 \\
    Strata        & 720 & 202 \\
-   Concordance   & 0.670 & 0.688 \\
    \bottomrule
 \end{tabular}
 }
@@ -610,14 +609,13 @@ Key properties:
 \begin{itemize}
     \item \textbf{Joy}: marginally significant increase in selling hazard (all sellers)
     \begin{itemize}
-        \item May reflect sarcastic joy detected by facial reading software
+        \item May reflect sarcastic joy detected by facial reading software \citep{forman2020capturing}
     \end{itemize}
     \item \textbf{Valence}: marginally significant decrease in selling hazard (all sellers)
     \begin{itemize}
-        \item Captures non-sarcastic positivity $\rightarrow$ later selling
+        \item Could capture non-sarcastic positivity $\rightarrow$ later selling
     \end{itemize}
     \item No individual emotion significant for first sellers
-    \item Consistent with rank-ordered logit: emotions matter more at the group-round level than period-by-period
 \end{itemize}
 \end{frame}
 
@@ -702,36 +700,10 @@ Key properties:
     \item \textbf{Signal}: strong negative effect --- participants understood signals
     \item \textbf{Chat} (Segments 3--4): $\approx 65\%$ reduction in selling hazard (supports H2)
     \item \textbf{Treatment 2}: not significant (does not support H1)
-    \item \textbf{Round}: learning effect --- less selling as segment progresses
+    \item \textbf{Round}: less selling as segment progresses
 \end{itemize}
 \end{frame}
 
-
-\begin{frame}{Cox Model Summary}
-\begin{center}
-\scalebox{0.75}{
-\begin{tabular}{l*{4}{>{\centering\arraybackslash}p{1.6cm}}}
-   \toprule
-   & \multicolumn{2}{c}{All Sellers} & \multicolumn{2}{c}{First Sellers} \\
-   \cmidrule(lr){2-3} \cmidrule(lr){4-5}
-   & (1) & (2) & (3) & (4) \\
-   & No Traits & With Traits & No Traits & With Traits \\
-   \midrule
-   Observations  & 13,590 & 13,590 & 1,183 & 1,183 \\
-   Events        & 659 & 659 & 467 & 467 \\
-   Participants  & 95 & 95 & 83 & 83 \\
-   Log-lik.      & $-$4401.0 & $-$4393.0 & $-$2227.9 & $-$2220.9 \\
-   \bottomrule
-\end{tabular}
-}
-\end{center}
-\vspace{0.3cm}
-\begin{itemize}
-    \item Adding traits improves model fit in both samples
-    \item 659 selling events across 95 participants
-    \item 467 first-seller events across 83 participants (87\% were first seller at least once)
-\end{itemize}
-\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ADDITIONAL RESULTS
@@ -749,6 +721,7 @@ Does being ``unlucky'' in a liquidation event predict future selling?
     \item Reference: Payoff = 2 (unluckiest)
     \item Group-round fixed effects
     \item Treatment 1 only (random liquidation)
+    \item Prior sales: number of sales made by the participant in the past
 \end{itemize}
 \end{column}
 \begin{column}{0.4\textwidth}
@@ -778,13 +751,23 @@ Does being ``unlucky'' in a liquidation event predict future selling?
 \end{columns}
 \end{frame}
 
+\begin{frame}{Result 4: Luck Plot}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\linewidth]{holdout_payoff_coefficients.png}
+        \caption{Coefficients from Luck specification. Note the monotonically decreasing coefficients. Confidence intervals are 95\% and 90\%.}
+        \label{fig:luck}
+    \end{figure}
+\end{frame}
+
+
 
 \begin{frame}{Result 4: Luck Takeaways}
 \begin{itemize}
     \item Receiving payoff of 8 (vs.\ 2) $\rightarrow$ \textbf{9.2\% less likely} to sell next round
     \item Coefficients are \textbf{monotonically decreasing}: luckier $\rightarrow$ less likely to sell
-    \item Payoffs of 4 and 6 (vs.\ 2) not individually significant
-    \item \textbf{Relative income effect}: being unlucky causes more future selling, even though rounds are independent
+    \item Payoffs of 4 and 6 (vs.\ 2) not significant
+    \item \textbf{Relative income effect}: being unlucky causes more future selling, even though round states and signals are independent
     \item Evidence against purely rational updating
 \end{itemize}
 \end{frame}
@@ -803,11 +786,14 @@ Does being ``unlucky'' in a liquidation event predict future selling?
 H1: Average treatment & Fewer sellers & \textcolor{red}{Not supported} \\
 H2: Chat treatment & Fewer sellers & \textcolor{green!50!black}{Supported} \\
 H3: Conscientiousness & More sellers & \textcolor{green!50!black}{Supported} \\
+H3: Impulsivity & More sellers & \textcolor{red}{Not supported}\\
 H3: Anxiety & More sellers & \textcolor{green!50!black}{Supported} \\
 H3: Risk tolerance & Fewer sellers & \textcolor{green!50!black}{Supported} \\
+H3: Openness & Fewer sellers & \textcolor{red}{Not supported}\\
 H3: Agreeableness & Fewer sellers & \textcolor{green!50!black}{Supported (sellers)} \\
-H4: Disgust & More sellers & \textcolor{green!50!black}{Supported (sellers)} \\
 H4: Joy & Fewer sellers & \textcolor{orange}{Mixed} \\
+H4: Engagement & More sellers & \textcolor{orange}{Mixed}\\
+H4: Fear, Anger & More sellers & \textcolor{red}{Not supported}\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -817,7 +803,7 @@ H4: Joy & Fewer sellers & \textcolor{orange}{Mixed} \\
 \begin{frame}{Conclusion}
 \begin{itemize}
     \item Individual psychological factors are significant predictors of market run participation
-    \item \textbf{Emotions:} Disgust increases selling; overall positivity (valence) decreases it
+    \item \textbf{Emotions:} Engagement increases selling; overall positivity (valence) decreases it
     \item \textbf{Traits:} Conscientiousness and anxiety increase selling; risk tolerance and agreeableness decrease it
     \item \textbf{Cascades:} Recent sales trigger panic despite providing no new information
     \item \textbf{Luck:} ``Unlucky'' payoffs increase future selling (relative income effect)
