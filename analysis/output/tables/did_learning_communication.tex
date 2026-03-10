@@ -2,40 +2,39 @@
 \begingroup
 \centering
 \scriptsize
-\begin{tabular}{lcccc}
+\begin{tabular}{lccc}
    \tabularnewline \midrule \midrule
-   Dependent Variable: & \multicolumn{4}{c}{Number of Sellers in Round}\\
-   \cmidrule(lr){2-5}
-   Model:               & ~~~~~~(1)~~~~~~  & ~~~~~~(2)~~~~~~  & ~~~~~~(3)~~~~~~  & ~~~~~~(4)~~~~~~\\
-   Estimator:           & Tobit  & OLS  & OLS  & OLS\\
+   Dependent Variable: & \multicolumn{3}{c}{Number of Sellers in Round}\\
+   \cmidrule(lr){2-4}
+   Model:               & ~~~~~~(1)~~~~~~  & ~~~~~~(2)~~~~~~  & ~~~~~~(3)~~~~~~\\
+   Estimator:           & Tobit  & OLS  & OLS\\
    \midrule
    \emph{Variables}\\
-   Constant                            & 0.7971$^{*}$ &  &  & \\
-                                       & (0.4330) &  &  & \\
-   Bad state                           & 0.9844$^{***}$ & 0.5488$^{***}$ & 0.5113$^{***}$ & 0.5230$^{***}$\\
-                                       & (0.1548) & (0.0692) & (0.0703) & (0.0730)\\
-   Treatment 2                         & 0.4948$^{**}$ &  &  & \\
-                                       & (0.2167) &  &  & \\
-   Learning trend                      & -0.2831 & -0.1050 & -0.1121 & -0.1123\\
-                                       & (0.2186) & (0.0932) & (0.0877) & (0.0877)\\
-   Chat (communication)                & -0.4386 & -0.3365 & -0.2641 & -0.4111\\
-                                       & (0.5016) & (0.2316) & (0.2182) & (0.2610)\\
-   Treatment 2 $\times$ Chat           &  &  &  & 0.2925\\
-                                       &  &  &  & (0.2202)\\
-   Round                               & -0.0689$^{**}$ &  &  & \\
-                                       & (0.0268) &  &  & \\
+   Constant                            & 0.7971$^{*}$ &  & \\
+                                       & (0.4330) &  & \\
+   Bad state                           & 0.9844$^{***}$ & 0.5488$^{***}$ & 0.5614$^{***}$\\
+                                       & (0.1548) & (0.0792) & (0.0820)\\
+   Treatment 2                         & 0.4948$^{**}$ &  & \\
+                                       & (0.2167) &  & \\
+   Learning trend                      & -0.2831 & -0.1050 & -0.1056\\
+                                       & (0.2186) & (0.1096) & (0.1092)\\
+   Chat (communication)                & -0.4386 & -0.3365 & -0.4863$^{*}$\\
+                                       & (0.5016) & (0.2543) & (0.2813)\\
+   Treatment 2 $\times$ Chat           &  &  & 0.2984\\
+                                       &  &  & (0.2250)\\
+   Round                               & -0.0689$^{**}$ &  & \\
+                                       & (0.0268) &  & \\
    \midrule
    \emph{Fit statistics}\\
-   Observations                        & 720 & 720 & 720 & 720\\
-   Log-likelihood                      & -975.4 &  &  & \\
-   Adj. $R^{2}$                        &  & 0.1737 & 0.2104 & 0.2141\\
-   Session FE                          & No & Yes & No & No\\
-   Round FE                            & No & Yes & No & No\\
-   Group FE                            & No & No & Yes & Yes\\
-   Parallel trends $p$                 & \multicolumn{4}{c}{0.7553}\\
+   Observations                        & 720 & 720 & 720\\
+   Log-likelihood                      & -975.4 &  & \\
+   Adj. $R^{2}$                        &  & 0.1737 & 0.1775\\
+   Session FE                          & No & Yes & Yes\\
+   Round FE                            & No & Yes & Yes\\
+   Parallel trends $p$                 & \multicolumn{3}{c}{0.7553}\\
    \midrule \midrule
-   \multicolumn{5}{l}{\emph{Cluster-robust standard errors in parentheses (group level for tobit, session-group for OLS)}}\\
-   \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+   \multicolumn{4}{l}{\emph{Cluster-robust standard errors in parentheses (segment-group level)}}\\
+   \multicolumn{4}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
 \end{tabular}
 \par\endgroup
 
