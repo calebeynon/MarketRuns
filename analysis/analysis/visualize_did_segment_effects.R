@@ -1,4 +1,4 @@
-# Purpose: Event-study plot of segment coefficients from tobit model (tab:tobit_n_sellers Model 3)
+# Purpose: DiD-style plot decomposing segment effects into learning vs communication
 # Author: Caleb Eynon w/ Claude Code
 # Date: 2026-03-10
 
@@ -19,7 +19,7 @@ main <- function() {
   dt <- load_and_prepare(INPUT_PATH)
   model <- fit_tobit(dt)
   coef_df <- extract_segment_coefs(model, dt)
-  p <- create_event_study_plot(coef_df)
+  p <- create_did_plot(coef_df)
   save_plot(p, OUTPUT_PATH)
   cat("Done. Saved to:", OUTPUT_PATH, "\n")
 }
@@ -62,7 +62,6 @@ build_segment_table <- function(ct) {
     estimate = ct[seg_names, 1],
     se = ct[seg_names, 2]
   )
-  # Reference category: coefficient is zero by construction
   ref <- data.table(segment = 1, estimate = 0, se = 0)
   coef_df <- rbind(ref, coef_df)
   coef_df[, ci_lower := estimate - 1.96 * se]
@@ -71,7 +70,7 @@ build_segment_table <- function(ct) {
 }
 
 # =====
-# Theme for economics papers (serif, minimal grid)
+# Theme for economics papers
 # =====
 theme_econ <- function() {
   theme_minimal() +
@@ -85,93 +84,137 @@ theme_econ <- function() {
 }
 
 # =====
-# Build annotations for segment transitions
+# Counterfactual 1: extrapolate 1->2 learning slope forward
 # =====
-build_annotations <- function(coef_df) {
-  # Y position for annotations: above the highest CI
-  y_top <- max(coef_df$ci_upper) + 0.15 * diff(range(coef_df$ci_lower, coef_df$ci_upper))
-  y_text <- y_top + 0.08 * diff(range(coef_df$ci_lower, coef_df$ci_upper))
+build_counterfactual_12 <- function(coef_df) {
+  slope <- coef_df[segment == 2, estimate]
+  data.table(segment = 1:4, cf = slope * (0:3))
+}
 
-  data.table(
-    x = c(1.5, 2.5, 3.5),
-    xstart = c(1, 2, 3),
-    xend = c(2, 3, 4),
-    y = y_top,
-    y_text = y_text,
-    label = c("Learning", "Learning +\nCommunication", "Learning")
+# =====
+# Counterfactual 2: use 3->4 learning slope, extended over full domain
+# =====
+build_counterfactual_34 <- function(coef_df) {
+  seg2 <- coef_df[segment == 2, estimate]
+  seg3 <- coef_df[segment == 3, estimate]
+  seg4 <- coef_df[segment == 4, estimate]
+  slope <- seg4 - seg3
+  # Anchor at seg 2; project back to seg 1 and forward to seg 4
+  data.table(segment = 1:4, cf = seg2 + slope * (-1:2))
+}
+
+# =====
+# Counterfactual trend layers
+# =====
+counterfactual_layers <- function(cf12, cf34) {
+  list(
+    # CF1 (1->2 slope): dashed post-treatment only
+    geom_line(
+      data = cf12[segment >= 2], aes(x = segment, y = cf),
+      inherit.aes = FALSE, linetype = "dashed", color = "gray50", linewidth = 0.5
+    ),
+    geom_point(
+      data = cf12[segment >= 3], aes(x = segment, y = cf),
+      inherit.aes = FALSE, shape = 1, size = 2.5, color = "gray50"
+    ),
+    # CF2 (3->4 slope): dashed post-treatment only
+    geom_line(
+      data = cf34[segment >= 2], aes(x = segment, y = cf),
+      inherit.aes = FALSE, linetype = "dashed", color = "gray40", linewidth = 0.5
+    ),
+    geom_point(
+      data = cf34[segment >= 3], aes(x = segment, y = cf),
+      inherit.aes = FALSE, shape = 2, size = 2.5, color = "gray40"
+    )
   )
 }
 
 # =====
-# Create event-study coefficient plot
+# Communication effect arrows from each counterfactual to actual seg 3
 # =====
-create_event_study_plot <- function(coef_df) {
-  ann <- build_annotations(coef_df)
+communication_arrow <- function(cf12_seg3, cf34_seg3, actual3) {
+  list(
+    # Arrow from CF1
+    annotate(
+      "segment", x = 3.08, xend = 3.08, y = cf12_seg3, yend = actual3,
+      color = "#CC4400", linewidth = 0.6,
+      arrow = arrow(ends = "both", length = unit(0.06, "inches"))
+    ),
+    # Arrow from CF2
+    annotate(
+      "segment", x = 2.92, xend = 2.92, y = cf34_seg3, yend = actual3,
+      color = "#005599", linewidth = 0.6,
+      arrow = arrow(ends = "both", length = unit(0.06, "inches"))
+    )
+  )
+}
 
-  p <- ggplot(coef_df, aes(x = segment, y = estimate)) +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
-    geom_vline(xintercept = 2.5, linetype = "dashed", color = "gray40") +
+# =====
+# Actual estimate layers (trajectory, CIs, points)
+# =====
+actual_layers <- function() {
+  list(
+    geom_line(color = "black", linewidth = 0.5),
     geom_errorbar(
       aes(ymin = ci_lower, ymax = ci_upper),
-      width = 0.15, linewidth = 0.5, color = "gray30"
-    ) +
-    geom_point(size = 2.5, color = "black", shape = 16) +
-    add_transition_annotations(ann) +
-    scale_x_continuous(breaks = 1:4, labels = paste("Segment", 1:4)) +
-    labs(x = NULL, y = "Coefficient (relative to Segment 1)") +
-    theme_econ()
-
-  p
+      width = 0.12, linewidth = 0.5, color = "gray30"
+    ),
+    geom_point(size = 2.5, shape = 16)
+  )
 }
 
 # =====
-# Add bracket annotations for segment transitions
+# Text labels for chat introduction and counterfactuals
 # =====
-add_transition_annotations <- function(ann) {
+text_labels <- function(cf12_seg4_y, cf34_seg4_y) {
   list(
-    bracket_segments(ann),
-    bracket_ticks(ann, "xstart"),
-    bracket_ticks(ann, "xend"),
-    bracket_labels(ann),
-    chat_label()
-  )
-}
-
-bracket_segments <- function(ann) {
-  geom_segment(
-    data = ann,
-    aes(x = xstart, xend = xend, y = y, yend = y),
-    inherit.aes = FALSE, linewidth = 0.4, color = "gray30"
-  )
-}
-
-bracket_ticks <- function(ann, col) {
-  geom_segment(
-    data = ann,
-    aes(x = .data[[col]], xend = .data[[col]],
-        y = y - 0.03, yend = y),
-    inherit.aes = FALSE, linewidth = 0.4, color = "gray30"
-  )
-}
-
-bracket_labels <- function(ann) {
-  geom_text(
-    data = ann,
-    aes(x = x, y = y_text, label = label),
-    inherit.aes = FALSE, size = 3, family = "serif", lineheight = 0.85
-  )
-}
-
-chat_label <- function() {
-  annotate(
-    "text", x = 2.55, y = -Inf, label = "Chat introduced",
-    hjust = 0, vjust = -0.5, size = 2.8, family = "serif",
-    fontface = "italic", color = "gray30"
+    annotate(
+      "text", x = 2.55, y = -Inf, label = "Chat introduced",
+      hjust = 0, vjust = -0.5, size = 2.8, family = "serif",
+      fontface = "italic", color = "gray50"
+    ),
+    annotate(
+      "text", x = 4.08, y = cf12_seg4_y,
+      label = "CF: 1\u21922\nslope",
+      hjust = 0, size = 2.8, family = "serif",
+      color = "gray50", lineheight = 0.85
+    ),
+    annotate(
+      "text", x = 4.08, y = cf34_seg4_y,
+      label = "CF: 3\u21924\nslope",
+      hjust = 0, size = 2.8, family = "serif",
+      color = "gray40", lineheight = 0.85
+    )
   )
 }
 
 # =====
-# Save plot as PDF
+# Assemble the DiD decomposition plot
+# =====
+create_did_plot <- function(coef_df) {
+  cf12 <- build_counterfactual_12(coef_df)
+  cf34 <- build_counterfactual_34(coef_df)
+  cf12_seg3 <- cf12[segment == 3, cf]
+  cf34_seg3 <- cf34[segment == 3, cf]
+  a3 <- coef_df[segment == 3, estimate]
+
+  ggplot(coef_df, aes(x = segment, y = estimate)) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray70") +
+    geom_vline(xintercept = 2.5, linetype = "dotted", color = "gray50") +
+    counterfactual_layers(cf12, cf34) +
+    communication_arrow(cf12_seg3, cf34_seg3, a3) +
+    actual_layers() +
+    text_labels(cf12[segment == 4, cf], cf34[segment == 4, cf]) +
+    scale_x_continuous(
+      breaks = 1:4, labels = paste("Segment", 1:4),
+      expand = expansion(mult = c(0.05, 0.2))
+    ) +
+    labs(x = NULL, y = "Change in number of sellers") +
+    theme_econ()
+}
+
+# =====
+# Save plot
 # =====
 save_plot <- function(p, path) {
   output_dir <- dirname(path)
