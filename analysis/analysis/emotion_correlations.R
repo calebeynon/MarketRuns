@@ -114,7 +114,7 @@ assemble_latex <- function(col_spec, header, rows, n_obs) {
     n_formatted
   )
   lines <- c(
-    "\\begingroup", "\\centering", "\\small",
+    "\\begingroup", "\\centering", "\\scriptsize",
     sprintf("\\begin{tabular}{%s}", col_spec),
     "\\toprule", header, "\\midrule", rows, "\\bottomrule",
     "\\end{tabular}", "\\par", "\\vspace{2pt}",
