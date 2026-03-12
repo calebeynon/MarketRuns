@@ -3,7 +3,7 @@
 # Date: 2026-03-10
 #
 # Decomposes segment effects into learning trend and chat (communication).
-# (1) Tobit no FE, (2) OLS session+round FE, (3) OLS session+round FE + interaction.
+# Table displays OLS with session+round FE and treatment x chat interaction.
 # Groups are reshuffled between segments, so all models cluster at global_group_id.
 # Wald tests check parallel trends and isolate communication effect.
 
@@ -13,6 +13,7 @@ library(sandwich)
 library(lmtest)
 library(car)
 library(fixest)
+# AER/sandwich/lmtest/car used for Wald tests on segment-dummy tobit
 
 # FILE PATHS
 INPUT_PATH <- "datastore/derived/group_round_timing.csv"
@@ -41,13 +42,14 @@ main <- function() {
   dt <- load_and_prepare(INPUT_PATH)
   cat("Loaded", nrow(dt), "observations\n")
 
-  models <- fit_models(dt)
-  coef_tabs <- extract_all_coefs(models, dt)
-  fits <- extract_all_fits(models, dt)
+  model <- fit_ols_session_round_fe_interaction(dt)
+  coef_tab <- extract_ols_coefs(model)
+  fit <- extract_ols_fit(model)
   wald_pvals <- run_wald_tests(dt)
 
-  build_latex_table(coef_tabs, fits, wald_pvals, OUTPUT_PATH)
-  print_summaries(models, dt)
+  build_latex_table(coef_tab, fit, wald_pvals, OUTPUT_PATH)
+  cat("\nModel summary:\n")
+  print(summary(model))
   cat("\nDone.\n")
 }
 
@@ -67,50 +69,11 @@ load_and_prepare <- function(path) {
 # =====
 # Model fitting
 # =====
-fit_models <- function(dt) {
-  list(
-    m1 = fit_tobit_no_fe(dt),
-    m2 = fit_ols_session_round_fe(dt),
-    m3 = fit_ols_session_round_fe_interaction(dt)
-  )
-}
-
-fit_tobit_no_fe <- function(dt) {
-  cat("Fitting Model 1 (tobit, no FE)...\n")
-  tobit(
-    n_sellers ~ bad_state + treatment + learning_trend + chat + round_num,
-    left = 0, right = 4, data = dt
-  )
-}
-
-fit_ols_session_round_fe <- function(dt) {
-  cat("Fitting Model 2 (OLS, session + round FE)...\n")
-  feols(
-    n_sellers ~ bad_state + learning_trend + chat | session + round_num,
-    cluster = ~global_group_id, data = dt
-  )
-}
-
 fit_ols_session_round_fe_interaction <- function(dt) {
-  cat("Fitting Model 3 (OLS, session + round FE + interaction)...\n")
+  cat("Fitting OLS (session + round FE + interaction)...\n")
   feols(
     n_sellers ~ bad_state + learning_trend + chat + tr2_chat | session + round_num,
     cluster = ~global_group_id, data = dt
-  )
-}
-
-# =====
-# Coefficient extraction — tobit with cluster-robust SEs
-# =====
-extract_tobit_coefs <- function(model, dt) {
-  cl_vcov <- vcovCL(model, cluster = dt$global_group_id)
-  ct <- coeftest(model, vcov. = cl_vcov)
-  ct <- ct[rownames(ct) != "Log(scale)", , drop = FALSE]
-  data.table(
-    var  = rownames(ct),
-    est  = ct[, 1],
-    se   = ct[, 2],
-    pval = ct[, 4]
   )
 }
 
@@ -128,36 +91,12 @@ extract_ols_coefs <- function(model) {
 }
 
 # =====
-# Combine coefficient tables for all models
-# =====
-extract_all_coefs <- function(models, dt) {
-  list(
-    extract_tobit_coefs(models$m1, dt),
-    extract_ols_coefs(models$m2),
-    extract_ols_coefs(models$m3)
-  )
-}
-
-# =====
 # Fit statistics extraction
 # =====
-extract_tobit_fit <- function(model) {
-  list(n = nobs(model), log_lik = as.numeric(logLik(model)))
-}
-
-extract_ols_fit <- function(model, dt) {
+extract_ols_fit <- function(model) {
   list(
     n = model$nobs,
-    r2 = fixest::r2(model, type = "ar2"),
-    n_clusters = uniqueN(dt$global_group_id)
-  )
-}
-
-extract_all_fits <- function(models, dt) {
-  list(
-    extract_tobit_fit(models$m1),
-    extract_ols_fit(models$m2, dt),
-    extract_ols_fit(models$m3, dt)
+    r2 = fixest::r2(model, type = "ar2")
   )
 }
 
@@ -207,12 +146,12 @@ run_parallel_trends_test <- function(model, vcov) {
 # =====
 # LaTeX table construction
 # =====
-build_latex_table <- function(coef_tabs, fits, wald_pvals, path) {
+build_latex_table <- function(coef_tab, fit, wald_pvals, path) {
   lines <- c(
     table_preamble(),
     table_header(),
-    coef_rows(VAR_ORDER, VAR_LABELS, coef_tabs),
-    fit_rows(fits, wald_pvals),
+    coef_rows(VAR_ORDER, VAR_LABELS, coef_tab),
+    fit_rows(fit, wald_pvals),
     table_footer()
   )
   write_table(lines, path)
@@ -227,44 +166,30 @@ write_table <- function(lines, path) {
 
 table_preamble <- function() {
   c("", "\\begingroup", "\\centering", "\\scriptsize",
-    "\\begin{tabular}{lccc}")
+    "\\begin{tabular}{lc}")
 }
 
 table_header <- function() {
   c("   \\tabularnewline \\midrule \\midrule",
-    paste0("   Dependent Variable: & \\multicolumn{3}",
-           "{c}{Number of Sellers in Round}\\\\"),
-    "   \\cmidrule(lr){2-4}",
-    paste0("   Model:               & ~~~~~~(1)~~~~~~  ",
-           "& ~~~~~~(2)~~~~~~  & ~~~~~~(3)~~~~~~\\\\"),
-    "   Estimator:           & Tobit  & OLS  & OLS\\\\",
+    "   Dependent Variable: & Number of Sellers in Round\\\\",
+    "   Estimator:           & OLS\\\\",
     "   \\midrule",
     "   \\emph{Variables}\\\\")
 }
 
-coef_rows <- function(vars, labels, coef_tabs) {
+coef_rows <- function(vars, labels, coef_tab) {
   rows <- c()
   for (v in vars) {
+    row <- coef_tab[var == v]
+    if (nrow(row) == 0) next
     label <- labels[v]
-    cells <- format_cells(v, coef_tabs)
-    if (!any(nzchar(cells$vals))) next
-    rows <- c(rows, row_line(label, cells$vals))
-    rows <- c(rows, row_line("", cells$ses))
+    star <- get_stars(row$pval)
+    val <- paste0(sprintf("%.4f", row$est), star)
+    se <- paste0("(", sprintf("%.4f", row$se), ")")
+    rows <- c(rows, row_line(label, val))
+    rows <- c(rows, row_line("", se))
   }
   rows
-}
-
-format_cells <- function(var_name, coef_tabs) {
-  n_cols <- length(coef_tabs)
-  vals <- ses <- rep("", n_cols)
-  for (i in seq_len(n_cols)) {
-    row <- coef_tabs[[i]][var == var_name]
-    if (nrow(row) == 0) next
-    star <- get_stars(row$pval)
-    vals[i] <- paste0(sprintf("%.4f", row$est), star)
-    ses[i]  <- paste0("(", sprintf("%.4f", row$se), ")")
-  }
-  list(vals = vals, ses = ses)
 }
 
 get_stars <- function(pval) {
@@ -274,41 +199,23 @@ get_stars <- function(pval) {
   ""
 }
 
-row_line <- function(label, cells) {
-  sprintf("   %-35s & %s & %s & %s\\\\",
-          label, cells[1], cells[2], cells[3])
+row_line <- function(label, val) {
+  sprintf("   %-35s & %s\\\\", label, val)
 }
 
 # =====
 # Fit statistics rows
 # =====
-fit_rows <- function(fits, wald_pvals) {
-  ns <- sapply(fits, function(f) format(f$n, big.mark = ","))
-  ll <- sprintf("%.1f", fits[[1]]$log_lik)
-  r2s <- sapply(fits[2:3], function(f) sprintf("%.4f", f$r2))
+fit_rows <- function(fit, wald_pvals) {
   pt_p <- sprintf("%.4f", wald_pvals$parallel_trends)
 
   c("   \\midrule",
     "   \\emph{Fit statistics}\\\\",
-    fit_stat_row("Observations", ns),
-    fit_stat_row("Log-likelihood", c(ll, "", "")),
-    fit_stat_row("Adj. $R^{2}$", c("", r2s)),
-    fe_indicator_rows(),
-    fit_stat_multicolumn("Parallel trends $p$", pt_p))
-}
-
-fe_indicator_rows <- function() {
-  c(fit_stat_row("Session FE", c("No", "Yes", "Yes")),
-    fit_stat_row("Round FE", c("No", "Yes", "Yes")))
-}
-
-fit_stat_multicolumn <- function(label, val) {
-  sprintf("   %-35s & \\multicolumn{3}{c}{%s}\\\\", label, val)
-}
-
-fit_stat_row <- function(label, vals) {
-  sprintf("   %-35s & %s & %s & %s\\\\",
-          label, vals[1], vals[2], vals[3])
+    row_line("Observations", format(fit$n, big.mark = ",")),
+    row_line("Adj. $R^{2}$", sprintf("%.4f", fit$r2)),
+    row_line("Session FE", "Yes"),
+    row_line("Round FE", "Yes"),
+    row_line("Parallel trends $p$", pt_p))
 }
 
 # =====
@@ -316,33 +223,13 @@ fit_stat_row <- function(label, vals) {
 # =====
 table_footer <- function() {
   c("   \\midrule \\midrule",
-    paste0("   \\multicolumn{4}{l}{\\emph{Cluster-robust",
+    paste0("   \\multicolumn{2}{l}{\\emph{Cluster-robust",
            " standard errors in parentheses",
            " (segment-group level)}}\\\\"),
-    paste0("   \\multicolumn{4}{l}{\\emph{Signif. Codes:",
+    paste0("   \\multicolumn{2}{l}{\\emph{Signif. Codes:",
            " ***: 0.01, **: 0.05, *: 0.1}}\\\\"),
     "\\end{tabular}",
     "\\par\\endgroup", "", "")
-}
-
-# =====
-# Console output
-# =====
-print_summaries <- function(models, dt) {
-  cat("\n", strrep("=", 60), "\n")
-  cat("MODEL SUMMARIES\n")
-  cat(strrep("=", 60), "\n")
-  print_tobit_summary(models$m1, dt)
-  cat("\nm2 (OLS, session + round FE):\n")
-  print(summary(models$m2))
-  cat("\nm3 (OLS, session + round FE + interaction):\n")
-  print(summary(models$m3))
-}
-
-print_tobit_summary <- function(model, dt) {
-  cat("\nm1 (tobit, no FE):\n")
-  cl_vcov <- vcovCL(model, cluster = dt$global_group_id)
-  print(coeftest(model, vcov. = cl_vcov))
 }
 
 # %%

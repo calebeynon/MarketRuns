@@ -1,4 +1,4 @@
-# Purpose: Event-study plot of segment coefficients from tobit model (Table 5 Model 3)
+# Purpose: Event-study plot of segment coefficients from tobit model (tab:tobit_n_sellers Model 3)
 # Author: Caleb Eynon w/ Claude Code
 # Date: 2026-03-10
 
@@ -36,7 +36,7 @@ load_and_prepare <- function(path) {
 }
 
 # =====
-# Model fitting (Table 5 Model 3 specification)
+# Model fitting (tobit with segment dummies)
 # =====
 fit_tobit <- function(dt) {
   tobit(n_sellers ~ bad_state + treatment + segment_num + round_num,
@@ -62,7 +62,7 @@ build_segment_table <- function(ct) {
     estimate = ct[seg_names, 1],
     se = ct[seg_names, 2]
   )
-  # Add segment 1 as reference (coefficient = 0, no uncertainty)
+  # Reference category: coefficient is zero by construction
   ref <- data.table(segment = 1, estimate = 0, se = 0)
   coef_df <- rbind(ref, coef_df)
   coef_df[, ci_lower := estimate - 1.96 * se]
