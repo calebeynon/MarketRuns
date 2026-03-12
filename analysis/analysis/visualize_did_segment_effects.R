@@ -209,7 +209,7 @@ create_did_plot <- function(coef_df) {
       breaks = 1:4, labels = paste("Segment", 1:4),
       expand = expansion(mult = c(0.05, 0.2))
     ) +
-    labs(x = NULL, y = "Change in number of sellers") +
+    labs(x = NULL, y = "Difference in number of sellers") +
     theme_econ()
 }
 
