@@ -364,6 +364,24 @@ Treatment 2 (the average liquidation treatment) causes an increase in 0.4952 sel
 
 Segments 3 and 4, where chat is available, are associated with a significant decrease in the number of sellers per group-round, while Segment 2 is not significant. On average, Segments 3 and 4 cause a decrease in 1.07 and 1.29 sellers per group round respectively. This would indicate support for hypothesis 2.
 
+\subsubsection{Decomposing learning and communication effects}
+
+% DiD decomposition table
+\begin{table}[H]
+  \centering
+  \caption{Decomposing learning and communication effects on number of sellers}
+  \label{tab:did_learning_communication}
+  \input{did_learning_communication}
+\end{table}
+
+% Event-study coefficient plot
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\linewidth]{did_segment_effects.pdf}
+  \caption{Segment effects on number of sellers with difference-in-differences identification. Points show estimated segment coefficients from Model~(3) in Table~\ref{tab:tobit_n_sellers} with 95\% cluster-robust confidence intervals. Segment~1 is the reference category. Transition annotations indicate whether the change between segments reflects pure learning or learning plus the introduction of communication.}
+  \label{fig:did_segment_effects}
+\end{figure}
+
 Although not mentioned in a hypothesis, it is worth noting that the binary state variable is associated with a significant increase in the number of sellers. This indicates that the participants understood the value of the signal, and reacted accordingly. Additionally, the Round variable was significantly negative, suggesting that participants were less likely to sell as they progressed through a segment.
 
 Table \ref{tab:ro_logit_selling_position} presents results from several rank-ordered logit specifications with the hazard rate for selling within the group-round as the outcome variable. Equation \ref{eq:ro_logit} presents the specification.

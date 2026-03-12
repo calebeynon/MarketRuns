@@ -1,0 +1,32 @@
+
+\begingroup
+\centering
+\scriptsize
+\begin{tabular}{lc}
+   \tabularnewline \midrule \midrule
+   Dependent Variable: & Number of Sellers in Round\\
+   Estimator:           & OLS\\
+   \midrule
+   \emph{Variables}\\
+   Bad state                           & 0.5614$^{***}$\\
+                                       & (0.0820)\\
+   Learning trend                      & -0.1056\\
+                                       & (0.1092)\\
+   Chat (communication)                & -0.4863$^{*}$\\
+                                       & (0.2813)\\
+   Treatment 2 $\times$ Chat           & 0.2984\\
+                                       & (0.2250)\\
+   \midrule
+   \emph{Fit statistics}\\
+   Observations                        & 720\\
+   Adj. $R^{2}$                        & 0.1775\\
+   Session FE                          & Yes\\
+   Round FE                            & Yes\\
+   Parallel trends $p$                 & 0.7553\\
+   \midrule \midrule
+   \multicolumn{2}{l}{\emph{Cluster-robust standard errors in parentheses (segment-group level)}}\\
+   \multicolumn{2}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+\par\endgroup
+
+
