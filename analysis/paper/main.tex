@@ -56,7 +56,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\title{To Sell or not to Sell:\\ The Psychology of Market Runs\thanks{Grant number xxx, IRB number xxx, We thank}}
+\title{To Sell or not to Sell:\\ The Psychology of Market Runs%\thanks{Grant number xxx, IRB number xxx, We thank}
+}
 
 
 \author{Caleb Eynon\thanks{University of Alabama, ceynon@crimson.ua.edu} 
@@ -345,9 +346,7 @@ As expected, more sales occur in bad state markets than good state markets. We a
   \input{summary_seller_counts}
 \end{table}
 
-
 \subsection{Selling Behavior}
-
 
 \subsubsection{Group-round-level regression analysis}
 Table \ref{tab:tobit_n_sellers} reports results from a Tobit regression specification with number of sellers in a group-round as the output variable. Equation \ref{eq:tobit} is the regression specification with $n\_sellers^*_{gr}$ is the censored number of sellers at 0 and 4.
@@ -371,8 +370,7 @@ Table \ref{tab:ro_logit_selling_position} presents results from several rank-ord
   \begin{equation}                                                                                                                                                                    
   \begin{split}                                                                                                                                                                       
       \lambda_i(t \mid s) = \lambda_{0s}(t) \exp\bigl(                                                                                                                                
-      & \boldsymbol{\beta}_{\text{emo}}^{\prime} \mathbf{Emotion}_i + \boldsymbol{\beta}_{\text{demo}}^{\prime} \mathbf{Demo}_i \\
-      & + \boldsymbol{\beta}_{\text{trait}}^{\prime} \mathbf{Trait}_i \bigr)
+      & \boldsymbol{\beta}_{\text{emo}}^{\prime} \mathbf{Emotion}_i + \boldsymbol{\beta}_{\text{demo}}^{\prime} \mathbf{Demo}_i  + \boldsymbol{\beta}_{\text{trait}}^{\prime} \mathbf{Trait}_i \bigr)
   \end{split}
   \label{eq:ro_logit}
   \end{equation}
@@ -401,6 +399,43 @@ In the sellers only sample, conscientiousness and anxiety both experience around
 
 \subsubsection{Decomposing learning and communication effects}
 
+Although Table \ref{tab:tobit_n_sellers} presents the effect of each segment on the expected number of sellers in a market, there are two possible channels from which this downward effect on selling originates. Participants could learn more about the experiment as it progresses (even in the absence of communication), or there could be some effect from communication. A limitation of our within-subjects design is that communication always follows the no-communication segments, so any non-communicative learning effects would bias our estimate of a communication effect. We estimate the following regression,
+\begin{equation}
+  \begin{split}
+n\_sellers_{gr} = \beta_1 \cdot \text{BadState}_r &+ \lambda \cdot s_g + \tau \cdot \mathbf{1}[s_g \geq 3] + \delta \cdot \text{Treatment2}_g \times \mathbf{1}[s_g \geq 3] \\+
+  &\alpha_{\text{session}} + \gamma_{\text{round}} + \varepsilon_{gr}
+    \end{split}
+  \label{eq:comms}
+\end{equation}
+where $s_g \in {1, 2, 3, 4}$ is the segment index for group-round $gr$, $\lambda$ is the per-segment learning rate, and $\tau$ is the communication effect.
+
+We present an additional assumption that allows for the identification of communication effects. Suppose that the learning rate observed in pre-chat segments (1 and 2) would have continued at the same rate into chat segments, absent the chat intervention. Then $\tau$ captures the additional change in sellers per market beyond the no-communication learning effect. Formally, the assumption
+
+\begin{equation}
+  \begin{split}
+E[n\_sellers_{g,s,r}^{(0)} \mid \mathbf{X}_{gr}] = \alpha + \lambda \cdot s \quad \forall \ s \in \{2,3,4\}
+  \end{split}
+  \end{equation}
+  \begin{equation}
+  \begin{split}
+      \implies \tau &= \underbrace{E[\Delta n\_sellers_{g,3,r} \mid \mathbf{X}_{gr}] - E[\Delta n\_sellers_{g,2,r} \mid \mathbf{X}_{gr}]}_{\text{observable}} \\
+      &= \underbrace{E[n\_sellers_{g,s,r}^{(1)} - n\_sellers_{g,s,r}^{(0)} \mid s \geq 3, \mathbf{X}_{gr}]}_{\text{communication effect}}
+  \end{split}
+  \end{equation}
+where $\Delta n\_sellers_{g,s,r} \equiv E[n\_sellers_{g,s,r} \mid \mathbf{X}_{gr}] - E[n\_sellers_{g,s-1,r} \mid \mathbf{X}_{gr}]$ is the cross-segment change in sellers for group $g$ in round $r$. $n\_sellers_{g,s,r}^{(0)}$ is the potential number of sellers for group $g$ in segment $s$ in round $r$ absent communication, and $\mathbf{X}_{gr} = (\text{BadState}_r, \text{Treatment}_g, \text{Session}_g, \text{Round}_r)$.
+
+
+It is worth noting that $\tau$ identifies the communication effect on selling compared to the unobserved potential outcome of not being able to communicate in the same group at the same time. This does not identify the effect of market participants chatting with each other about the rules of the experiment separately from a general communicative/cooperative effect. When we refer to the ``communication'' effect, it refers to the effect of \textit{all} participant chat, not just chat about strategy or coordination. 
+
+It may be unreasonable to assume non-communicative learning trends to be linear. The identification would still hold if those learning trends are concave, meaning the sellers per segment diminishes over time. In this case, $\tau$ would be biased \textit{towards} 0. Our effects found to be negative and significant would underestimate the communication effect, but still be significant. Our identification would fail in the convex case where learning accelerates through segments.  
+
+
+Table \ref{tab:did_learning_communication} presents results from the regression specified above. We include a treatment effect as well to test whether the communication effect is heterogeneous. Consistent with previous results, the bad state is associated with a significant increase in the number of sellers in a market. The communication effect is negative and marginally significant. This means that the number of sellers in a market decreases by 0.4863 when participants are permitted to chat with each other. We also include a test that provides support for our identifying assumption. We test whether the change in sellers, conditional on covariates, differs between the shift from segment 1 to 2 and segments 3 to 4. In both of these transitions, the ability to chat, or not to chat, remains constant. Since $p= 0.7553$, we fail to reject the hypothesis that they differ. This provides support for the assumption that in the absence of a change in communication status, selling trends remain constant. 
+
+Figure \ref{fig:did_segment_effects} displays the learning trend and communication effect visually. Notice that the dashed lines represent the counterfactual outcome in the absence of the chat intervention. There are two of these, one counterfactual projects the 1→2 slope forward into segments 3–4, and the other projects the 3→4 slope backward into segments 1-2. The blue and red arrows represent the size of each of these effects, respectively.
+
+
+
 % DiD decomposition table
 \begin{table}[H]
   \centering
@@ -413,7 +448,7 @@ In the sellers only sample, conscientiousness and anxiety both experience around
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\linewidth]{did_segment_effects.pdf}
-  \caption{Segment effects on number of sellers with difference-in-differences identification. Points show estimated segment coefficients from Model~(3) in Table~\ref{tab:tobit_n_sellers} with 95\% cluster-robust confidence intervals. Segment~1 is the reference category. Transition annotations indicate whether the change between segments reflects pure learning or learning plus the introduction of communication.}
+  \caption{Segment effects on number of sellers. Points show estimated segment coefficients from Model~(3) in Table~\ref{tab:tobit_n_sellers} with 95\% standard error clustered confidence intervals. Segment~1 is the reference category.} 
   \label{fig:did_segment_effects}
 \end{figure}
 
@@ -424,14 +459,12 @@ We estimate Cox proportional hazards survival models treating the within-round p
   \begin{equation}                                                                                                                                                                    
   \begin{split}                                                                                                                                                                       
       \lambda_{it}(t) = \lambda_0(t) \exp\bigl(                                                                                                                                       
-      & \beta_1 D_{1,it} + \beta_2 D_{2,it} + \beta_3 D_{3,it} \\                                 
-      & + \boldsymbol{\gamma}^{\prime} \mathbf{Cascade}_{it} + \beta_s \, \text{Signal}_{it} \\
-      & + \boldsymbol{\beta}_{\text{emo}}^{\prime} \mathbf{Emotion}_{it} + \boldsymbol{\beta}_{\text{trait}}^{\prime} \mathbf{Trait}_i \\
-      & + \boldsymbol{\beta}_{\text{ctrl}}^{\prime} \mathbf{Controls}_{it} + u_i \bigr)
+      & \beta_1 D_{1,it} + \beta_2 D_{2,it} + \beta_3 D_{3,it}                                  
+     + \boldsymbol{\gamma}^{\prime} \mathbf{Cascade}_{it} + \beta_s \, \text{Signal}_{it} \\
+      & + \boldsymbol{\beta}_{\text{emo}}^{\prime} \mathbf{Emotion}_{it} + \boldsymbol{\beta}_{\text{trait}}^{\prime} \mathbf{Trait}_i  + \boldsymbol{\beta}_{\text{ctrl}}^{\prime} \mathbf{Controls}_{it} + u_i \bigr)
   \end{split}
   \label{eq:coxph}
   \end{equation}
-
 where  $t$ is the period within the round and $D_{j,it}$ is a dummy for $j$ prior group sales. $\mathbf{Cascade}_{it}$ are the interaction terms for prior and immediately previous group sales, $\mathbf{Emotion}_{it}$ are the measurements of emotions, $\mathbf{Trait}_{i}$ are the time-invariant personality traits, and $\mathbf{Controls}_{it}$ are the round, segments, treatment, age and gender. $u_i$ is the player random intercept.  Notice that a coefficient of less than 1 indicates a decreased probability of selling, while a coefficient greater than 1 indicates an increased probability of selling.
 
 In the full seller sample, we include coefficients for the number of previous sellers and how many of those sellers were in the immediately prior period ($t-1$). While 1 prior sale is not significant, both 2 and 3 prior sales are significant, and decrease the probability of selling. Since prior sales are perfectly collinear with the market price of the asset, the number of overall prior sales pushes the value of selling down. However, when looking at the case where there are two prior sales, with one of them being in the immediately prior period, or two prior sales with both of them being in the immediately prior period, the probability of selling significantly increases, more so with the latter scenario. This strongly suggests a cascade effect, where participants panic or like to mirror the actions of their fellow group members. This result may make sense in a setting where signals private, but in our case, the signal is public, and the prior sales provide no additional information about the state of the market. Even more interestingly, increasing number of prior sales would actually decrease the opportunity cost of a participant holding their asset to the terminal period. Therefore, our cascade result contradicts the expected behavior, in relation to prior group sales, of an individual investor in the outlined model framework.

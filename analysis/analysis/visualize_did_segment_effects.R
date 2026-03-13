@@ -92,15 +92,13 @@ build_counterfactual_12 <- function(coef_df) {
 }
 
 # =====
-# Counterfactual 2: use 3->4 learning slope, extended over full domain
+# Counterfactual 2: use 3->4 learning slope, anchored at seg 3-4 actuals
 # =====
 build_counterfactual_34 <- function(coef_df) {
-  seg2 <- coef_df[segment == 2, estimate]
   seg3 <- coef_df[segment == 3, estimate]
   seg4 <- coef_df[segment == 4, estimate]
   slope <- seg4 - seg3
-  # Anchor at seg 2; project back to seg 1 and forward to seg 4
-  data.table(segment = 1:4, cf = seg2 + slope * (-1:2))
+  data.table(segment = 1:4, cf = seg3 + slope * (-2:1))
 }
 
 # =====
@@ -108,7 +106,7 @@ build_counterfactual_34 <- function(coef_df) {
 # =====
 counterfactual_layers <- function(cf12, cf34) {
   list(
-    # CF1 (1->2 slope): dashed post-treatment only
+    # CF1 (1->2 slope): dashed forward from seg 2
     geom_line(
       data = cf12[segment >= 2], aes(x = segment, y = cf),
       inherit.aes = FALSE, linetype = "dashed", color = "gray50", linewidth = 0.5
@@ -117,32 +115,32 @@ counterfactual_layers <- function(cf12, cf34) {
       data = cf12[segment >= 3], aes(x = segment, y = cf),
       inherit.aes = FALSE, shape = 1, size = 2.5, color = "gray50"
     ),
-    # CF2 (3->4 slope): dashed post-treatment only
+    # CF2 (3->4 slope): dashed backward to seg 1
     geom_line(
-      data = cf34[segment >= 2], aes(x = segment, y = cf),
+      data = cf34[segment <= 3], aes(x = segment, y = cf),
       inherit.aes = FALSE, linetype = "dashed", color = "gray40", linewidth = 0.5
     ),
     geom_point(
-      data = cf34[segment >= 3], aes(x = segment, y = cf),
+      data = cf34[segment <= 2], aes(x = segment, y = cf),
       inherit.aes = FALSE, shape = 2, size = 2.5, color = "gray40"
     )
   )
 }
 
 # =====
-# Communication effect arrows from each counterfactual to actual seg 3
+# Communication effect arrows on opposite sides
 # =====
-communication_arrow <- function(cf12_seg3, cf34_seg3, actual3) {
+communication_arrow <- function(cf12_seg3, cf34_seg2, actual3, actual2) {
   list(
-    # Arrow from CF1
+    # Red arrow at seg 3: CF1 (above) to actual (below)
     annotate(
-      "segment", x = 3.08, xend = 3.08, y = cf12_seg3, yend = actual3,
+      "segment", x = 3.06, xend = 3.06, y = cf12_seg3, yend = actual3,
       color = "#CC4400", linewidth = 0.6,
       arrow = arrow(ends = "both", length = unit(0.06, "inches"))
     ),
-    # Arrow from CF2
+    # Blue arrow at seg 2: actual (above) to CF2 (below)
     annotate(
-      "segment", x = 2.92, xend = 2.92, y = cf34_seg3, yend = actual3,
+      "segment", x = 1.94, xend = 1.94, y = actual2, yend = cf34_seg2,
       color = "#005599", linewidth = 0.6,
       arrow = arrow(ends = "both", length = unit(0.06, "inches"))
     )
@@ -166,24 +164,19 @@ actual_layers <- function() {
 # =====
 # Text labels for chat introduction and counterfactuals
 # =====
-text_labels <- function(cf12_seg4_y, cf34_seg4_y) {
+text_labels <- function(cf12_seg3_y, cf34_seg2_y) {
   list(
     annotate(
-      "text", x = 2.55, y = -Inf, label = "Chat introduced",
+      "text", x = 3.5, y = cf12_seg3_y,
+      label = "1\u21922 slope",
       hjust = 0, vjust = -0.5, size = 2.8, family = "serif",
-      fontface = "italic", color = "gray50"
+      color = "gray50"
     ),
     annotate(
-      "text", x = 4.08, y = cf12_seg4_y,
-      label = "CF: 1\u21922\nslope",
-      hjust = 0, size = 2.8, family = "serif",
-      color = "gray50", lineheight = 0.85
-    ),
-    annotate(
-      "text", x = 4.08, y = cf34_seg4_y,
-      label = "CF: 3\u21924\nslope",
-      hjust = 0, size = 2.8, family = "serif",
-      color = "gray40", lineheight = 0.85
+      "text", x = 1.5, y = cf34_seg2_y,
+      label = "3\u21924 slope",
+      hjust = 1, vjust = 1.5, size = 2.8, family = "serif",
+      color = "gray40"
     )
   )
 }
@@ -195,19 +188,25 @@ create_did_plot <- function(coef_df) {
   cf12 <- build_counterfactual_12(coef_df)
   cf34 <- build_counterfactual_34(coef_df)
   cf12_seg3 <- cf12[segment == 3, cf]
-  cf34_seg3 <- cf34[segment == 3, cf]
+  cf34_seg2 <- cf34[segment == 2, cf]
   a3 <- coef_df[segment == 3, estimate]
+  a2 <- coef_df[segment == 2, estimate]
+
+  seg_labels <- c(
+    "Segment 1\n(No Chat)", "Segment 2\n(No Chat)",
+    "Segment 3\n(Chat)", "Segment 4\n(Chat)"
+  )
 
   ggplot(coef_df, aes(x = segment, y = estimate)) +
     geom_hline(yintercept = 0, linetype = "dashed", color = "gray70") +
     geom_vline(xintercept = 2.5, linetype = "dotted", color = "gray50") +
     counterfactual_layers(cf12, cf34) +
-    communication_arrow(cf12_seg3, cf34_seg3, a3) +
+    communication_arrow(cf12_seg3, cf34_seg2, a3, a2) +
     actual_layers() +
-    text_labels(cf12[segment == 4, cf], cf34[segment == 4, cf]) +
+    text_labels(cf12_seg3, cf34_seg2) +
     scale_x_continuous(
-      breaks = 1:4, labels = paste("Segment", 1:4),
-      expand = expansion(mult = c(0.05, 0.2))
+      breaks = 1:4, labels = seg_labels,
+      expand = expansion(mult = c(0.08, 0.08))
     ) +
     labs(x = NULL, y = "Difference in number of sellers") +
     theme_econ()
