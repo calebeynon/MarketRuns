@@ -97,7 +97,7 @@ build_trait_row <- function(survey, trait, label, range) {
 
 wrap_combined_latex <- function(demo_rows, trait_rows) {
   c(
-    "\\begingroup", "\\centering", "\\small",
+    "\\begingroup", "\\centering", "\\scriptsize",
     "\\begin{tabular}{lcccc}", "\\toprule",
     " & Range & Full Sample & Treatment 1 & Treatment 2 \\\\",
     "\\midrule",
@@ -221,7 +221,7 @@ calc_stat_by_group <- function(data, stat_fn) {
 
 wrap_seller_count_latex <- function(rows) {
   c(
-    "\\begingroup", "\\centering", "\\small",
+    "\\begingroup", "\\centering", "\\scriptsize",
     "\\begin{tabular}{lcccc}", "\\toprule",
     " & \\multicolumn{2}{c}{Treatment 1} & \\multicolumn{2}{c}{Treatment 2} \\\\",
     "\\cmidrule(lr){2-3} \\cmidrule(lr){4-5}",

@@ -103,6 +103,7 @@ build_row_cells <- function(cor_mat, p_mat, i, n) {
 assemble_latex <- function(col_spec, header, rows) {
   lines <- c(
     "\\begingroup", "\\centering", "\\scriptsize",
+    "\\setlength{\\tabcolsep}{3pt}",
     sprintf("\\begin{tabular}{%s}", col_spec),
     "\\toprule", header, "\\midrule", rows, "\\bottomrule",
     "\\end{tabular}", "\\par", "\\vspace{2pt}",

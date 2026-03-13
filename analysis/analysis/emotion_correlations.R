@@ -115,6 +115,7 @@ assemble_latex <- function(col_spec, header, rows, n_obs) {
   )
   lines <- c(
     "\\begingroup", "\\centering", "\\scriptsize",
+    "\\setlength{\\tabcolsep}{3pt}",
     sprintf("\\begin{tabular}{%s}", col_spec),
     "\\toprule", header, "\\midrule", rows, "\\bottomrule",
     "\\end{tabular}", "\\par", "\\vspace{2pt}",
