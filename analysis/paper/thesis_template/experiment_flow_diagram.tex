@@ -1,0 +1,102 @@
+% Experiment flow diagram: hierarchical tree showing session structure
+% Session -> Segments -> Rounds -> Periods
+% Uses TikZ libraries: automata, arrows, positioning, calc (loaded in main.tex)
+
+\begin{figure}[ht]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    % Node styles
+    session/.style={
+        rectangle, draw, thick, rounded corners=3pt,
+        fill=black!8, minimum width=2.8cm, minimum height=0.9cm,
+        font=\bfseries\normalsize
+    },
+    nochat/.style={
+        rectangle, draw, thick, rounded corners=3pt,
+        fill=black!12, minimum width=2.6cm, minimum height=0.8cm,
+        font=\small, align=center
+    },
+    chat/.style={
+        rectangle, draw, thick, rounded corners=3pt,
+        fill=CornflowerBlue!25, minimum width=2.6cm, minimum height=0.8cm,
+        font=\small, align=center
+    },
+    roundnode/.style={
+        rectangle, draw, rounded corners=2pt,
+        fill=white, minimum width=1.6cm, minimum height=0.7cm,
+        font=\small
+    },
+    periodnode/.style={
+        rectangle, draw, rounded corners=2pt,
+        fill=white, minimum width=1.4cm, minimum height=0.6cm,
+        font=\footnotesize
+    },
+    ellipsisnode/.style={
+        font=\large, inner sep=2pt
+    },
+    annotation/.style={
+        font=\footnotesize\itshape, text=black!70
+    },
+    arrowed/.style={
+        ->, >=stealth, thick
+    },
+]
+
+% === Session node ===
+\node[session] (session) {Part 1};
+
+% === Segment nodes (evenly spaced using absolute x-coordinates) ===
+\node[nochat] (seg1) at (-6, -2.2) {Segment 1\\(No Chat)};
+\node[nochat] (seg2) at (-2, -2.2) {Segment 2\\(No Chat)};
+\node[chat]   (seg3) at ( 2, -2.2) {Segment 3\\(Chat)};
+\node[chat]   (seg4) at ( 6, -2.2) {Segment 4\\(Chat)};
+
+% === Session -> Segment edges ===
+\draw[arrowed] (session) -- (seg1);
+\draw[arrowed] (session) -- (seg2);
+\draw[arrowed] (session) -- (seg3);
+\draw[arrowed] (session) -- (seg4);
+
+% === Vertical dots under segments without expanded subtree ===
+\node[annotation] at (-6, -3.5) {$\vdots$};
+\node[annotation] at ( 2, -3.5) {$\vdots$};
+\node[annotation] at ( 6, -3.5) {$\vdots$};
+
+% === Round nodes (under Segment 2) ===
+\node[roundnode] (r1) at (-4.2, -4.6) {Round 1};
+\node[roundnode] (r2) at (-2.0, -4.6) {Round 2};
+\node[ellipsisnode] (rdots) at (-0.3, -4.6) {$\cdots$};
+\node[roundnode] (rR) at (1.2, -4.6) {Round $R$};
+
+% === Segment -> Round edges ===
+\draw[arrowed] (seg2) -- (r1);
+\draw[arrowed] (seg2) -- (r2);
+\draw[arrowed] (seg2) -- (rdots);
+\draw[arrowed] (seg2) -- (rR);
+
+% === Geometric annotation for rounds ===
+\node[annotation, right=0.4cm of rR]
+    {$R \sim \text{Geometric}(0.125)$};
+
+% === Period nodes (under Round 1) ===
+\node[periodnode] (p1) at (-6.2, -7.0) {Period 1};
+\node[periodnode] (p2) at (-4.4, -7.0) {Period 2};
+\node[ellipsisnode] (pdots) at (-3.0, -7.0) {$\cdots$};
+\node[periodnode] (pT) at (-1.6, -7.0) {Period $T$};
+
+% === Round -> Period edges ===
+\draw[arrowed] (r1) -- (p1);
+\draw[arrowed] (r1) -- (p2);
+\draw[arrowed] (r1) -- (pdots);
+\draw[arrowed] (r1) -- (pT);
+
+% === Geometric annotation for periods ===
+\node[annotation, right=0.4cm of pT]
+    {$T \sim \text{Geometric}(0.125)$};
+
+\end{tikzpicture}%
+}% end resizebox
+\caption{Hierarchical structure of the experiment.}
+\label{fig:experiment_flow}
+\end{figure}
