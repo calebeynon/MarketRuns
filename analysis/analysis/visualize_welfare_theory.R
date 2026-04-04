@@ -10,7 +10,7 @@ OUTPUT_PATH <- "analysis/output/plots/welfare_theory.pdf"
 
 # PARAMETERS
 N_SELLERS <- 4
-PRICES <- c(8, 6, 4, 2)
+PRICES <- c(2, 4, 6, 8)  # p_n = 2n; price when n sellers remain
 LIQUIDATION_VALUE <- 20
 ALPHA_SEQ <- seq(0.01, 1, by = 0.01)
 M_VALUES <- 0:4
