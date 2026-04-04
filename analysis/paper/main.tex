@@ -204,6 +204,40 @@ This model captures key components of a market run environment.
     \item Investors have incentive to sell before their market counterparts if the state of the market is bad.
 \end{itemize}
 
+\subsection{Investor Welfare}
+
+We now show that early liquidations when $z = G$ decrease investor welfare. Define investor welfare as the ratio of total utility
+received by investors to the maximum total possible utility received by investors. Let $u(\cdot)$ be a generic utility function. When $z=B$, the maximum total possibile utility is $\sum_{n=1}^{4} u(p_n)$
+since each investor will either voluntarily sell during the market or be forced to sell at the terminal period. When $z=G$, the maximum possible total utility is $4 \cdot u(v=20)$ since each investor cannot sell
+their asset during the market for any more than $p_4=8$. Thus welfare when $z=B$ is given by,
+\begin{equation}
+  w_m = \dfrac{\sum_{n=m+1}^{4} u(p_n) + \sum_{n=1}^{m} u(p_n)}{\sum_{n=1}^{4} u(p_n)} = 1 \; \forall m \in \{0,1,2,3,4\}
+  \label{eq:welfare_bad}
+\end{equation}
+where $m$ is the number of participants that do not sell their asset during the market. In the bad state, welfare is always maximized. When $z=G$, the welfare function is,
+
+\begin{equation}
+  w_m = \dfrac{\sum_{n=m+1}^{4} u(p_n) + m\cdot u(v=20)}{4 \cdot u(v=20)} \le 1 \; \forall m \in \{0,1,2,3,4\}
+  \label{eq:welfare_good}
+\end{equation}
+
+Suppose that $u(\cdot)$ is CRRA, with $u(p_n) = \dfrac{p_n^{1-\alpha}}{1-\alpha}$. Then we can examine the relationship between risk aversion and welfare
+in each of the five cases of $m$. Figure \ref{fig:welfare} plots each welfare possibility against risk aversion, $\alpha$. Since $z=G$, welfare is maximized
+when $m=4$ and minimized when $m=0$. The differences in welfare for each scenario are largest when investors are risk neutral ($\alpha = 0$). The differences
+are the smallest when investors are risk averse ($\alpha \rightarrow 1$). This can be interpretted as investors gaining some utility from becoming certain about 
+their payoff earlier in the market despite it not being the highest possible value. 
+
+\subsection{Best Replies and Equilibrium}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\linewidth]{welfare_theory.pdf}
+  \caption{Welfare of each possible ending market scenario as it relates to risk aversion, $\alpha$.}
+  \label{fig:welfare}
+\end{figure}
+
+
+
 \subsection{Experimental Implementation}
 We conducted six experimental sessions, each with 16 subjects in the TIDE Lab at the University of Alabama. Subjects were students at the university ranging in age from 18 to 34. Each session consisted of three parts, first subjects privately watched an instructions video and completed a quiz\footnote{The average quiz score on the first attempt across all six sessions was 85.7\%.} on their computer with headphones\footnote{A typed version of the video is available in \ref{sec:app_instr}, and the video can be found in the online appendix.}. Subjects answered the questions independently first, then the correct answers were read aloud by the experimenters. Then subjects proceeded to complete part 1, the market portion, of the experiment. Following, the conclusion of part 1, subjects completed part 2, the survey portion.
 Each participant was assigned an alphabet letter as an identifier that was constant throughout the session. Each entire session consisted of 4 segments. At the beginning of each segment, participants were grouped into four groups of four. Each segment grouping was designed such that no two participants are grouped together more than once. At the beginning of segments 1 and 2, participants did not interact with each other. At the beginning of segments 3 and 4, participants could communicate with members of their group through a virtual chat environment for 90 seconds.
