@@ -29,6 +29,7 @@ SESSIONS = {
 }
 
 SEGMENTS = ["chat_noavg", "chat_noavg2", "chat_noavg3", "chat_noavg4"]
+PRICES = [8, 6, 4, 2]
 
 
 # =====
@@ -122,6 +123,7 @@ def build_group_round_record(
         "round_num": round_num,
         "state": int(state),
         "n_sellers": len(sellers),
+        "welfare": compute_welfare(int(state), len(sellers)),
     }
 
     # Add seller columns (up to 4 sellers)
@@ -137,6 +139,27 @@ def build_group_round_record(
             record[f"seller_{seller_num}_signal"] = None
 
     return record
+
+
+# =====
+# Welfare computation
+# =====
+def compute_welfare(state: int, n_sellers: int) -> float:
+    """Compute group welfare as fraction of maximum possible surplus.
+
+    When state=0, no trade is optimal so welfare is always 1.0.
+    When state=1, welfare depends on how many units were sold at given prices.
+    """
+    if state not in (0, 1):
+        raise ValueError(f"Invalid state: {state}. Must be 0 or 1.")
+    if n_sellers not in range(5):
+        raise ValueError(f"Invalid n_sellers: {n_sellers}. Must be 0-4.")
+    if state == 0:
+        return 1.0
+    max_surplus = 80
+    holder_value = (4 - n_sellers) * 20
+    seller_revenue = sum(PRICES[:n_sellers])
+    return (holder_value + seller_revenue) / max_surplus
 
 
 # =====

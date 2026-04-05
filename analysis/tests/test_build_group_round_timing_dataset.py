@@ -11,8 +11,10 @@ import pytest
 
 from analysis.derived.build_group_round_timing_dataset import (
     DATASTORE,
+    PRICES,
     SEGMENTS,
     SESSIONS,
+    compute_welfare,
     get_sellers_with_timing,
     load_segment_data,
 )
@@ -389,6 +391,89 @@ def test_no_missing_values_in_tobit_columns():
     for col in tobit_cols:
         assert col in df.columns, f"Column {col} not found"
         assert df[col].notna().all(), f"Column {col} has missing values"
+
+
+# =====
+# Unit tests: compute_welfare
+# =====
+@pytest.mark.parametrize("n_sellers", range(5))
+def test_welfare_state_0_always_1(n_sellers):
+    """State=0 means no trade is optimal; welfare is always 1.0."""
+    assert compute_welfare(0, n_sellers) == 1.0
+
+
+@pytest.mark.parametrize("n_sellers,expected", [
+    (0, 1.0),
+    (1, 0.85),
+    (2, 0.675),
+    (3, 0.475),
+    (4, 0.25),
+])
+def test_welfare_state_1_lookup(n_sellers, expected):
+    """State=1 welfare matches hand-computed values from PRICES=[8,6,4,2]."""
+    assert compute_welfare(1, n_sellers) == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("bad_n", [-1, 5, 10])
+def test_welfare_invalid_n_sellers(bad_n):
+    """n_sellers outside 0-4 raises ValueError."""
+    with pytest.raises(ValueError, match="Invalid n_sellers"):
+        compute_welfare(1, bad_n)
+
+
+@pytest.mark.parametrize("bad_state", [-1, 2, 99])
+def test_welfare_invalid_state(bad_state):
+    """State outside {0, 1} raises ValueError."""
+    with pytest.raises(ValueError, match="Invalid state"):
+        compute_welfare(bad_state, 0)
+
+
+# =====
+# Integration tests: welfare column in group_round_timing.csv
+# =====
+@skip_no_datastore
+def test_welfare_column_present():
+    """welfare column exists in the derived CSV."""
+    df = _load_derived()
+    assert "welfare" in df.columns
+
+
+@skip_no_datastore
+def test_welfare_values_in_range():
+    """All welfare values are between 0.25 and 1.0."""
+    df = _load_derived()
+    assert df["welfare"].min() >= 0.25
+    assert df["welfare"].max() <= 1.0
+
+
+@skip_no_datastore
+def test_welfare_no_nans():
+    """welfare column has no missing values."""
+    df = _load_derived()
+    assert df["welfare"].notna().all()
+
+
+@skip_no_datastore
+def test_welfare_state_0_all_one():
+    """All state=0 rows have welfare=1.0."""
+    df = _load_derived()
+    s0 = df[df["state"] == 0]
+    assert (s0["welfare"] == 1.0).all()
+
+
+@skip_no_datastore
+def test_welfare_matches_n_sellers():
+    """For state=1, welfare matches the expected lookup for each n_sellers."""
+    df = _load_derived()
+    expected = {0: 1.0, 1: 0.85, 2: 0.675, 3: 0.475, 4: 0.25}
+    s1 = df[df["state"] == 1]
+    for n, w in expected.items():
+        subset = s1[s1["n_sellers"] == n]
+        if len(subset) > 0:
+            assert subset["welfare"].unique() == pytest.approx([w]), (
+                f"n_sellers={n}: expected welfare={w}, "
+                f"got {subset['welfare'].unique()}"
+            )
 
 
 # %%
