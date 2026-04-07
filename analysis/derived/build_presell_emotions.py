@@ -246,7 +246,7 @@ def assemble_record(
 # iMotions data loading and emotion extraction
 # =====
 def load_imotions_csv(filepath: Path) -> pd.DataFrame:
-    """Load an iMotions CSV, returning Timestamp and emotion columns."""
+    """Load an iMotions CSV with numeric-coerced Timestamp and emotion columns."""
     df = pd.read_csv(
         filepath,
         skiprows=IMOTIONS_SKIP_ROWS,
@@ -254,6 +254,8 @@ def load_imotions_csv(filepath: Path) -> pd.DataFrame:
         low_memory=False,
         usecols=["Timestamp"] + EMOTION_COLS,
     )
+    for col in ["Timestamp"] + EMOTION_COLS:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
     return df
 
 
@@ -265,20 +267,20 @@ def extract_window_emotions(
     window = imotions_df[mask]
 
     result = {"n_frames": len(window)}
-    for col in EMOTION_COLS:
-        if len(window) == 0:
+    if len(window) == 0:
+        for col in EMOTION_COLS:
             result[f"{col.lower()}_mean"] = float("nan")
-        else:
-            result[f"{col.lower()}_mean"] = pd.to_numeric(
-                window[col], errors="coerce"
-            ).mean()
+    else:
+        means = window[EMOTION_COLS].mean()
+        for col in EMOTION_COLS:
+            result[f"{col.lower()}_mean"] = means[col]
 
     return result
 
 
 def extract_player_label(filename: str) -> str | None:
     """Extract participant letter from filename like 001_R3.csv."""
-    match = re.match(r"\d+_([A-Z])\d+\.csv", filename)
+    match = re.match(r"\d+_([A-Z])\d*\.csv", filename)
     return match.group(1) if match else None
 
 
