@@ -84,7 +84,6 @@ run_full_traits_model <- function(dt) {
 export_table <- function(model) {
   output_dir <- dirname(OUTPUT_TEX)
   if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
-
   etable(
     model,
     dict = c(
