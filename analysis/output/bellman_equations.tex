@@ -1,0 +1,478 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+\newtheorem{proposition}{Proposition}
+
+\title{Equilibrium Simulation: Mathematical Framework\\
+{\large Magnani \& Munro (2020) with Treatment-Specific Payoffs}}
+\author{Caleb Eynon}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Model}
+
+We adapt the dynamic market runs model of Magnani \& Munro (2020) to our
+experimental design. The game consists of $N = 4$ risk-averse investors, each
+holding one unit of an asset. Time is discrete, and the game terminates each
+period with probability $\lambda$. Investors observe public signals about a
+binary state $z \in \{G, B\}$ and decide whether to sell irreversibly. Our
+innovation is to compare two payoff treatments---\textit{Random} and
+\textit{Average}---that differ in how simultaneous sellers split the available
+prices.
+
+\subsection{Notation}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cl}
+\toprule
+Symbol & Definition \\
+\midrule
+$N = 4$ & Number of investors \\
+$n \in \{1,2,3,4\}$ & Number of investors still holding \\
+$\pi \in (0,1)$ & Posterior probability that state is Good, $\Pr(z = G)$ \\
+$\sigma(n,\pi)$ & Symmetric mixing probability: each holder sells with prob $\sigma$ \\
+$V(n,\pi)$ & Value for a holder at start of period (before signal) \\
+$W(n,\pi')$ & Value for a holder after signal observation (at decision point) \\
+$\lambda = 0.125$ & Per-period termination probability \\
+$v = 20$ & Asset return in good state \\
+$p_n = 2n$ & Price when $n$ holders remain: $p_1 = 2,\; p_2 = 4,\; p_3 = 6,\; p_4 = 8$ \\
+$\mu_B = 0.675$ & $\Pr(\text{bad signal} \mid z = B)$ \\
+$\mu_G = 0.325$ & $\Pr(\text{bad signal} \mid z = G)$ \\
+$\alpha$ & CRRA risk aversion parameter \\
+$u(x) = \frac{x^{1-\alpha}}{1-\alpha}$ & CRRA utility ($u(x) = x$ if $\alpha = 0$; $u(x) = \ln x$ if $\alpha = 1$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Information structure}
+
+Agents start with common prior $\pi_0 = 0.5$. Each period, a public signal
+$y \in \{g, b\}$ is drawn with accuracy $\mu_B + \mu_G = 1$. We adopt the
+Magnani \& Munro normalization so that good and bad signals are exact Bayesian
+inverses. The posterior updates are:
+%
+\begin{align}
+    \pi_g(\pi) &= \frac{\pi(1-\mu_G)}{\pi(1-\mu_G) + (1-\pi)\mu_G}
+    & &\text{(after good signal)} \label{eq:pi_good} \\[4pt]
+    \pi_b(\pi) &= \frac{\pi(1-\mu_B)}{\pi(1-\mu_B) + (1-\pi)\mu_B}
+    & &\text{(after bad signal)} \label{eq:pi_bad}
+\end{align}
+
+The unconditional signal probabilities given belief $\pi$ are:
+\begin{align}
+    \Pr(y = g \mid \pi) &= (1-\mu_G)\pi + \mu_G(1-\pi) \label{eq:prob_good} \\
+    \Pr(y = b \mid \pi) &= (1-\mu_B)\pi + \mu_B(1-\pi) \label{eq:prob_bad}
+\end{align}
+
+\subsection{Belief grid}
+
+Since $\mu_B + \mu_G = 1$, the likelihood ratio update from a bad signal is
+the exact multiplicative inverse of a good signal:
+\[
+    \frac{\Pr(y=b \mid B)}{\Pr(y=b \mid G)} = \frac{\mu_B}{\mu_G}
+    = \frac{0.675}{0.325} \approx 2.077
+    = \left(\frac{\mu_G}{\mu_B}\right)^{-1}
+    = \left(\frac{\Pr(y=g \mid B)}{\Pr(y=g \mid G)}\right)^{-1}
+\]
+Consequently, after $k$ bad and $j$ good signals from $\pi_0 = 0.5$, the
+posterior depends only on the net bad count $d = k - j$:
+\[
+    \pi(d) = \frac{1}{1 + \left(\frac{\mu_B}{\mu_G}\right)^d}
+\]
+The reachable belief grid consists of $2T_{\max} + 1$ values, computed by
+applying $d \in \{-T_{\max}, \ldots, T_{\max}\}$. We set $T_{\max} = 20$,
+yielding a 41-point grid spanning from $\pi(-20) \approx 4.5 \times 10^{-7}$
+to $\pi(20) \approx 1 - 4.5 \times 10^{-7}$.
+
+\section{Payoff structure}
+
+\subsection{Voluntary selling}
+
+When $k$ investors sell simultaneously from $n$ remaining holders, the prices
+consumed are $\{p_n, p_{n-1}, \ldots, p_{n-k+1}\}$. The payoff depends on the
+treatment:
+
+\textbf{Random treatment.} Each seller is randomly assigned one of the $k$
+positions with equal probability, receiving the corresponding price:
+\begin{equation}
+    \rho_{\text{random}}(n, k)
+    = \frac{1}{k} \sum_{j=0}^{k-1} u(p_{n-j})
+    \label{eq:rho_random}
+\end{equation}
+
+\textbf{Average treatment.} Each seller receives the average price:
+\begin{equation}
+    \rho_{\text{average}}(n, k)
+    = u\!\left(\frac{1}{k} \sum_{j=0}^{k-1} p_{n-j}\right)
+    \label{eq:rho_average}
+\end{equation}
+
+For $k = 1$, both treatments are identical: $\rho(n, 1) = u(p_n)$. For $k > 1$
+and $\alpha > 0$, Jensen's inequality gives
+$\rho_{\text{average}} > \rho_{\text{random}}$ since $u$ is strictly concave.
+
+\subsection{Forced liquidation}
+
+If the game terminates in the bad state with $m$ holders remaining, all are
+forced to sell at prices $\{p_1, \ldots, p_m\}$:
+
+\textbf{Random:} $\displaystyle
+L_{\text{random}}(m) = \frac{1}{m} \sum_{i=1}^{m} u(p_i)$
+\qquad
+\textbf{Average:} $\displaystyle
+L_{\text{average}}(m) = u\!\left(\frac{1}{m} \sum_{i=1}^{m} p_i\right)$
+
+Again, $L_{\text{average}}(m) \geq L_{\text{random}}(m)$ by Jensen's
+inequality for $\alpha > 0$.
+
+\section{Bellman equations}
+
+\subsection{Pre-signal value}
+
+At the start of a period, before the signal is observed:
+\begin{equation}
+    V(n, \pi)
+    = \Pr(y{=}g \mid \pi) \cdot W\!\bigl(n, \pi_g(\pi)\bigr)
+    + \Pr(y{=}b \mid \pi) \cdot W\!\bigl(n, \pi_b(\pi)\bigr)
+    \label{eq:bellman_pre}
+\end{equation}
+
+\subsection{Post-signal value}
+
+After observing the signal and updating to $\pi'$, each holder sells with
+probability $\sigma = \sigma(n, \pi')$:
+\begin{equation}
+    W(n, \pi')
+    = \sigma \cdot U_{\text{sell}}(n, \sigma)
+    + (1-\sigma) \cdot U_{\text{hold}}(n, \pi', \sigma)
+    \label{eq:bellman_post}
+\end{equation}
+
+\subsection{Expected utility of selling}
+
+The investor sells along with $j$ of the other $n-1$ holders (each selling
+independently with probability $\sigma$):
+\begin{equation}
+    U_{\text{sell}}(n, \sigma)
+    = \sum_{j=0}^{n-1} \binom{n-1}{j} \sigma^j (1-\sigma)^{n-1-j}
+      \cdot \rho(n,\, j+1)
+    \label{eq:u_sell}
+\end{equation}
+
+Note that $U_{\text{sell}}$ does not depend on $\pi'$---the selling payoff is
+realized immediately and does not depend on the state.
+
+\subsection{Expected utility of holding}
+
+\begin{equation}
+    U_{\text{hold}}(n, \pi', \sigma)
+    = \sum_{j=0}^{n-1} \binom{n-1}{j} \sigma^j (1-\sigma)^{n-1-j}
+      \cdot H(n{-}j,\, \pi')
+    \label{eq:u_hold}
+\end{equation}
+
+\subsection{Continuation value}
+
+After $j$ others sell, $m = n - j$ holders remain. With probability $\lambda$
+the game terminates (good state yields $v$, bad state forces liquidation); with
+probability $1 - \lambda$ the game continues:
+\begin{equation}
+    H(m, \pi')
+    = \lambda \bigl[\pi' \cdot u(v) + (1-\pi') \cdot L(m)\bigr]
+    + (1-\lambda) \cdot V(m, \pi')
+    \label{eq:continuation}
+\end{equation}
+
+\section{Equilibrium}
+
+We solve for symmetric Markov-perfect equilibria: $\sigma_i(n,\pi) = \sigma(n,\pi)$ for all investors $i$.
+
+\subsection{Equilibrium conditions}
+
+For each state $(n, \pi')$:
+\begin{enumerate}
+    \item If $U_{\text{sell}}(n, 0) \leq U_{\text{hold}}(n, \pi', 0)$:
+          $\sigma = 0$ \quad (holding dominates)
+    \item If $U_{\text{sell}}(n, 1) \geq U_{\text{hold}}(n, \pi', 1)$:
+          $\sigma = 1$ \quad (selling dominates)
+    \item Otherwise: $\sigma \in (0,1)$ solves
+          $U_{\text{sell}}(n, \sigma) = U_{\text{hold}}(n, \pi', \sigma)$
+          \quad (indifference)
+\end{enumerate}
+
+\subsection{Boundary condition}
+
+For $n = 1$ (last holder): $\sigma(1, \pi) = 0$ for all $\pi$. Selling yields
+$u(p_1) = u(2)$, while holding preserves the option value
+$H(1,\pi') = \lambda[\pi' u(v) + (1-\pi')u(p_1)] + (1-\lambda)V(1,\pi')$.
+Since $u(v) = u(20) \gg u(2)$, holding always dominates when there is no
+strategic interaction.
+
+\subsection{Uniqueness}
+
+\begin{proposition}
+For each state $(n, \pi')$ with $n \geq 2$, the equilibrium mixing probability
+$\sigma^*$ is unique.
+\end{proposition}
+
+\begin{proof}[Argument]
+Define $\Delta(\sigma) \equiv U_{\textup{sell}}(n, \sigma)
+- U_{\textup{hold}}(n, \pi', \sigma)$. The equilibrium condition requires
+$\Delta(\sigma^*) = 0$ (or a corner solution). We argue $\Delta$ is strictly
+decreasing in $\sigma$:
+
+\textbf{$U_{\textup{sell}}$ is strictly decreasing in $\sigma$.} The selling
+payoff is $\rho(n, j{+}1)$ where $j \sim \text{Binomial}(n{-}1, \sigma)$ is
+the number of others who sell simultaneously. Since $\rho(n, k)$ is decreasing
+in $k$ (more simultaneous sellers means each is more likely to receive a lower
+price), increasing $\sigma$ shifts the distribution of $j$ upward in the sense
+of first-order stochastic dominance, reducing $U_{\text{sell}}$.
+
+\textbf{$U_{\textup{hold}}$ is also decreasing in $\sigma$, but more slowly.}
+When $\sigma$ increases, the holder transitions to a state with fewer remaining
+holders ($m = n - j$ lower in expectation). Recall the continuation value:
+\[
+    H(m, \pi') = \lambda[\pi' u(v) + (1-\pi')L(m)] + (1-\lambda)V(m, \pi')
+\]
+The good-state terminal payoff $u(v)$ does not depend on $m$. The
+forced-liquidation value $L(m)$ is increasing in $m$ since the price schedule
+$p_m = 2m$ is increasing, so fewer holders means worse liquidation outcomes.
+The continuation value $V(m, \pi')$ is also increasing in $m$: lower $m$ means
+lower available selling prices ($p_m = 2m$) and lower forced-liquidation
+payoffs in all future periods. Thus $H(m, \pi')$ is increasing in $m$, and
+higher $\sigma$ (which shifts weight toward lower $m$) reduces
+$U_{\text{hold}}$.
+
+\textbf{Both utilities decrease, but $U_{\textup{sell}}$ decreases faster.}
+Since $\Delta(\sigma) = U_{\text{sell}} - U_{\text{hold}}$ and both terms
+decrease with $\sigma$, uniqueness requires that $U_{\text{sell}}$ is more
+sensitive to simultaneous competition than $U_{\text{hold}}$. Intuitively, a
+seller is \textit{directly} affected by the number of simultaneous sellers
+(splitting the current prices), while a holder is only \textit{indirectly}
+affected through future continuation values. We verify numerically that
+$\Delta(\sigma)$ is strictly decreasing at every grid point $(n, \pi')$ across
+all parameter configurations $(\alpha, \text{treatment})$, confirming at most
+one root in $(0,1)$.
+
+This yields a unique equilibrium $\sigma^*$ at each state---a
+\textit{strategic substitutes} property that rules out the self-reinforcing
+panics arising in bank run models with strategic complements.
+\end{proof}
+
+\subsection{Threshold structure}
+
+For each $n \geq 2$, define $\pi^*(n)$ as the belief where
+$\Delta(0) = U_{\text{sell}}(n, 0) - U_{\text{hold}}(n, \pi^*, 0) = 0$. Then:
+\begin{itemize}
+    \item For $\pi > \pi^*(n)$: $\sigma(n, \pi) = 0$ (pure hold)
+    \item For $\pi \leq \pi^*(n)$: $\sigma(n, \pi) > 0$ (mixing or pure sell)
+    \item $\sigma(n, \pi)$ is weakly decreasing in $\pi$ (more pessimistic
+          beliefs $\Rightarrow$ more selling)
+    \item $\pi^*(n)$ is increasing in $n$ (more holders $\Rightarrow$ selling
+          starts at higher beliefs)
+\end{itemize}
+
+\section{Treatment effects}
+
+Under risk neutrality ($\alpha = 0$), $u(x) = x$ is linear, so Jensen's
+inequality has no bite:
+$\rho_{\text{random}} = \rho_{\text{average}}$ and
+$L_{\text{random}} = L_{\text{average}}$. The equilibrium is identical across
+treatments.
+
+Under risk aversion ($\alpha > 0$), two competing channels arise:
+
+\begin{enumerate}
+    \item \textbf{Selling channel}: $\rho_{\text{average}} > \rho_{\text{random}}$
+    makes selling more attractive in the Average treatment.
+
+    \item \textbf{Holding channel}: $L_{\text{average}} > L_{\text{random}}$
+    makes forced liquidation less painful, increasing the value of holding.
+\end{enumerate}
+
+Quantitatively, the holding channel dominates: thresholds $\pi^*(n)$ are lower
+under Average (narrower selling region). However, conditional on the same
+belief, the mixing probability $\sigma$ is higher under Average (the selling
+payoff improvement dominates locally). These two effects partially offset.
+
+\section{Solution algorithm}
+
+The equilibrium has a circular structure: the value function $V(n, \pi)$
+depends on the equilibrium strategies $\sigma(n, \pi)$, but the strategies
+themselves depend on the value function through the continuation payoff
+$U_{\text{hold}}$. We resolve this via value iteration, which repeatedly
+alternates between updating strategies (given the current value function) and
+updating the value function (given the current strategies).
+
+\subsection{Initialization}
+
+Construct the 41-point belief grid (Section~1.3). Store $V(n, \pi)$ and
+$\sigma(n, \pi)$ as arrays of dimension $4 \times 41$ (one entry per
+$(n, \pi)$ pair). Initialize $V^{(0)}(n, \pi) = 0$ for all $(n, \pi)$.
+
+\subsection{Iteration}
+
+Each iteration $t$ proceeds in two passes:
+
+\textbf{Pass 1: Update $\sigma$ and compute $W$.} For each grid point
+$(n, \pi')$:
+\begin{enumerate}
+    \item Compute $U_{\text{sell}}(n, 0)$ using Eq.~\eqref{eq:u_sell}. This
+          does not depend on $V$ since selling payoffs are immediate.
+    \item Compute $U_{\text{hold}}(n, \pi', 0)$ using Eq.~\eqref{eq:u_hold}
+          with $\sigma = 0$. This \textit{does} depend on $V^{(t)}$ through
+          the continuation value $H(m, \pi')$ in Eq.~\eqref{eq:continuation}.
+          Since $\sigma = 0$, nobody else sells, so $m = n$ and
+          $U_{\text{hold}} = H(n, \pi')$.
+    \item \textbf{Find $\sigma^{(t+1)}$.} Define
+          $\Delta(\sigma) \equiv U_{\text{sell}}(n, \sigma)
+          - U_{\text{hold}}(n, \pi', \sigma)$, where $U_{\text{hold}}$
+          uses $V^{(t)}$ in the continuation value. Then:
+          \[
+              \sigma^{(t+1)} =
+              \begin{cases}
+                  0 & \text{if } \Delta(0) \leq 0 \\
+                  1 & \text{if } \Delta(0) > 0 \text{ and } \Delta(1) \geq 0 \\
+                  \sigma^* \text{ s.t.\ } \Delta(\sigma^*) = 0
+                    & \text{if } \Delta(0) > 0 \text{ and } \Delta(1) < 0
+              \end{cases}
+          \]
+          The first case: even when no one else sells, holding weakly
+          dominates, so no one sells. The second case: even when everyone
+          else sells, selling still dominates, so everyone sells. The third
+          case: $\Delta$ changes sign on $(0,1)$, so an interior root
+          $\sigma^*$ exists; find it via Brent's method.
+    \item Compute $W^{(t+1)}(n, \pi') = \sigma \cdot U_{\text{sell}}(n, \sigma)
+          + (1 - \sigma) \cdot U_{\text{hold}}(n, \pi', \sigma)$ using the
+          $\sigma$ just found.
+\end{enumerate}
+
+\textbf{Pass 2: Update $V$.} For each grid point $(n, \pi)$:
+\begin{enumerate}
+    \item Compute the updated beliefs $\pi_g(\pi)$ and $\pi_b(\pi)$ via
+          Eqs.~\eqref{eq:pi_good}--\eqref{eq:pi_bad}.
+    \item Look up $W^{(t+1)}(n, \pi_g)$ and $W^{(t+1)}(n, \pi_b)$ by
+          linearly interpolating the $W$ array at the updated beliefs.
+    \item Set $V^{(t+1)}(n, \pi) = \Pr(y{=}g \mid \pi) \cdot W(n, \pi_g)
+          + \Pr(y{=}b \mid \pi) \cdot W(n, \pi_b)$ per
+          Eq.~\eqref{eq:bellman_pre}.
+\end{enumerate}
+
+\subsection{Convergence}
+
+Repeat until $\max_{n,\pi} |V^{(t+1)}(n,\pi) - V^{(t)}(n,\pi)| < 10^{-8}$.
+The output is the converged strategy table $\sigma(n, \pi)$ for all 4 $\times$
+41 state pairs.
+
+\section{Simulation engine}
+
+The equilibrium solution gives a strategy table $\sigma(n, \pi)$---the
+probability of selling at each state. To produce predictions comparable to
+experimental data, we need to know when sales actually occur. This requires
+simulation because the \textit{timing} of sales depends on the stochastic
+signal process: beliefs random-walk through the grid, and a sale happens only
+when (a) the belief enters the selling region \textit{and} (b) the coin flip
+with probability $\sigma$ comes up ``sell.'' Neither the threshold $\pi^*$ nor
+the mixing probability $\sigma$ alone tells us the average belief at sale.
+
+\subsection{One simulated game}
+
+For a given $(\alpha, \text{treatment})$ pair with converged strategy table
+$\sigma(n, \pi)$:
+
+\begin{enumerate}
+    \item \textbf{Setup.} Set $n = 4$ holders, belief $\pi = 0.5$. Draw the
+          true state $z \in \{G, B\}$ with equal probability. Initialize seller
+          count $s = 0$.
+
+    \item \textbf{Each period} (repeat until $n = 1$ or game terminates):
+    \begin{enumerate}
+        \item \textit{Signal.} Draw a signal from the true state: if $z = B$,
+              the signal is bad with probability $\mu_B = 0.675$; if $z = G$,
+              with probability $\mu_G = 0.325$. Update $\pi$ via Bayesian
+              rule (Eqs.~\eqref{eq:pi_good}--\eqref{eq:pi_bad}).
+
+        \item \textit{Selling decisions.} Look up $\sigma(n, \pi)$ from the
+              strategy table (interpolating if $\pi$ falls between grid
+              points). Each of the $n$ holders independently draws a
+              $\text{Bernoulli}(\sigma)$: sell if 1, hold if 0. Let $k$ be
+              the total number who sell.
+
+        \item \textit{Record sales.} If $k > 0$: for each of the $k$ sellers,
+              record the current belief $\pi$ as the belief at seller position
+              $s + 1, s + 2, \ldots, s + k$. Update $s \leftarrow s + k$ and
+              $n \leftarrow n - k$.
+
+        \item \textit{Termination.} With probability $\lambda = 0.125$, the
+              game ends. If the game terminates, stop---any remaining holders
+              did not sell voluntarily.
+    \end{enumerate}
+\end{enumerate}
+
+Note that multiple investors can sell in the same period (simultaneous sales),
+and they all receive the same belief $\pi$ for their seller position. Games
+where the market terminates before any voluntary sale contribute no
+observations.
+
+\subsection{Aggregation}
+
+We run 10{,}000 games per $(\alpha, \text{treatment})$ pair. For each seller
+position $k \in \{1, 2, 3\}$, we compute the average belief at the time of
+sale across all games where that sale occurred:
+\[
+    \bar{\pi}_k = \frac{1}{|\mathcal{G}_k|}
+    \sum_{g \in \mathcal{G}_k} \pi_k^{(g)}
+\]
+where $\mathcal{G}_k$ is the set of games in which a $k$th sale happened and
+$\pi_k^{(g)}$ is the belief at that sale. The 4th investor never sells in
+equilibrium ($\sigma(1, \pi) = 0$ for all $\pi$), so we report three seller
+positions.
+
+Following Magnani \& Munro (2020, Table~2), we convert to $\Pr(z = B) =
+1 - \pi$ for reporting.
+
+\section{Results}
+
+Table~\ref{tab:equilibrium} reports the equilibrium-predicted average
+$\Pr(z = B)$ at the time of each sale across treatments and risk aversion
+levels, from 10{,}000 simulated games per cell.
+
+\begin{table}[h]
+\centering
+\small
+\input{tables/equilibrium_thresholds}
+\caption{Equilibrium predictions: average $\Pr(z = B)$ at each seller
+position. The 4th investor never sells ($n = 1$ boundary condition).}
+\label{tab:equilibrium}
+\end{table}
+
+\subsection{Validation against Magnani \& Munro (2020)}
+
+Table~2 of Magnani \& Munro reports the average $\Pr(z = B)$ at the first sale
+for their HIGH information environment ($\mu_B = 0.675$, NoCB). Our
+first-seller column reproduces their values:
+
+\begin{center}
+\small
+\begin{tabular}{lccc}
+\toprule
+ & Our model & M\&M Table~2 & Difference \\
+\midrule
+$\alpha = 0$ (risk neutral) & 0.812 & 0.800 & $+0.012$ \\
+$\alpha = 0.5$ (risk averse) & 0.678 & 0.678 & $< 0.001$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The risk-averse prediction matches exactly. The 1.2pp difference under risk
+neutrality is attributable to grid resolution: our 41-point grid produces
+slightly different value function interpolation than Magnani \& Munro's
+numerical solution.
+
+\end{document}
