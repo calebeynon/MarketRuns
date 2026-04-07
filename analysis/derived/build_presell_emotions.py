@@ -62,14 +62,38 @@ PRESELL_WINDOWS_MS = [2000, 1000, 500, 100, 50]
 EXCEL_EPOCH_1970 = 25569.0
 CST_OFFSET_HOURS = 6
 
+TRAIT_COLS = [
+    "session_id", "player", "extraversion", "agreeableness",
+    "conscientiousness", "neuroticism", "openness",
+    "impulsivity", "state_anxiety", "risk_tolerance", "age", "gender",
+]
+
+MERGE_KEYS = ["session_id", "segment", "round", "period", "player"]
+
 
 # =====
 # Main function
 # =====
 def main():
     """Build the pre-sell emotions dataset."""
-    all_records = []
+    presell_df = extract_all_sessions()
 
+    if presell_df.empty:
+        raise RuntimeError(
+            "No pre-sell records extracted. "
+            "Check datastore/ for session directories and iMotions exports."
+        )
+
+    merged = merge_all(presell_df)
+    merged = add_global_group_id(merged)
+    print_summary(merged)
+    save_dataset(merged)
+    return merged
+
+
+def extract_all_sessions() -> pd.DataFrame:
+    """Extract pre-sell emotion records from all sessions."""
+    all_records = []
     print("Extracting pre-sell emotions...")
     for imotions_session, session_id in IMOTIONS_SESSION_MAP.items():
         print(f"  Session {imotions_session} ({session_id})")
@@ -79,13 +103,7 @@ def main():
 
     presell_df = pd.DataFrame(all_records)
     print(f"\nTotal pre-sell records: {len(presell_df)}")
-
-    merged = merge_all(presell_df)
-    merged = add_global_group_id(merged)
-    print_summary(merged)
-    save_dataset(merged)
-
-    return merged
+    return presell_df
 
 
 # =====
@@ -146,6 +164,11 @@ def load_all_imotions(imotions_session: str) -> dict[str, pd.DataFrame]:
 def load_sell_events(session_id: str, segment_name: str) -> pd.DataFrame:
     """Load oTree CSV and return rows with valid sell clicks."""
     session_dir = DATASTORE / session_id
+    if not session_dir.exists():
+        raise FileNotFoundError(
+            f"Session directory missing: {session_dir}. "
+            f"Check DATASTORE path and session ID '{session_id}'."
+        )
     csv_files = list(session_dir.glob(f"{segment_name}_*.csv"))
     if not csv_files:
         return pd.DataFrame()
@@ -159,18 +182,33 @@ def build_presell_record(
     row: pd.Series, session_id: str, segment: int,
     recording_starts: dict, imotions_cache: dict,
 ) -> dict | None:
-    """Build one pre-sell emotion record with all window sizes."""
+    """Build one pre-sell emotion record. Returns None if player has no iMotions data."""
     player = row["participant.label"]
-    if player not in recording_starts or player not in imotions_cache:
+    missing = _check_player_data(player, session_id, segment,
+                                 recording_starts, imotions_cache)
+    if missing:
         return None
 
     sell_click = row["player.sell_click_time"]
     click_ms = (sell_click - recording_starts[player]) * 1000
     all_emotions = extract_all_windows(imotions_cache[player], click_ms)
-
     return assemble_record(
         session_id, segment, row, player, sell_click, all_emotions,
     )
+
+
+def _check_player_data(player, session_id, segment,
+                       recording_starts, imotions_cache) -> bool:
+    """Warn and return True if player is missing from recording or iMotions data."""
+    if player not in recording_starts:
+        print(f"    WARNING: {player} missing from recording_starts "
+              f"(session={session_id}, segment={segment}). Skipping.")
+        return True
+    if player not in imotions_cache:
+        print(f"    WARNING: {player} missing from imotions_cache "
+              f"(session={session_id}, segment={segment}). Skipping.")
+        return True
+    return False
 
 
 def extract_all_windows(imotions_df: pd.DataFrame, click_ms: float) -> dict:
@@ -249,6 +287,11 @@ def extract_player_label(filename: str) -> str | None:
 # =====
 def pid_to_label(pid: int) -> str:
     """Convert participant_id_in_session (1-16) to letter label."""
+    if pid < 1 or pid > len(PARTICIPANT_LABELS):
+        raise ValueError(
+            f"participant_id_in_session={pid} out of range "
+            f"[1, {len(PARTICIPANT_LABELS)}]. Check edited_data CSV."
+        )
     return PARTICIPANT_LABELS[pid - 1]
 
 
@@ -260,28 +303,30 @@ def excel_to_epoch(excel_serial: float) -> float:
 # =====
 # Merge with period data and traits
 # =====
-TRAIT_COLS = [
-    "session_id", "player", "extraversion", "agreeableness",
-    "conscientiousness", "neuroticism", "openness",
-    "impulsivity", "state_anxiety", "risk_tolerance", "age", "gender",
-]
-
-MERGE_KEYS = ["session_id", "segment", "round", "period", "player"]
-
-
 def merge_all(presell_df: pd.DataFrame) -> pd.DataFrame:
     """Merge pre-sell emotions with period data and survey traits."""
     period_df = pd.read_csv(INPUT_PERIOD)
     traits_df = pd.read_csv(INPUT_TRAITS)
 
-    # Filter period data to sell events only for merge
     merged = period_df.merge(presell_df, on=MERGE_KEYS, how="inner")
+    _validate_merge(presell_df, merged)
+
     merged = merged.merge(
         traits_df[TRAIT_COLS], on=["session_id", "player"], how="left",
     )
-
     print(f"Merged: {len(merged)} rows (period data x presell emotions)")
     return merged
+
+
+def _validate_merge(presell_df, merged):
+    """Raise if inner merge dropped any presell records."""
+    dropped = len(presell_df) - len(merged)
+    if dropped > 0:
+        raise ValueError(
+            f"Inner merge dropped {dropped} of {len(presell_df)} presell "
+            f"records. Check that {INPUT_PERIOD.name} contains matching "
+            f"keys for all sessions/segments/players."
+        )
 
 
 def add_global_group_id(df: pd.DataFrame) -> pd.DataFrame:

@@ -6,7 +6,7 @@ Create a derived dataset capturing facial emotion data from the milliseconds bef
 
 ## Approach
 
-For each sell event (where `sold=1` and `sell_click_time` is non-null), convert the oTree `sell_click_time` (Unix timestamp) to the iMotions relative timestamp using each participant's recording start time, then extract emotion frames from configurable windows (500ms, 1000ms, 2000ms, 5000ms) before the click. Average those frames and merge with the existing period/traits data.
+For each sell event (where `sold=1` and `sell_click_time` is non-null), convert the oTree `sell_click_time` (Unix timestamp) to the iMotions relative timestamp using each participant's recording start time, then extract emotion frames from configurable windows (2000ms, 1000ms, 500ms, 100ms, 50ms) before the click. Average those frames and merge with the existing period/traits data.
 
 ## Changes Made
 
