@@ -1,20 +1,20 @@
-# Purpose: Plot equilibrium selling thresholds (pi*) vs risk aversion (alpha)
-#          by number of holders (n), comparing Random vs Average treatment
+# Purpose: Plot average pi = P(Good) at sale by seller position across
+#          alpha values, comparing Random vs Average treatment
 # Author: Claude
-# Date: 2026-04-05
+# Date: 2026-04-08
 
 library(data.table)
 library(ggplot2)
 
 # FILE PATHS
 INPUT_CSV <- "datastore/derived/equilibrium_thresholds.csv"
-OUTPUT_PATH <- "analysis/output/plots/equilibrium_thresholds.pdf"
+OUTPUT_PATH <- "analysis/output/plots/equilibrium_avg_pi_at_sale.pdf"
 
-# Muted neutral palette for n values
-N_PALETTE <- c(
-  "2" = "#7A93A8",
-  "3" = "#A8897A",
-  "4" = "#6B9385"
+# Seller position labels
+SELLER_LABELS <- c(
+  "4" = "1st seller (n=4)",
+  "3" = "2nd seller (n=3)",
+  "2" = "3rd seller (n=2)"
 )
 
 # Treatment linetypes
@@ -43,40 +43,40 @@ theme_econ <- function() {
 # Main function
 # =====
 main <- function() {
-  dt <- load_threshold_data(INPUT_CSV)
-  p <- create_threshold_plot(dt)
+  dt <- load_data(INPUT_CSV)
+  p <- create_plot(dt)
   save_plot(p, OUTPUT_PATH)
-  cat("Saved threshold plot to:", OUTPUT_PATH, "\n")
+  cat("Saved avg pi plot to:", OUTPUT_PATH, "\n")
 }
 
 # =====
 # Load and prepare data
 # =====
-load_threshold_data <- function(path) {
+load_data <- function(path) {
   dt <- fread(path)
   dt <- dt[n > 1]
-  dt[, n := factor(n)]
+  dt[, seller_label := factor(SELLER_LABELS[as.character(n)],
+                              levels = SELLER_LABELS)]
   dt[, treatment := factor(treatment, levels = c("random", "average"))]
   return(dt)
 }
 
 # =====
-# Create faceted threshold plot
+# Create faceted plot
 # =====
-create_threshold_plot <- function(dt) {
-  ggplot(dt, aes(x = alpha, y = threshold_pi,
-                 color = n, linetype = treatment)) +
-    geom_line(linewidth = 0.7) +
-    geom_point(aes(shape = treatment), size = 1.8) +
-    scale_color_manual(values = N_PALETTE, name = expression(italic(n))) +
+create_plot <- function(dt) {
+  ggplot(dt, aes(x = alpha, y = avg_pi_at_sale, linetype = treatment)) +
+    geom_line(color = "black", linewidth = 0.7) +
+    geom_point(aes(shape = treatment), color = "black", size = 1.8) +
     scale_linetype_manual(values = TREATMENT_LINES, name = "Treatment") +
     scale_shape_manual(values = c("random" = 16, "average" = 17),
                        name = "Treatment") +
     scale_x_continuous(breaks = seq(0, 0.9, by = 0.2)) +
-    scale_y_continuous(breaks = seq(0, 0.5, by = 0.1)) +
+    scale_y_continuous(breaks = seq(0, 0.5, by = 0.05)) +
+    facet_wrap(~ seller_label, nrow = 1) +
     labs(
       x = expression(alpha ~ "(risk aversion)"),
-      y = expression(pi * "*" ~ "(selling threshold)")
+      y = expression("Avg " * pi ~ "= Pr(" * italic(z) * " = " * italic(G) * ") at sale")
     ) +
     theme_econ()
 }
@@ -89,7 +89,7 @@ save_plot <- function(p, output_path) {
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
   }
-  ggsave(output_path, p, width = 7, height = 5)
+  ggsave(output_path, p, width = 9, height = 4.5)
 }
 
 # %%
