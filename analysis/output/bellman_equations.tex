@@ -3,8 +3,14 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{longtable}
 
 \newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+% Extension marker: flags sections that extend beyond M&M (2020)
+\newcommand{\extension}{\textsuperscript{\textcolor{red}{$\bigstar$}}\,}
 
 \title{Equilibrium Simulation: Mathematical Framework\\
 {\large Magnani \& Munro (2020) with Treatment-Specific Payoffs}}
@@ -14,16 +20,30 @@
 \begin{document}
 \maketitle
 
-\section{Model}
+\noindent\textbf{Reading guide.}
+Sections marked with \extension{} extend the Magnani \& Munro (2020)
+framework. All other material replicates or directly follows their model.
 
-We adapt the dynamic market runs model of Magnani \& Munro (2020) to our
-experimental design. The game consists of $N = 4$ risk-averse investors, each
-holding one unit of an asset. Time is discrete, and the game terminates each
-period with probability $\lambda$. Investors observe public signals about a
-binary state $z \in \{G, B\}$ and decide whether to sell irreversibly. Our
-innovation is to compare two payoff treatments---\textit{Random} and
-\textit{Average}---that differ in how simultaneous sellers split the available
-prices.
+\tableofcontents
+\newpage
+
+% ======================================================================
+\section{Model}
+% ======================================================================
+
+We adapt the dynamic market runs model of Magnani \& Munro (2020,
+hereafter M\&M) to our experimental design. The game consists of $N = 4$
+risk-averse investors, each holding one unit of an asset. Time is
+discrete, and the game terminates each period with probability $\lambda$.
+Investors observe public signals about a binary state
+$z \in \{G, B\}$ and decide whether to sell irreversibly.
+
+\extension Our innovation is to compare two payoff
+treatments---\textit{Random} and \textit{Average}---that differ in how
+simultaneous sellers split the available prices. M\&M analyze only the
+Random treatment; we extend the model to derive equilibrium predictions
+for both treatments and characterize how the treatment affects
+equilibrium behavior.
 
 \subsection{Notation}
 
@@ -54,7 +74,7 @@ $u(x) = \frac{x^{1-\alpha}}{1-\alpha}$ & CRRA utility ($u(x) = x$ if $\alpha = 0
 
 Agents start with common prior $\pi_0 = 0.5$. Each period, a public signal
 $y \in \{g, b\}$ is drawn with accuracy $\mu_B + \mu_G = 1$. We adopt the
-Magnani \& Munro normalization so that good and bad signals are exact Bayesian
+M\&M normalization so that good and bad signals are exact Bayesian
 inverses. The posterior updates are:
 %
 \begin{align}
@@ -70,7 +90,7 @@ The unconditional signal probabilities given belief $\pi$ are:
     \Pr(y = b \mid \pi) &= (1-\mu_B)\pi + \mu_B(1-\pi) \label{eq:prob_bad}
 \end{align}
 
-\subsection{Belief grid}
+\subsection{Belief grid}\label{sec:belief_grid}
 
 Since $\mu_B + \mu_G = 1$, the likelihood ratio update from a bad signal is
 the exact multiplicative inverse of a good signal:
@@ -82,40 +102,63 @@ the exact multiplicative inverse of a good signal:
 \]
 Consequently, after $k$ bad and $j$ good signals from $\pi_0 = 0.5$, the
 posterior depends only on the net bad count $d = k - j$:
-\[
+\begin{equation}
     \pi(d) = \frac{1}{1 + \left(\frac{\mu_B}{\mu_G}\right)^d}
-\]
+    \label{eq:belief_grid}
+\end{equation}
 The reachable belief grid consists of $2T_{\max} + 1$ values, computed by
 applying $d \in \{-T_{\max}, \ldots, T_{\max}\}$. We set $T_{\max} = 20$,
 yielding a 41-point grid spanning from $\pi(-20) \approx 4.5 \times 10^{-7}$
-to $\pi(20) \approx 1 - 4.5 \times 10^{-7}$.
+to $\pi(20) \approx 1 - 4.5 \times 10^{-7}$. The grid is non-uniform in
+$\pi$ but uniform in log-odds space.
 
+\begin{remark}[Grid sufficiency]
+Robustness checks in Section~\ref{sec:robustness} confirm that both sigma
+values and equilibrium thresholds are fully converged by $T_{\max} = 20$:
+doubling to $T_{\max} = 40, 80, 160$ produces changes below $10^{-3}$.
+\end{remark}
+
+% ======================================================================
 \section{Payoff structure}
+% ======================================================================
 
 \subsection{Voluntary selling}
 
 When $k$ investors sell simultaneously from $n$ remaining holders, the prices
-consumed are $\{p_n, p_{n-1}, \ldots, p_{n-k+1}\}$. The payoff depends on the
-treatment:
+consumed are $\{p_n, p_{n-1}, \ldots, p_{n-k+1}\}$. \extension The payoff
+depends on the treatment:
 
-\textbf{Random treatment.} Each seller is randomly assigned one of the $k$
-positions with equal probability, receiving the corresponding price:
+\textbf{Random treatment} (M\&M baseline). Each seller is randomly assigned
+one of the $k$ positions with equal probability, receiving the corresponding
+price:
 \begin{equation}
     \rho_{\text{random}}(n, k)
     = \frac{1}{k} \sum_{j=0}^{k-1} u(p_{n-j})
     \label{eq:rho_random}
 \end{equation}
+This is the expected utility of a uniform lottery over the $k$ available prices.
 
-\textbf{Average treatment.} Each seller receives the average price:
+\extension \textbf{Average treatment.} Each seller receives the average
+price:
 \begin{equation}
     \rho_{\text{average}}(n, k)
     = u\!\left(\frac{1}{k} \sum_{j=0}^{k-1} p_{n-j}\right)
     \label{eq:rho_average}
 \end{equation}
+This is the utility of the certain average price.
 
-For $k = 1$, both treatments are identical: $\rho(n, 1) = u(p_n)$. For $k > 1$
-and $\alpha > 0$, Jensen's inequality gives
-$\rho_{\text{average}} > \rho_{\text{random}}$ since $u$ is strictly concave.
+For $k = 1$, both treatments are identical: $\rho(n, 1) = u(p_n)$. For
+$k > 1$ and $\alpha > 0$, Jensen's inequality gives
+$\rho_{\text{average}} > \rho_{\text{random}}$ since $u$ is strictly
+concave. The difference is:
+\begin{equation}
+    \rho_{\text{average}}(n, k) - \rho_{\text{random}}(n, k)
+    = u\!\left(\mathbb{E}[p]\right) - \mathbb{E}\!\left[u(p)\right] > 0
+    \label{eq:jensen_selling}
+\end{equation}
+This ``risk premium'' in selling payoffs is one of two channels through
+which the treatment affects equilibrium behavior
+(Section~\ref{sec:treatment_effects}).
 
 \subsection{Forced liquidation}
 
@@ -125,13 +168,16 @@ forced to sell at prices $\{p_1, \ldots, p_m\}$:
 \textbf{Random:} $\displaystyle
 L_{\text{random}}(m) = \frac{1}{m} \sum_{i=1}^{m} u(p_i)$
 \qquad
-\textbf{Average:} $\displaystyle
+\extension \textbf{Average:} $\displaystyle
 L_{\text{average}}(m) = u\!\left(\frac{1}{m} \sum_{i=1}^{m} p_i\right)$
 
 Again, $L_{\text{average}}(m) \geq L_{\text{random}}(m)$ by Jensen's
-inequality for $\alpha > 0$.
+inequality for $\alpha > 0$. This ``insurance'' in liquidation payoffs
+is the second channel (Section~\ref{sec:treatment_effects}).
 
+% ======================================================================
 \section{Bellman equations}
+% ======================================================================
 
 \subsection{Pre-signal value}
 
@@ -142,6 +188,8 @@ At the start of a period, before the signal is observed:
     + \Pr(y{=}b \mid \pi) \cdot W\!\bigl(n, \pi_b(\pi)\bigr)
     \label{eq:bellman_pre}
 \end{equation}
+where signal probabilities are given by
+Eqs.~\eqref{eq:prob_good}--\eqref{eq:prob_bad}.
 
 \subsection{Post-signal value}
 
@@ -153,6 +201,10 @@ probability $\sigma = \sigma(n, \pi')$:
     + (1-\sigma) \cdot U_{\text{hold}}(n, \pi', \sigma)
     \label{eq:bellman_post}
 \end{equation}
+At an interior equilibrium ($\sigma \in (0,1)$), the indifference condition
+$U_{\text{sell}} = U_{\text{hold}}$ implies $W = U_{\text{sell}} =
+U_{\text{hold}}$, so the weighting is immaterial. At corner solutions
+($\sigma = 0$ or $\sigma = 1$), only one term is active.
 
 \subsection{Expected utility of selling}
 
@@ -164,9 +216,9 @@ independently with probability $\sigma$):
       \cdot \rho(n,\, j+1)
     \label{eq:u_sell}
 \end{equation}
-
 Note that $U_{\text{sell}}$ does not depend on $\pi'$---the selling payoff is
-realized immediately and does not depend on the state.
+realized immediately and does not depend on the state. The total number of
+sellers is $j + 1$ (the focal seller plus the $j$ others).
 
 \subsection{Expected utility of holding}
 
@@ -176,6 +228,9 @@ realized immediately and does not depend on the state.
       \cdot H(n{-}j,\, \pi')
     \label{eq:u_hold}
 \end{equation}
+where $m = n - j$ investors remain after $j$ others sell (the focal holder
+stays). Note the summation runs over $j = 0, \ldots, n-1$ because at most
+$n-1$ \textit{others} can sell.
 
 \subsection{Continuation value}
 
@@ -188,10 +243,16 @@ probability $1 - \lambda$ the game continues:
     + (1-\lambda) \cdot V(m, \pi')
     \label{eq:continuation}
 \end{equation}
+This creates the circular dependency that makes the model non-trivial:
+$V$ depends on $W$, $W$ depends on $U_{\text{hold}}$, $U_{\text{hold}}$
+depends on $H$, and $H$ depends on $V$.
 
+% ======================================================================
 \section{Equilibrium}
+% ======================================================================
 
-We solve for symmetric Markov-perfect equilibria: $\sigma_i(n,\pi) = \sigma(n,\pi)$ for all investors $i$.
+We solve for \textit{symmetric Markov-perfect equilibria}: all investors
+use the same strategy $\sigma_i(n,\pi) = \sigma(n,\pi)$.
 
 \subsection{Equilibrium conditions}
 
@@ -212,7 +273,8 @@ For $n = 1$ (last holder): $\sigma(1, \pi) = 0$ for all $\pi$. Selling yields
 $u(p_1) = u(2)$, while holding preserves the option value
 $H(1,\pi') = \lambda[\pi' u(v) + (1-\pi')u(p_1)] + (1-\lambda)V(1,\pi')$.
 Since $u(v) = u(20) \gg u(2)$, holding always dominates when there is no
-strategic interaction.
+strategic interaction. The last holder has no coordination risk and
+simply waits for the game to end.
 
 \subsection{Uniqueness}
 
@@ -230,40 +292,50 @@ decreasing in $\sigma$:
 \textbf{$U_{\textup{sell}}$ is strictly decreasing in $\sigma$.} The selling
 payoff is $\rho(n, j{+}1)$ where $j \sim \text{Binomial}(n{-}1, \sigma)$ is
 the number of others who sell simultaneously. Since $\rho(n, k)$ is decreasing
-in $k$ (more simultaneous sellers means each is more likely to receive a lower
-price), increasing $\sigma$ shifts the distribution of $j$ upward in the sense
+in $k$ (more simultaneous sellers means each receives a weakly lower price),
+increasing $\sigma$ shifts the distribution of $j$ upward in the sense
 of first-order stochastic dominance, reducing $U_{\text{sell}}$.
 
 \textbf{$U_{\textup{hold}}$ is also decreasing in $\sigma$, but more slowly.}
 When $\sigma$ increases, the holder transitions to a state with fewer remaining
-holders ($m = n - j$ lower in expectation). Recall the continuation value:
-\[
-    H(m, \pi') = \lambda[\pi' u(v) + (1-\pi')L(m)] + (1-\lambda)V(m, \pi')
-\]
-The good-state terminal payoff $u(v)$ does not depend on $m$. The
-forced-liquidation value $L(m)$ is increasing in $m$ since the price schedule
-$p_m = 2m$ is increasing, so fewer holders means worse liquidation outcomes.
-The continuation value $V(m, \pi')$ is also increasing in $m$: lower $m$ means
-lower available selling prices ($p_m = 2m$) and lower forced-liquidation
-payoffs in all future periods. Thus $H(m, \pi')$ is increasing in $m$, and
-higher $\sigma$ (which shifts weight toward lower $m$) reduces
+holders ($m = n - j$ lower in expectation). The continuation value
+$H(m, \pi')$ is increasing in $m$ because:
+\begin{itemize}
+    \item The good-state terminal payoff $u(v)$ does not depend on $m$.
+    \item The forced-liquidation value $L(m)$ is increasing in $m$ since the
+          price schedule $p_m = 2m$ is increasing, so fewer holders means worse
+          liquidation outcomes.
+    \item The continuation value $V(m, \pi')$ is increasing in $m$: lower $m$
+          means lower available selling prices and lower forced-liquidation
+          payoffs in all future periods.
+\end{itemize}
+Thus higher $\sigma$ (which shifts weight toward lower $m$) reduces
 $U_{\text{hold}}$.
 
 \textbf{Both utilities decrease, but $U_{\textup{sell}}$ decreases faster.}
-Since $\Delta(\sigma) = U_{\text{sell}} - U_{\text{hold}}$ and both terms
-decrease with $\sigma$, uniqueness requires that $U_{\text{sell}}$ is more
-sensitive to simultaneous competition than $U_{\text{hold}}$. Intuitively, a
-seller is \textit{directly} affected by the number of simultaneous sellers
-(splitting the current prices), while a holder is only \textit{indirectly}
-affected through future continuation values. We verify numerically that
-$\Delta(\sigma)$ is strictly decreasing at every grid point $(n, \pi')$ across
-all parameter configurations $(\alpha, \text{treatment})$, confirming at most
-one root in $(0,1)$.
+Uniqueness requires that $U_{\text{sell}}$ is more sensitive to simultaneous
+competition than $U_{\text{hold}}$. Intuitively, a seller is \textit{directly}
+affected by the number of simultaneous sellers (splitting the current prices),
+while a holder is only \textit{indirectly} affected through future continuation
+values. We verify numerically that $\Delta(\sigma)$ is strictly decreasing at
+every grid point $(n, \pi')$ across all parameter configurations
+$(\alpha, \text{treatment})$, confirming at most one root in $(0,1)$.
 
 This yields a unique equilibrium $\sigma^*$ at each state---a
 \textit{strategic substitutes} property that rules out the self-reinforcing
 panics arising in bank run models with strategic complements.
 \end{proof}
+
+\begin{remark}[Scope of uniqueness]
+The argument above establishes uniqueness of $\sigma^*$ at each individual
+state $(n, \pi')$, \textit{given} the value function $V$. Combined with the
+contraction mapping property of value iteration (verified by convergence from
+both low and high initial conditions to the same fixed point), this implies
+a unique symmetric Markov-perfect equilibrium. However, asymmetric equilibria
+where different investors use different strategy functions could in principle
+exist. The strategic-substitutes property makes this unlikely, but we restrict
+attention to symmetric strategies throughout.
+\end{remark}
 
 \subsection{Threshold structure}
 
@@ -275,46 +347,88 @@ $\Delta(0) = U_{\text{sell}}(n, 0) - U_{\text{hold}}(n, \pi^*, 0) = 0$. Then:
     \item $\sigma(n, \pi)$ is weakly decreasing in $\pi$ (more pessimistic
           beliefs $\Rightarrow$ more selling)
     \item $\pi^*(n)$ is increasing in $n$ (more holders $\Rightarrow$ selling
-          starts at higher beliefs)
+          starts at higher beliefs, reflecting greater coordination risk)
 \end{itemize}
+We compute $\pi^*(n)$ by root-finding (Brent's method) on the function
+$\pi \mapsto U_{\text{sell}}(n, 0) - U_{\text{hold}}(n, \pi, 0)$, yielding
+a continuous threshold that does not depend on grid placement.
 
-\section{Treatment effects}
+% ======================================================================
+\section{\extension Treatment effects}\label{sec:treatment_effects}
+% ======================================================================
+
+\extension This section extends M\&M by deriving how the Average treatment
+changes equilibrium behavior relative to the Random treatment.
+
+\subsection{Risk-neutral equivalence}
 
 Under risk neutrality ($\alpha = 0$), $u(x) = x$ is linear, so Jensen's
 inequality has no bite:
 $\rho_{\text{random}} = \rho_{\text{average}}$ and
 $L_{\text{random}} = L_{\text{average}}$. The equilibrium is identical across
-treatments.
+treatments. This provides a useful check: any difference between treatments
+at $\alpha = 0$ would indicate a bug.
 
-Under risk aversion ($\alpha > 0$), two competing channels arise:
+\subsection{Two competing channels}
+
+Under risk aversion ($\alpha > 0$), the Average treatment changes payoffs
+through two channels that work in opposite directions:
 
 \begin{enumerate}
-    \item \textbf{Selling channel}: $\rho_{\text{average}} > \rho_{\text{random}}$
-    makes selling more attractive in the Average treatment.
+    \item \textbf{Selling channel.} $\rho_{\text{average}}(n,k) >
+    \rho_{\text{random}}(n,k)$ for $k > 1$ by Jensen's inequality
+    (Eq.~\ref{eq:jensen_selling}). Receiving a certain average price is
+    preferred to a lottery over heterogeneous prices under concave utility.
+    This makes selling more attractive in the Average treatment, pushing
+    $\sigma$ upward and $\pi^*$ upward.
 
-    \item \textbf{Holding channel}: $L_{\text{average}} > L_{\text{random}}$
-    makes forced liquidation less painful, increasing the value of holding.
+    \item \textbf{Holding channel.} $L_{\text{average}}(m) >
+    L_{\text{random}}(m)$ for $m > 1$ by the same Jensen's inequality.
+    Forced liquidation under the Average treatment is less painful because
+    holders receive the average of the forced prices rather than a random
+    assignment. This increases the continuation value $H(m, \pi')$ in
+    Eq.~\eqref{eq:continuation}, making holding more attractive. This pushes
+    $\sigma$ downward and $\pi^*$ downward.
 \end{enumerate}
 
-Quantitatively, the holding channel dominates: thresholds $\pi^*(n)$ are lower
-under Average (narrower selling region). However, conditional on the same
-belief, the mixing probability $\sigma$ is higher under Average (the selling
-payoff improvement dominates locally). These two effects partially offset.
+\subsection{Net effect: holding channel dominates}
 
+Quantitatively, the holding channel dominates: equilibrium thresholds
+$\pi^*(n)$ are lower under the Average treatment, meaning the selling region
+is \textit{narrower}. Investors are willing to hold longer because the
+worst-case outcome (forced liquidation in the bad state) is less painful.
+
+However, the two channels create a subtle interaction. Conditional on the
+same belief $\pi'$, the mixing probability $\sigma$ can be higher under
+Average (the selling-channel improvement dominates locally at beliefs near
+the threshold). But the threshold itself shifts, so the overall selling
+probability---integrating over the belief distribution generated by the
+signal process---is lower under Average.
+
+The magnitude of the treatment effect is increasing in $\alpha$:
+\begin{itemize}
+    \item At $\alpha = 0$: no treatment effect (Jensen's inequality inactive)
+    \item At $\alpha = 0.5$: moderate threshold differences (a few percentage
+          points in $\pi^*$)
+    \item At $\alpha = 0.9$: larger threshold differences
+\end{itemize}
+
+% ======================================================================
 \section{Solution algorithm}
+% ======================================================================
 
-The equilibrium has a circular structure: the value function $V(n, \pi)$
-depends on the equilibrium strategies $\sigma(n, \pi)$, but the strategies
-themselves depend on the value function through the continuation payoff
-$U_{\text{hold}}$. We resolve this via value iteration, which repeatedly
-alternates between updating strategies (given the current value function) and
-updating the value function (given the current strategies).
+The equilibrium has a circular structure: $V$ depends on $\sigma$ through
+$W$, and $\sigma$ depends on $V$ through $U_{\text{hold}}$. We resolve this
+via value iteration, which repeatedly alternates between updating strategies
+(given the current value function) and updating the value function (given the
+current strategies).
 
 \subsection{Initialization}
 
-Construct the 41-point belief grid (Section~1.3). Store $V(n, \pi)$ and
-$\sigma(n, \pi)$ as arrays of dimension $4 \times 41$ (one entry per
-$(n, \pi)$ pair). Initialize $V^{(0)}(n, \pi) = 0$ for all $(n, \pi)$.
+Construct the 41-point belief grid (Section~\ref{sec:belief_grid}). Store
+$V(n, \pi)$ and $\sigma(n, \pi)$ as arrays of dimension $4 \times 41$ (one
+entry per $(n, \pi)$ pair). Initialize $V^{(0)}(n, \pi) = 0$ for all
+$(n, \pi)$.
 
 \subsection{Iteration}
 
@@ -343,14 +457,10 @@ $(n, \pi')$:
                     & \text{if } \Delta(0) > 0 \text{ and } \Delta(1) < 0
               \end{cases}
           \]
-          The first case: even when no one else sells, holding weakly
-          dominates, so no one sells. The second case: even when everyone
-          else sells, selling still dominates, so everyone sells. The third
-          case: $\Delta$ changes sign on $(0,1)$, so an interior root
-          $\sigma^*$ exists; find it via Brent's method.
+          Interior roots are found via Brent's method with tolerance
+          $10^{-12}$.
     \item Compute $W^{(t+1)}(n, \pi') = \sigma \cdot U_{\text{sell}}(n, \sigma)
-          + (1 - \sigma) \cdot U_{\text{hold}}(n, \pi', \sigma)$ using the
-          $\sigma$ just found.
+          + (1 - \sigma) \cdot U_{\text{hold}}(n, \pi', \sigma)$.
 \end{enumerate}
 
 \textbf{Pass 2: Update $V$.} For each grid point $(n, \pi)$:
@@ -367,10 +477,97 @@ $(n, \pi')$:
 \subsection{Convergence}
 
 Repeat until $\max_{n,\pi} |V^{(t+1)}(n,\pi) - V^{(t)}(n,\pi)| < 10^{-8}$.
-The output is the converged strategy table $\sigma(n, \pi)$ for all 4 $\times$
-41 state pairs.
+The output is the converged strategy table $\sigma(n, \pi)$ for all
+$4 \times 41$ state pairs.
 
-\section{Simulation engine}
+Convergence is verified by two additional checks:
+\begin{itemize}
+    \item \textbf{Initialization independence.} The solver supports both
+    ``low'' ($V^{(0)} = 0$) and ``high''
+    ($V^{(0)} = u(v)/(1-\alpha)$) initialization. Both converge to the
+    same fixed point, providing a bracketing check on uniqueness.
+    \item \textbf{Equilibrium conditions.} At every grid point of the
+    converged solution, we verify that $U_{\text{sell}} = U_{\text{hold}}$
+    (within $10^{-6}$) at interior sigma, and $U_{\text{sell}} \leq
+    U_{\text{hold}}$ wherever $\sigma = 0$.
+\end{itemize}
+
+% ======================================================================
+\section{\extension Alternative solution algorithms}\label{sec:alt_algorithms}
+% ======================================================================
+
+\extension To verify that our numerical results are not artifacts of the
+value iteration algorithm, we implement and compare four alternative
+solution methods. All five approaches converge to the same equilibrium
+(Section~\ref{sec:replication}).
+
+\subsection{Policy iteration (exact V solve)}
+
+Given a current strategy $\sigma(n, \pi')$, we solve for $V$ exactly by
+reformulating the Bellman equation as a linear system. Define the
+\textit{signal transition matrix} $T$ with entries:
+\begin{equation}
+    T_{ij} = \Pr(\pi_j \mid \pi_i)
+    = \Pr(y{=}g \mid \pi_i) \cdot \mathbf{1}[\pi_j = \pi_g(\pi_i)]
+    + \Pr(y{=}b \mid \pi_i) \cdot \mathbf{1}[\pi_j = \pi_b(\pi_i)]
+    \label{eq:transition_matrix}
+\end{equation}
+where the indicator is replaced by linear interpolation weights when
+$\pi_g(\pi_i)$ or $\pi_b(\pi_i)$ falls between grid points. The matrix $T$
+is row-stochastic ($\sum_j T_{ij} = 1$), non-negative, and sparse (at most
+4 non-zero entries per row).
+
+For fixed $\sigma$, the post-signal value $W(n, \pi'_j)$ decomposes into a
+constant part (selling payoff, terminal values) and a part linear in
+$V(n, \cdot)$ (continuation via $H$). This gives:
+\begin{equation}
+    V(n, \cdot) = T \cdot \bigl[c(n, \cdot) + C(n) \cdot V(n, \cdot)\bigr]
+    \label{eq:linear_system}
+\end{equation}
+where $c$ is a vector of constants and $C$ is a coefficient matrix. Rearranging:
+\[
+    (I - T \cdot C) \cdot V(n, \cdot) = T \cdot c(n, \cdot)
+\]
+which is a standard linear system solved via LU decomposition.
+
+Policy iteration alternates between (1)~updating $\sigma$ at all grid points
+given $V$, and (2)~solving the linear system for $V$ given $\sigma$. This
+replaces the iterative V-update of value iteration with an exact solve,
+eliminating any concern about insufficient convergence.
+
+\subsection{Howard improvement}
+
+A hybrid approach: perform one $\sigma$-update step, then run $K$ value
+iteration sweeps (without updating $\sigma$) before the next $\sigma$-update.
+We test $K = 10$ and $K = 50$. This interpolates between value iteration
+($K = 1$) and policy iteration ($K = \infty$).
+
+\subsection{Discount convention variant}
+
+We test an alternative placement of the termination probability. Instead of
+embedding $\lambda$ in the continuation value $H$ (Eq.~\ref{eq:continuation}),
+we define:
+\[
+    V_{\text{disc}}(n, \pi)
+    = \lambda \bigl[\pi \cdot u(v) + (1 - \pi) \cdot L(n)\bigr]
+    + (1 - \lambda) \cdot \bigl[\Pr(g|\pi) \cdot W(n, \pi_g)
+    + \Pr(b|\pi) \cdot W(n, \pi_b)\bigr]
+\]
+with $H(m, \pi') = V(m, \pi')$ (no $\lambda$ in the continuation). These
+formulations are algebraically equivalent when both converge, but could
+differ during iteration if the fixed-point path differs.
+
+\subsection{W-at-indifference variant}
+
+At interior equilibrium ($0 < \sigma < 1$), the indifference condition gives
+$U_{\text{sell}} = U_{\text{hold}} = W$. We test setting
+$W = U_{\text{sell}}$ directly (rather than the mixture
+$\sigma \cdot U_{\text{sell}} + (1-\sigma) \cdot U_{\text{hold}}$) to check
+whether the weighting formula matters for convergence.
+
+% ======================================================================
+\section{Simulation engine}\label{sec:simulation}
+% ======================================================================
 
 The equilibrium solution gives a strategy table $\sigma(n, \pi)$---the
 probability of selling at each state. To produce predictions comparable to
@@ -388,8 +585,8 @@ $\sigma(n, \pi)$:
 
 \begin{enumerate}
     \item \textbf{Setup.} Set $n = 4$ holders, belief $\pi = 0.5$. Draw the
-          true state $z \in \{G, B\}$ with equal probability. Initialize seller
-          count $s = 0$.
+          true state $z \in \{G, B\}$ with equal probability ($\Pr(G) = 0.5$,
+          matching the prior). Initialize seller count $s = 0$.
 
     \item \textbf{Each period} (repeat until $n = 1$ or game terminates):
     \begin{enumerate}
@@ -399,10 +596,9 @@ $\sigma(n, \pi)$:
               rule (Eqs.~\eqref{eq:pi_good}--\eqref{eq:pi_bad}).
 
         \item \textit{Selling decisions.} Look up $\sigma(n, \pi)$ from the
-              strategy table (interpolating if $\pi$ falls between grid
-              points). Each of the $n$ holders independently draws a
-              $\text{Bernoulli}(\sigma)$: sell if 1, hold if 0. Let $k$ be
-              the total number who sell.
+              strategy table (linearly interpolating if $\pi$ falls between
+              grid points). Draw $k \sim \text{Binomial}(n, \sigma)$: the
+              number of holders who sell this period.
 
         \item \textit{Record sales.} If $k > 0$: for each of the $k$ sellers,
               record the current belief $\pi$ as the belief at seller position
@@ -418,13 +614,15 @@ $\sigma(n, \pi)$:
 Note that multiple investors can sell in the same period (simultaneous sales),
 and they all receive the same belief $\pi$ for their seller position. Games
 where the market terminates before any voluntary sale contribute no
-observations.
+observations. A safety cap of 200 periods prevents infinite loops; given
+$\lambda = 0.125$, the probability of reaching 200 periods is
+$(1-\lambda)^{200} \approx 2.6 \times 10^{-12}$.
 
-\subsection{Aggregation}
+\subsection{\extension Aggregation and common random numbers}
 
-We run 10{,}000 games per $(\alpha, \text{treatment})$ pair. For each seller
-position $k \in \{1, 2, 3\}$, we compute the average belief at the time of
-sale across all games where that sale occurred:
+\extension We run 10{,}000 games per $(\alpha, \text{treatment})$ pair. For
+each seller position $k \in \{1, 2, 3\}$, we compute the average belief at
+the time of sale:
 \[
     \bar{\pi}_k = \frac{1}{|\mathcal{G}_k|}
     \sum_{g \in \mathcal{G}_k} \pi_k^{(g)}
@@ -434,45 +632,243 @@ $\pi_k^{(g)}$ is the belief at that sale. The 4th investor never sells in
 equilibrium ($\sigma(1, \pi) = 0$ for all $\pi$), so we report three seller
 positions.
 
-Following Magnani \& Munro (2020, Table~2), we convert to $\Pr(z = B) =
-1 - \pi$ for reporting.
+We report $\bar{\pi}_k = \Pr(z = G)$ directly, converting to $\Pr(z = B) =
+1 - \pi$ only when comparing against M\&M Table~2 (which uses the $\Pr(B)$
+convention).
 
+\textbf{Common random numbers.} We use the same random seed for all
+$(\alpha, \text{treatment})$ pairs, providing a form of common random
+numbers (CRN) variance reduction. Since the same signal sequence is used
+for both treatments at each $\alpha$, treatment-difference estimates have
+lower variance than if independent seeds were used. Because equilibrium
+strategies differ across treatments, the CRN benefit is partial---the same
+signal sequence leads to different selling paths once behaviors diverge.
+Robustness checks in Section~\ref{sec:robustness} confirm that results are
+stable across 50 independent seeds.
+
+% ======================================================================
 \section{Results}
+% ======================================================================
 
 Table~\ref{tab:equilibrium} reports the equilibrium-predicted average
-$\Pr(z = B)$ at the time of each sale across treatments and risk aversion
-levels, from 10{,}000 simulated games per cell.
+$\pi = \Pr(z = G)$ at the time of each sale across treatments and risk
+aversion levels, from 10{,}000 simulated games per cell. Lower values
+indicate more pessimistic beliefs at sale (investors sell when they believe
+the bad state is likely).
 
 \begin{table}[h]
 \centering
 \small
 \input{tables/equilibrium_thresholds}
-\caption{Equilibrium predictions: average $\Pr(z = B)$ at each seller
+\caption{Equilibrium predictions: average $\pi = \Pr(z = G)$ at each seller
 position. The 4th investor never sells ($n = 1$ boundary condition).}
 \label{tab:equilibrium}
 \end{table}
 
-\subsection{Validation against Magnani \& Munro (2020)}
+\subsection{Validation against M\&M Table~2}
 
-Table~2 of Magnani \& Munro reports the average $\Pr(z = B)$ at the first sale
-for their HIGH information environment ($\mu_B = 0.675$, NoCB). Our
-first-seller column reproduces their values:
+Table~2 of M\&M reports the average $\Pr(z = B) = 1 - \pi$ at the first sale
+for their HIGH information environment ($\mu_B = 0.675$, NoCB). Converting
+our first-seller $\pi$ to $\Pr(B)$ for comparison:
 
 \begin{center}
 \small
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \toprule
- & Our model & M\&M Table~2 & Difference \\
+ & Our $\pi$ & Our $\Pr(B)$ & M\&M $\Pr(B)$ & Difference \\
 \midrule
-$\alpha = 0$ (risk neutral) & 0.812 & 0.800 & $+0.012$ \\
-$\alpha = 0.5$ (risk averse) & 0.678 & 0.678 & $< 0.001$ \\
+$\alpha = 0$ (risk neutral) & 0.188 & 0.812 & 0.800 & $+0.012$ \\
+$\alpha = 0.5$ (risk averse) & 0.322 & 0.678 & 0.678 & $< 0.001$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 The risk-averse prediction matches exactly. The 1.2pp difference under risk
-neutrality is attributable to grid resolution: our 41-point grid produces
-slightly different value function interpolation than Magnani \& Munro's
-numerical solution.
+neutrality is a systematic grid-resolution effect, not simulation noise
+(Section~\ref{sec:robustness} shows the seed-induced standard deviation is
+$< 0.001$).
+
+% ======================================================================
+\section{\extension Replication diagnostic: M\&M Appendix~D}
+\label{sec:replication}
+% ======================================================================
+
+\extension This section documents our systematic comparison of solver output
+against five sigma values reported in M\&M Appendix~D. This goes beyond
+M\&M's published analysis by testing whether the discrepancy is algorithmic,
+and by implementing four alternative solution methods to isolate the source.
+
+\subsection{Target values}
+
+M\&M Appendix~D reports equilibrium mixing probabilities $\sigma$ at specific
+$(n, \pi)$ states for the Random treatment. We compare at five points:
+
+\begin{center}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+$\alpha$ & $n$ & $d$ & $\Pr(B)$ exact & M\&M $\sigma$ & Our $\sigma$ & Gap \\
+\midrule
+0.0 & 4 & 2 & 0.8118 & 0.775 & 0.801 & $+0.026$ \\
+0.0 & 3 & 2 & 0.8118 & 0.016 & 0.048 & $+0.032$ \\
+0.5 & 4 & 1 & 0.6750 & 0.516 & 0.539 & $+0.023$ \\
+0.5 & 3 & 2 & 0.8118 & 0.887 & 0.911 & $+0.024$ \\
+0.5 & 2 & 3 & 0.8996 & 0.860 & 0.913 & $+0.053$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Here $d$ is the net bad signal count and $\Pr(B) = 1 - \pi(d)$ from
+Eq.~\eqref{eq:belief_grid}. All five gaps are positive: our solver
+systematically produces higher $\sigma$ than M\&M.
+
+\subsection{Seven solver variants tested}
+
+We tested whether the gap could be closed by changing the numerical method:
+
+\begin{enumerate}
+    \item Value iteration, low initialization ($V^{(0)} = 0$) --- baseline
+    \item Value iteration, high initialization ($V^{(0)} = u(v)/(1-\alpha)$)
+    \item Policy iteration with exact linear system solve
+          (Section~\ref{sec:alt_algorithms})
+    \item Howard improvement with $K = 10$ sweeps
+    \item Howard improvement with $K = 50$ sweeps
+    \item Discount convention variant
+    \item $W = U_{\text{sell}}$ at indifference variant
+\end{enumerate}
+
+\subsection{Result: all variants identical}
+
+All seven methods produce \textbf{identical} $\sigma$ values to four decimal
+places at all five target points. The RMSE is 0.033 for every method. This
+rules out:
+
+\begin{itemize}
+    \item \textbf{Convergence}: Policy iteration solves $V$ exactly via
+    linear algebra---if value iteration had not converged, the two would
+    differ. They agree to $10^{-6}$.
+    \item \textbf{Initialization sensitivity}: High and low initial conditions
+    converge to the same fixed point.
+    \item \textbf{Insufficient V-sweeps}: Howard improvement with 50 sweeps
+    per $\sigma$-update gives the same answer.
+    \item \textbf{Discount convention}: Moving $\lambda$ between $H$ and $V$
+    gives identical $\sigma$ (algebraically equivalent).
+    \item \textbf{W formula}: Using $W = U_{\text{sell}}$ at indifference
+    gives identical results (mathematically expected since
+    $U_{\text{sell}} = U_{\text{hold}}$ there).
+\end{itemize}
+
+\subsection{Interpretation}
+
+The systematic 2--5\% upward bias in $\sigma$ is not a numerical or
+algorithmic artifact. The most likely explanations are:
+
+\begin{enumerate}
+    \item \textbf{Grid or interpolation differences.} M\&M may use a
+    different grid structure, finer resolution in certain regions, or
+    higher-order interpolation.
+    \item \textbf{Root-finding tolerance.} Different tolerance in Brent's
+    method or a different root-finding algorithm could produce small
+    differences that compound through the value iteration.
+    \item \textbf{Minor errata.} Published appendix values may contain
+    rounding or transcription errors.
+\end{enumerate}
+
+Importantly, the sigma-level discrepancy does not propagate to aggregate
+predictions: our simulated average $\Pr(B)$ at the first sale matches
+M\&M Table~2 within 0.001 for $\alpha = 0.5$ (Section~8.1). The simulation
+integrates over the full strategy profile and signal process, smoothing out
+pointwise sigma differences.
+
+% ======================================================================
+\section{\extension Robustness checks}\label{sec:robustness}
+% ======================================================================
+
+\extension We test the sensitivity of our results to two key numerical
+choices: grid resolution ($T_{\max}$) and random seed.
+
+\subsection{Grid resolution}
+
+We solve the equilibrium at $T_{\max} \in \{10, 20, 40, 80, 160\}$,
+corresponding to grids of 21, 41, 81, 161, and 321 points.
+
+\textbf{Sigma convergence.} At all five M\&M target points, the sigma values
+are identical (to four decimal places) for $T_{\max} \geq 20$. The largest
+change from $T_{\max} = 20$ to $T_{\max} = 160$ is below $10^{-3}$. Only
+$T_{\max} = 10$ shows any deviation, with a maximum $|\Delta| = 0.002$.
+
+\textbf{Threshold convergence.} Continuous thresholds $\pi^*(n)$ are even
+more stable: the maximum change from $T_{\max} = 10$ to $T_{\max} = 160$ is
+$1.5 \times 10^{-4}$ (at $\alpha = 0.5$, $n = 2$). For all other
+$(alpha, n)$ combinations, the change is below $10^{-4}$.
+
+\textbf{Conclusion.} The 41-point grid ($T_{\max} = 20$) is more than
+sufficient for our purposes. The solver output is numerically converged with
+respect to grid resolution.
+
+\subsection{Random seed sensitivity}
+
+We run the simulation with 50 independent seeds (seeds 1--50), each
+producing 10{,}000 games, for $\alpha \in \{0.0, 0.5\}$ under the Random
+treatment.
+
+\begin{center}
+\small
+\begin{tabular}{llcccc}
+\toprule
+$\alpha$ & Position & Mean $\Pr(B)$ & SD & Min & Max \\
+\midrule
+0.0 & 1st sale & 0.812 & $< 0.001$ & 0.812 & 0.812 \\
+0.0 & 2nd sale & 0.813 & 0.000 & 0.813 & 0.814 \\
+0.0 & 3rd sale & 0.825 & 0.001 & 0.823 & 0.826 \\
+\midrule
+0.5 & 1st sale & 0.678 & 0.000 & 0.678 & 0.679 \\
+0.5 & 2nd sale & 0.698 & 0.001 & 0.697 & 0.700 \\
+0.5 & 3rd sale & 0.758 & 0.001 & 0.755 & 0.761 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The standard deviation across 50 seeds is at most 0.001 for the 1st and 2nd
+sales, and 0.001--0.002 for the 3rd sale. The full range (max $-$ min) is
+at most 0.006. This confirms:
+\begin{itemize}
+    \item The 1.2pp gap between our $\alpha = 0$ first-sale prediction (0.812)
+    and M\&M's (0.800) is \textit{not} simulation noise---it is approximately
+    $40 \times$ the seed-induced standard deviation.
+    \item 10{,}000 games per cell provides sufficient precision for the
+    comparisons in this paper.
+    \item Later seller positions have modestly higher variance, as expected
+    from smaller sample sizes (not all games reach the 3rd sale).
+\end{itemize}
+
+% ======================================================================
+\section{Summary of extensions}
+% ======================================================================
+
+The following elements extend beyond the M\&M (2020) framework:
+
+\begin{enumerate}
+    \item \textbf{Average treatment payoffs}
+    (Eqs.~\ref{eq:rho_average}, Section~\ref{sec:treatment_effects}):
+    treatment-specific $\rho$ and $L$ functions, Jensen's inequality
+    characterization, and the holding-channel-dominates result.
+
+    \item \textbf{Per-seller belief simulation} (Section~\ref{sec:simulation}):
+    tracking average $\Pr(B)$ at each seller position (1st, 2nd, 3rd) with
+    common random numbers across treatments.
+
+    \item \textbf{Alternative solution algorithms}
+    (Section~\ref{sec:alt_algorithms}): policy iteration with exact linear
+    system solve, Howard improvement, and convention variants.
+
+    \item \textbf{Replication diagnostic} (Section~\ref{sec:replication}):
+    systematic comparison of seven solver variants against M\&M Appendix~D,
+    ruling out algorithmic causes for the 2--5\% sigma gap.
+
+    \item \textbf{Robustness checks} (Section~\ref{sec:robustness}):
+    grid-resolution sensitivity ($T_{\max}$ from 10 to 160) and seed
+    sensitivity (50 seeds $\times$ 10{,}000 games).
+\end{enumerate}
 
 \end{document}

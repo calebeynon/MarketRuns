@@ -13,7 +13,7 @@ from analysis.analysis.equilibrium_model import (
     MU_G,
     solve_equilibrium,
 )
-from analysis.analysis.mm_alternative_solvers import (
+from analysis.analysis.robustness.mm_alternative_solvers import (
     solve_discount_variant,
     solve_howard,
     solve_policy_iteration,

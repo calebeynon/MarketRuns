@@ -1,6 +1,6 @@
 """
-Purpose: Generate LaTeX table of equilibrium predictions — average P(Bad)
-         at each seller position, matching M&M (2020) Table 2 format.
+Purpose: Generate LaTeX table of equilibrium predictions — average P(Good)
+         at each seller position from simulated equilibrium strategies.
 Author: Claude
 Date: 2026-04-06
 """
@@ -21,8 +21,6 @@ def main():
     """Read simulation data and generate LaTeX table."""
     df = pd.read_csv(INPUT_CSV)
     df = df[df["n"] > 1]  # n=1 never sells, omit from table
-    # Convert avg_pi_at_sale (P(Good)) to P(Bad) for M&M convention
-    df["avg_pbad_at_sale"] = 1 - df["avg_pi_at_sale"]
     latex = build_latex_table(df)
     OUTPUT_TEX.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_TEX.write_text(latex)
@@ -63,7 +61,7 @@ def _format_row(df, alpha):
     for treatment in ["random", "average"]:
         # n=4 → 1st seller, n=3 → 2nd, n=2 → 3rd
         for n in [4, 3, 2]:
-            val = _get_avg_pbad(df, alpha, treatment, n)
+            val = _get_avg_pi(df, alpha, treatment, n)
             cells.append(_format_value(val))
     return " & ".join(cells) + r" \\"
 
@@ -75,15 +73,15 @@ def _format_alpha(alpha):
     return f"{alpha:.1f}"
 
 
-def _get_avg_pbad(df, alpha, treatment, n):
-    """Look up average P(Bad) at sale for given parameters."""
+def _get_avg_pi(df, alpha, treatment, n):
+    """Look up average P(Good) at sale for given parameters."""
     mask = ((df["alpha"] == alpha) & (df["treatment"] == treatment)
             & (df["n"] == n))
-    return df.loc[mask, "avg_pbad_at_sale"].values[0]
+    return df.loc[mask, "avg_pi_at_sale"].values[0]
 
 
 def _format_value(val):
-    """Format a P(Bad) value for the table."""
+    """Format a P(Good) value for the table."""
     if pd.isna(val):
         return "---"
     return f"{val:.3f}"
@@ -97,8 +95,8 @@ def _table_footer():
         r"\par",
         r"\vspace{0.5em}",
         r"\footnotesize",
-        (r"\textit{Note:} Each cell reports the average $\pi$ "
-         r"(probability of bad state) at the time of the $k$th sale, "
+        (r"\textit{Note:} Each cell reports the average $\pi = \Pr(z = G)$ "
+         r"at the time of the $k$th sale, "
          r"from 10{,}000 simulated games using equilibrium strategies."),
         (r"At $\alpha = 0$ (risk neutral), predictions are identical "
          r"across treatments."),

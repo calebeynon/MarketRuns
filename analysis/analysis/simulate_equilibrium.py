@@ -27,7 +27,7 @@ OUTPUT_CSV = Path("datastore/derived/equilibrium_thresholds.csv")
 ALPHA_VALUES = [round(a * 0.1, 1) for a in range(10)]  # 0.0 to 0.9
 TREATMENTS = ["random", "average"]
 N_SIMULATIONS = 10_000
-T_MAX = 20  # belief grid depth (606 points, sufficient resolution)
+T_MAX = 20  # belief grid depth (41 points, converged per robustness checks)
 SEED = 42
 
 
@@ -171,15 +171,15 @@ def _print_validation(df):
         t_a = av[av["n"] == n]["threshold_pi"].values[0]
         match = "OK" if abs(t_r - t_a) < 0.01 else "MISMATCH"
         print(f"  n={n}: random={t_r:.4f}, average={t_a:.4f} [{match}]")
-    # Validate against M&M Table 2 (HIGH NoCB)
-    print("\nValidation: avg P(Bad) at 1st sale vs M&M Table 2")
-    for alpha, mm_val in [(0.0, 0.800), (0.5, 0.678)]:
+    # Validate against M&M Table 2 (HIGH NoCB) — convert to P(Bad) for comparison
+    print("\nValidation: avg P(Bad) at 1st sale vs M&M Table 2 (P(Bad) = 1 - pi)")
+    for alpha, mm_pbad in [(0.0, 0.800), (0.5, 0.678)]:
         row = df[(df["alpha"] == alpha) & (df["treatment"] == "random")
                  & (df["n"] == 4)]
         if len(row) > 0:
             our_pbad = 1 - row["avg_pi_at_sale"].values[0]
-            match = "OK" if abs(our_pbad - mm_val) < 0.02 else "CHECK"
-            print(f"  alpha={alpha}: ours={our_pbad:.3f}, M&M={mm_val:.3f} [{match}]")
+            match = "OK" if abs(our_pbad - mm_pbad) < 0.02 else "CHECK"
+            print(f"  alpha={alpha}: ours={our_pbad:.3f}, M&M={mm_pbad:.3f} [{match}]")
 
 
 # %%

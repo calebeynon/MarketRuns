@@ -17,7 +17,7 @@ from analysis.analysis.equilibrium_model import (
     solve_equilibrium,
     _update_bad,
 )
-from analysis.analysis.mm_alternative_solvers import (
+from analysis.analysis.robustness.mm_alternative_solvers import (
     solve_policy_iteration,
     solve_howard,
     solve_discount_variant,
