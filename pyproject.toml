@@ -24,6 +24,11 @@ allow-direct-references = true
 [tool.hatch.build.targets.wheel]
 packages = ["src/marketruns"]
 
+[tool.pytest.ini_options]
+markers = [
+    "integration: tests that read real data files from datastore/",
+]
+
 [dependency-groups]
 dev = [
     "pandas>=2.3.3",

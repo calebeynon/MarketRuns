@@ -1,5 +1,5 @@
 """
-Purpose: Unit and integration tests for build_group_round_timing_dataset.py
+Purpose: Integration tests for build_group_round_timing_dataset.py (requires datastore)
 Author: Claude Code
 Date: 2025-01-18
 """
@@ -13,12 +13,11 @@ from analysis.derived.build_group_round_timing_dataset import (
     DATASTORE,
     SEGMENTS,
     SESSIONS,
-    get_sellers_with_timing,
     load_segment_data,
 )
 
 # =====
-# File paths for integration tests
+# File paths and test configuration
 # =====
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DERIVED_CSV = PROJECT_ROOT / "datastore" / "derived" / "group_round_timing.csv"
@@ -33,139 +32,7 @@ skip_no_datastore = pytest.mark.skipif(
 
 
 # =====
-# Test get_sellers_with_timing
-# =====
-def test_no_sales():
-    """No one sold - should return empty list."""
-    df = pd.DataFrame({
-        "player.sold": [0, 0, 0, 0],
-        "player.period_in_round": [1, 1, 1, 1],
-        "player.signal": [0.5, 0.5, 0.5, 0.5],
-        "player.id_in_group": [1, 2, 3, 4],
-        "participant.label": ["A", "B", "C", "D"],
-    })
-    result = get_sellers_with_timing(df)
-
-    assert result == []
-
-
-def test_single_sale_period_1():
-    """One person sells in period 1."""
-    df = pd.DataFrame({
-        "player.sold": [1, 0, 0, 0],
-        "player.period_in_round": [1, 1, 1, 1],
-        "player.signal": [0.5, 0.5, 0.5, 0.5],
-        "player.id_in_group": [1, 2, 3, 4],
-        "participant.label": ["A", "B", "C", "D"],
-    })
-    result = get_sellers_with_timing(df)
-
-    assert len(result) == 1
-    assert result[0]["period"] == 1
-    assert result[0]["label"] == "A"
-    assert result[0]["signal"] == 0.5
-
-
-def test_multiple_sales_same_period():
-    """Two sellers in the same period - should be ordered by label."""
-    df = pd.DataFrame({
-        "player.sold": [1, 1, 0, 0],
-        "player.period_in_round": [1, 1, 1, 1],
-        "player.signal": [0.5, 0.6, 0.5, 0.5],
-        "player.id_in_group": [1, 2, 3, 4],
-        "participant.label": ["B", "A", "C", "D"],
-    })
-    result = get_sellers_with_timing(df)
-
-    assert len(result) == 2
-    # First by period (both 1), then by label (A before B)
-    assert result[0]["label"] == "A"
-    assert result[1]["label"] == "B"
-
-
-def test_sales_different_periods():
-    """Sales across periods 1, 2, 3 - should be ordered by period."""
-    df = pd.DataFrame({
-        "player.sold": [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0],
-        "player.period_in_round": [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
-        "player.signal": [0.5] * 4 + [0.325] * 4 + [0.188] * 4 + [0.1] * 4,
-        "player.id_in_group": [1, 2, 3, 4] * 4,
-        "participant.label": ["A", "B", "C", "D"] * 4,
-    })
-    result = get_sellers_with_timing(df)
-
-    assert len(result) == 3
-    assert result[0]["period"] == 2
-    assert result[0]["label"] == "A"
-    assert result[1]["period"] == 3
-    assert result[1]["label"] == "B"
-    assert result[2]["period"] == 4
-    assert result[2]["label"] == "C"
-
-
-def test_all_four_sell():
-    """All 4 players sell across different periods."""
-    df = pd.DataFrame({
-        "player.sold": [1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1],
-        "player.period_in_round": [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
-        "player.signal": [0.5] * 4 + [0.325] * 4 + [0.188] * 4 + [0.1] * 4,
-        "player.id_in_group": [1, 2, 3, 4] * 4,
-        "participant.label": ["A", "B", "C", "D"] * 4,
-    })
-    result = get_sellers_with_timing(df)
-    assert len(result) == 4
-    expected = [("A", 1), ("B", 2), ("C", 3), ("D", 4)]
-    for seller, (label, period) in zip(result, expected):
-        assert seller["label"] == label
-        assert seller["period"] == period
-
-
-def test_seller_ordering_by_period():
-    """Verify sellers ordered by period first, then by label."""
-    df = pd.DataFrame({
-        # D sells in period 1, A and C sell in period 2
-        "player.sold": [0, 0, 0, 1, 1, 0, 1, 1],
-        "player.period_in_round": [1, 1, 1, 1, 2, 2, 2, 2],
-        "player.signal": [0.5, 0.5, 0.5, 0.5, 0.325, 0.325, 0.325, 0.325],
-        "player.id_in_group": [1, 2, 3, 4, 1, 2, 3, 4],
-        "participant.label": ["A", "B", "C", "D", "A", "B", "C", "D"],
-    })
-    result = get_sellers_with_timing(df)
-
-    assert len(result) == 3
-    # D first (period 1), then A and C (period 2, alphabetical)
-    assert result[0]["period"] == 1
-    assert result[0]["label"] == "D"
-    assert result[1]["period"] == 2
-    assert result[1]["label"] == "A"
-    assert result[2]["period"] == 2
-    assert result[2]["label"] == "C"
-
-
-def test_signal_values_preserved():
-    """Signal value at sale time is correctly captured for each seller."""
-    df = pd.DataFrame({
-        "player.sold": [1, 0, 0, 0, 1, 1, 0, 0],
-        "player.period_in_round": [1, 1, 1, 1, 2, 2, 2, 2],
-        "player.signal": [0.5, 0.5, 0.5, 0.5, 0.675, 0.675, 0.675, 0.675],
-        "player.id_in_group": [1, 2, 3, 4, 1, 2, 3, 4],
-        "participant.label": ["A", "B", "C", "D", "A", "B", "C", "D"],
-    })
-    result = get_sellers_with_timing(df)
-
-    assert len(result) == 2
-    # A sold in period 1 with signal 0.5
-    assert result[0]["period"] == 1
-    assert result[0]["label"] == "A"
-    assert result[0]["signal"] == 0.5
-    # B sold in period 2 with signal 0.675
-    assert result[1]["period"] == 2
-    assert result[1]["label"] == "B"
-    assert result[1]["signal"] == 0.675
-
-
-# =====
-# Integration test helpers
+# Test helpers
 # =====
 def _load_derived():
     """Load the derived group_round_timing dataset."""
@@ -206,7 +73,7 @@ def _get_derived_row(df, session, seg_num, group_id, round_num):
 
 
 # =====
-# Integration tests: row count
+# Row count
 # =====
 @skip_no_datastore
 def test_row_count_is_720():
@@ -216,7 +83,7 @@ def test_row_count_is_720():
 
 
 # =====
-# Integration tests: n_sellers accuracy against raw data
+# n_sellers accuracy against raw data
 # =====
 @skip_no_datastore
 def test_n_sellers_matches_raw_seg1():
@@ -275,7 +142,7 @@ def test_n_sellers_matches_raw_seg4():
 
 
 # =====
-# Integration tests: state accuracy against raw data
+# State accuracy against raw data
 # =====
 @skip_no_datastore
 @pytest.mark.parametrize("session,segment,seg_num,group_id,round_num", [
@@ -293,7 +160,7 @@ def test_state_matches_raw_data(session, segment, seg_num, group_id, round_num):
 
 
 # =====
-# Integration tests: treatment accuracy
+# Treatment accuracy
 # =====
 @skip_no_datastore
 def test_treatment_matches_session_mapping():
@@ -310,7 +177,7 @@ def test_treatment_matches_session_mapping():
 
 
 # =====
-# Integration tests: segment_num and round_num ranges
+# Segment and round ranges
 # =====
 @skip_no_datastore
 def test_segment_num_values():
@@ -338,7 +205,7 @@ def test_round_num_ranges_per_segment():
 
 
 # =====
-# Integration tests: global_group_id uniqueness
+# Global group ID uniqueness
 # =====
 @skip_no_datastore
 def test_global_group_id_has_96_unique_values():
@@ -358,7 +225,7 @@ def test_no_duplicate_group_round_pairs():
 
 
 # =====
-# Integration tests: n_sellers bounds
+# n_sellers bounds
 # =====
 @skip_no_datastore
 def test_n_sellers_bounded_0_to_4():
@@ -376,7 +243,7 @@ def test_n_sellers_no_nulls():
 
 
 # =====
-# Integration tests: no missing values in key columns
+# No missing values in key columns
 # =====
 @skip_no_datastore
 def test_no_missing_values_in_tobit_columns():
@@ -389,6 +256,54 @@ def test_no_missing_values_in_tobit_columns():
     for col in tobit_cols:
         assert col in df.columns, f"Column {col} not found"
         assert df[col].notna().all(), f"Column {col} has missing values"
+
+
+# =====
+# Welfare column in group_round_timing.csv
+# =====
+@skip_no_datastore
+def test_welfare_column_present():
+    """welfare column exists in the derived CSV."""
+    df = _load_derived()
+    assert "welfare" in df.columns
+
+
+@skip_no_datastore
+def test_welfare_values_in_range():
+    """All welfare values are between 0.25 and 1.0."""
+    df = _load_derived()
+    assert df["welfare"].min() >= 0.25
+    assert df["welfare"].max() <= 1.0
+
+
+@skip_no_datastore
+def test_welfare_no_nans():
+    """welfare column has no missing values."""
+    df = _load_derived()
+    assert df["welfare"].notna().all()
+
+
+@skip_no_datastore
+def test_welfare_state_0_all_one():
+    """All state=0 rows have welfare=1.0."""
+    df = _load_derived()
+    s0 = df[df["state"] == 0]
+    assert (s0["welfare"] == 1.0).all()
+
+
+@skip_no_datastore
+def test_welfare_matches_n_sellers():
+    """For state=1, welfare matches the expected lookup for each n_sellers."""
+    df = _load_derived()
+    expected = {0: 1.0, 1: 0.85, 2: 0.675, 3: 0.475, 4: 0.25}
+    s1 = df[df["state"] == 1]
+    for n, w in expected.items():
+        subset = s1[s1["n_sellers"] == n]
+        if len(subset) > 0:
+            assert subset["welfare"].unique() == pytest.approx([w]), (
+                f"n_sellers={n}: expected welfare={w}, "
+                f"got {subset['welfare'].unique()}"
+            )
 
 
 # %%
