@@ -88,6 +88,15 @@ def _run_simulations(alpha, treatment, result):
     return averages
 
 
+def _record_sales(n_sellers, seller_count, pi, sales):
+    """Append sale records and return updated seller_count."""
+    for _ in range(n_sellers):
+        seller_count += 1
+        if seller_count < N_INVESTORS:  # 4th holder never sells
+            sales.append((seller_count, pi))
+    return seller_count
+
+
 def _simulate_one_game(rng, grid, sigma_table):
     """Simulate one game, return list of (seller_position, pi) tuples."""
     n = N_INVESTORS
@@ -100,14 +109,9 @@ def _simulate_one_game(rng, grid, sigma_table):
         sig = _lookup_sigma(pi, n, grid, sigma_table)
         n_sellers = _count_sellers(rng, n, sig)
         if n_sellers > 0:
-            for _ in range(n_sellers):
-                seller_count += 1
-                if seller_count < N_INVESTORS:  # 4th holder never sells
-                    sales.append((seller_count, pi))
+            seller_count = _record_sales(n_sellers, seller_count, pi, sales)
             n -= n_sellers
-        if n <= 1:
-            break
-        if rng.random() < LAMBDA:
+        if n <= 1 or rng.random() < LAMBDA:
             break
     return sales
 

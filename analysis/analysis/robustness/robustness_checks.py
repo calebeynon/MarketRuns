@@ -67,34 +67,51 @@ def _net_bad_to_belief(d):
     return 1.0 / (1.0 + (MU_B / MU_G) ** d)
 
 
-def _print_sigma_sensitivity():
-    """Print sigma at M&M target points across t_max values."""
-    print("\nSigma at M&M target points:")
-    header = f"{'Target':<22}" + "".join(f"{'t=' + str(t):>10}" for t in T_MAX_VALUES)
-    print(header)
-    print("-" * (22 + 10 * len(T_MAX_VALUES)))
-
-    # Cache solver results by (alpha, t_max)
+def _build_solver_cache():
+    """Run solver for all (alpha, t_max) combos and cache results."""
     cache = {}
     for alpha in ALPHA_CASES:
         for t_max in T_MAX_VALUES:
             cache[(alpha, t_max)] = solve_equilibrium(
                 alpha=alpha, treatment=TREATMENT, t_max=t_max
             )
+    return cache
 
+
+def _sigma_row(alpha, n, d, cache):
+    """Format one sigma sensitivity row for a given M&M target."""
+    pi = _net_bad_to_belief(d)
+    sigmas = [
+        float(np.interp(pi, cache[(alpha, t)]["belief_grid"], cache[(alpha, t)]["sigma"][n]))
+        for t in T_MAX_VALUES
+    ]
+    max_delta = max(abs(s - sigmas[-1]) for s in sigmas[:-1])
+    row = f"{'a=' + str(alpha) + ', n=' + str(n) + ', d=' + str(d):<22}"
+    return row + "".join(f"{s:>10.4f}" for s in sigmas) + f"  max|Δ|={max_delta:.5f}"
+
+
+def _print_sigma_sensitivity():
+    """Print sigma at M&M target points across t_max values."""
+    print("\nSigma at M&M target points:")
+    header = f"{'Target':<22}" + "".join(f"{'t=' + str(t):>10}" for t in T_MAX_VALUES)
+    print(header)
+    print("-" * (22 + 10 * len(T_MAX_VALUES)))
+    cache = _build_solver_cache()
     for alpha, n, d in MM_TARGETS:
-        pi = _net_bad_to_belief(d)
-        label = f"a={alpha}, n={n}, d={d}"
-        sigmas = []
-        for t_max in T_MAX_VALUES:
-            result = cache[(alpha, t_max)]
-            sigma = float(np.interp(pi, result["belief_grid"], result["sigma"][n]))
-            sigmas.append(sigma)
-        row = f"{label:<22}" + "".join(f"{s:>10.4f}" for s in sigmas)
-        # Max change from finest grid
-        max_delta = max(abs(s - sigmas[-1]) for s in sigmas[:-1])
-        row += f"  max|Δ|={max_delta:.5f}"
-        print(row)
+        print(_sigma_row(alpha, n, d, cache))
+
+
+def _threshold_row(alpha, n):
+    """Format one threshold sensitivity row for a given (alpha, n) pair."""
+    thresholds = []
+    for t_max in T_MAX_VALUES:
+        result = solve_equilibrium(alpha=alpha, treatment=TREATMENT, t_max=t_max)
+        thresholds.append(
+            find_continuous_threshold(n, alpha, TREATMENT, result["v_table"], result["belief_grid"])
+        )
+    max_delta = max(abs(t - thresholds[-1]) for t in thresholds[:-1])
+    row = f"{'a=' + str(alpha) + ', n=' + str(n):<22}"
+    return row + "".join(f"{t:>10.5f}" for t in thresholds) + f"  max|Δ|={max_delta:.6f}"
 
 
 def _print_threshold_sensitivity():
@@ -103,23 +120,9 @@ def _print_threshold_sensitivity():
     header = f"{'(alpha, n)':<22}" + "".join(f"{'t=' + str(t):>10}" for t in T_MAX_VALUES)
     print(header)
     print("-" * (22 + 10 * len(T_MAX_VALUES)))
-
     for alpha in ALPHA_CASES:
         for n in range(2, N_INVESTORS + 1):
-            thresholds = []
-            for t_max in T_MAX_VALUES:
-                result = solve_equilibrium(
-                    alpha=alpha, treatment=TREATMENT, t_max=t_max
-                )
-                thr = find_continuous_threshold(
-                    n, alpha, TREATMENT, result["v_table"], result["belief_grid"]
-                )
-                thresholds.append(thr)
-            label = f"a={alpha}, n={n}"
-            row = f"{label:<22}" + "".join(f"{t:>10.5f}" for t in thresholds)
-            max_delta = max(abs(t - thresholds[-1]) for t in thresholds[:-1])
-            row += f"  max|Δ|={max_delta:.6f}"
-            print(row)
+            print(_threshold_row(alpha, n))
 
 
 # =====

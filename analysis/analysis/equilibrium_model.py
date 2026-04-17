@@ -177,6 +177,14 @@ def find_continuous_threshold(n, alpha, treatment, v_table, belief_grid):
 # =====
 # Main solver
 # =====
+def _init_v_table(n_beliefs, alpha, v_init):
+    """Initialize value table for value iteration."""
+    if v_init == "high":
+        v_start = crra_utility(FINAL_VALUE, alpha)
+        return {n: np.full(n_beliefs, v_start) for n in range(1, N_INVESTORS + 1)}
+    return {n: np.zeros(n_beliefs) for n in range(1, N_INVESTORS + 1)}
+
+
 def solve_equilibrium(alpha, treatment, t_max=40, tol=1e-8, max_iter=1000,
                       v_init="low"):
     """Solve for symmetric Markov-perfect equilibrium via value iteration.
@@ -185,15 +193,9 @@ def solve_equilibrium(alpha, treatment, t_max=40, tol=1e-8, max_iter=1000,
             "high" (V=u(v), converges from no-run direction).
     """
     belief_grid = build_belief_grid(t_max)
-    n_beliefs = len(belief_grid)
-    if v_init == "high":
-        v_start = crra_utility(FINAL_VALUE, alpha)
-        v_table = {n: np.full(n_beliefs, v_start)
-                   for n in range(1, N_INVESTORS + 1)}
-    else:
-        v_table = {n: np.zeros(n_beliefs) for n in range(1, N_INVESTORS + 1)}
-    sigma_table = {n: np.zeros(n_beliefs) for n in range(1, N_INVESTORS + 1)}
-    for iteration in range(max_iter):
+    v_table = _init_v_table(len(belief_grid), alpha, v_init)
+    sigma_table = {n: np.zeros(len(belief_grid)) for n in range(1, N_INVESTORS + 1)}
+    for _ in range(max_iter):
         v_old = {n: v_table[n].copy() for n in v_table}
         w_table = _compute_w_table(belief_grid, alpha, treatment, v_table, sigma_table)
         _update_v_table(belief_grid, v_table, w_table)
