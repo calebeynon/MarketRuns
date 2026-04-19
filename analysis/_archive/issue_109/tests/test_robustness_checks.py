@@ -5,11 +5,17 @@ Author: Claude
 Date: 2026-04-08
 """
 
+import sys
+from pathlib import Path
+
 import numpy as np
 import pytest
 
-from analysis.analysis.equilibrium_model import solve_equilibrium
-from analysis.analysis.robustness.robustness_checks import (
+# Archived: load the archived robustness module as a sibling package.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "analysis" / "robustness"))
+
+from analysis.analysis.equilibrium_model import solve_equilibrium  # noqa: E402
+from robustness_checks import (  # noqa: E402
     _net_bad_to_belief,
     _simulate_with_seed,
     MM_TARGETS,

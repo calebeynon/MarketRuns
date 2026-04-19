@@ -26,7 +26,9 @@ TOL_V <- 1e-6
 TOL_SIG <- 1e-7
 MAX_ITER <- 2000
 
-OUT_CSV <- "/Users/caleb/Research/issue_109_equilibrium_simulation/analysis/output/munro_style_our_prices.csv"
+# Resolve output path relative to the project root. Run from project root:
+#   Rscript analysis/_archive/issue_109/analysis/_munro_style_solver.R
+OUT_CSV <- "analysis/_archive/issue_109/output/munro_style_our_prices.csv"
 
 # Reachable-belief grid in P(Bad). Mirrors equilibrium_model.build_belief_grid
 # (axis there is P(Good)); we build directly in P(Bad) by iterating bad/good

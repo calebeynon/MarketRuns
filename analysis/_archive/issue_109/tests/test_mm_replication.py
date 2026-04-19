@@ -6,10 +6,17 @@ Author: Claude Code
 Date: 2026-04-07
 """
 
+import sys
+from pathlib import Path
+
 import numpy as np
 import pytest
 
-from analysis.analysis.equilibrium_model import (
+# Archived: ensure the archived robustness/ dir is on sys.path so we can
+# import its modules as siblings.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "analysis" / "robustness"))
+
+from analysis.analysis.equilibrium_model import (  # noqa: E402
     N_INVESTORS,
     build_belief_grid,
     compute_u_hold,
@@ -17,7 +24,7 @@ from analysis.analysis.equilibrium_model import (
     solve_equilibrium,
     _update_bad,
 )
-from analysis.analysis.robustness.mm_alternative_solvers import (
+from mm_alternative_solvers import (  # noqa: E402
     solve_policy_iteration,
     solve_howard,
     solve_discount_variant,

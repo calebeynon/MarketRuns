@@ -12,7 +12,7 @@ import pandas as pd
 from analysis.analysis.equilibrium_model import N_INVESTORS, solve_equilibrium
 
 # FILE PATHS
-OUTPUT_CSV = Path("analysis/output/full_sigmas.csv")
+OUTPUT_CSV = Path(__file__).resolve().parents[1] / "output" / "full_sigmas.csv"
 
 # SIMULATION PARAMETERS
 ALPHA_VALUES = [round(a * 0.1, 1) for a in range(10)]  # 0.0 to 0.9

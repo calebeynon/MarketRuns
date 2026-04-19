@@ -13,15 +13,15 @@ import numpy as np
 import pandas as pd
 import pytest
 
-# Make the driver's sibling imports (e.g., `import equilibrium_model`) resolvable.
+# Driver and its outputs live next to this test in the archive.
 DRIVER_DIR = Path(__file__).resolve().parents[1] / "analysis"
 sys.path.insert(0, str(DRIVER_DIR))
 
 import compare_our_prices_replication as driver  # noqa: E402
 
 # FILE PATHS
-REPO_ROOT = Path(__file__).resolve().parents[2]
-OUTPUT_DIR = REPO_ROOT / "analysis" / "output"
+ARCHIVE_ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_DIR = ARCHIVE_ROOT / "output"
 COMPARISON_CSV = OUTPUT_DIR / "cross_validation_our_prices.csv"
 EXPECTED_COLUMNS = [
     "n", "belief_p_bad", "belief_p_good",

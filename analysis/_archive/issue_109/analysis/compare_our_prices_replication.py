@@ -15,12 +15,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import equilibrium_model as em
+# Archived under analysis/_archive/issue_109/analysis/. Re-point sys.path so
+# the canonical package import resolves.
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(PROJECT_ROOT))
+from analysis.analysis import equilibrium_model as em  # noqa: E402
 
 # FILE PATHS
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-ANALYSIS_DIR = PROJECT_ROOT / "analysis"
-OUTPUT_DIR = ANALYSIS_DIR / "output"
+ARCHIVE_ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_DIR = ARCHIVE_ROOT / "output"
 PLOTS_DIR = OUTPUT_DIR / "plots"
 MUNRO_STYLE_CSV = OUTPUT_DIR / "munro_style_our_prices.csv"
 OUTPUT_CSV = OUTPUT_DIR / "cross_validation_our_prices.csv"

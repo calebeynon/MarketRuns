@@ -6,14 +6,21 @@ Author: Claude
 Date: 2026-04-07
 """
 
+import sys
+from pathlib import Path
+
 import numpy as np
 
-from analysis.analysis.equilibrium_model import (
+# Archived: ensure project root and local archive dir are on sys.path.
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from analysis.analysis.equilibrium_model import (  # noqa: E402
     MU_B,
     MU_G,
     solve_equilibrium,
 )
-from analysis.analysis.robustness.mm_alternative_solvers import (
+from mm_alternative_solvers import (  # noqa: E402
     solve_discount_variant,
     solve_howard,
     solve_policy_iteration,

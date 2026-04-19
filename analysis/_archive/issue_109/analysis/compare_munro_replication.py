@@ -17,14 +17,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import equilibrium_model as em
+# Archived under analysis/_archive/issue_109/analysis/. Make the project root
+# importable so we can use the canonical package path for equilibrium_model.
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(PROJECT_ROOT))
+from analysis.analysis import equilibrium_model as em  # noqa: E402
 
 # FILE PATHS
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-ANALYSIS_DIR = PROJECT_ROOT / "analysis"
-MUNRO_RA_SCRIPT = ANALYSIS_DIR / "analysis" / "munro_code" / "MixedStrat_low_RA.R"
-R_DRIVER = ANALYSIS_DIR / "analysis" / "_munro_driver.R"
-OUTPUT_DIR = ANALYSIS_DIR / "output"
+ARCHIVE_ROOT = Path(__file__).resolve().parents[1]
+MUNRO_RA_SCRIPT = ARCHIVE_ROOT / "analysis" / "munro_code" / "MixedStrat_low_RA.R"
+R_DRIVER = ARCHIVE_ROOT / "analysis" / "_munro_driver.R"
+OUTPUT_DIR = ARCHIVE_ROOT / "output"
 PLOTS_DIR = OUTPUT_DIR / "plots"
 MUNRO_CSV_TMP = Path("/tmp/munro_replication_out.csv")
 OUTPUT_CSV = OUTPUT_DIR / "munro_replication_comparison.csv"

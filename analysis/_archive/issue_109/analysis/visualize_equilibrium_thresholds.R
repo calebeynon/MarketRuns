@@ -8,7 +8,7 @@ library(ggplot2)
 
 # FILE PATHS
 INPUT_CSV <- "datastore/derived/equilibrium_thresholds.csv"
-OUTPUT_PATH <- "analysis/output/plots/equilibrium_thresholds.pdf"
+OUTPUT_PATH <- "analysis/_archive/issue_109/output/plots/equilibrium_thresholds.pdf"
 
 # Muted neutral palette for n values
 N_PALETTE <- c(
