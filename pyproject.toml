@@ -28,6 +28,7 @@ packages = ["src/marketruns"]
 markers = [
     "integration: tests that read real data files from datastore/",
 ]
+norecursedirs = ["analysis/_archive", ".venv", "node_modules"]
 
 [dependency-groups]
 dev = [
