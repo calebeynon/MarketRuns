@@ -169,3 +169,38 @@ After pulling Overleaf changes via rsync, check for `\includegraphics` and `\inp
 
 - **LaTeX tables**: Save to `analysis/output/tables/` (not `analysis/output/analysis/`)
 - **Plots**: Save to `analysis/output/plots/`
+
+## Wiki Maintenance
+
+The project wiki (`wiki/`) is the canonical knowledge base for AI agents and collaborators. **Whenever you push to `main` or open a PR targeting `main`, update the wiki to reflect any changes that affect what's documented there.**
+
+### When wiki updates are required
+
+Update, add, or delete wiki articles whenever the change touches:
+- **Data structure** — new/renamed/removed columns in derived datasets, new dataset builders, schema changes → `wiki/concepts/data-structure.md`, `wiki/tools/derived-datasets.md`
+- **Experiment design** — constants, treatments, segment structure, signal mechanism → `wiki/concepts/experiment-design.md`
+- **Paper content** — new/restructured tables, new sections, hypothesis changes, new results → `wiki/papers/main-paper-results.md`
+- **iMotions integration** — alignment logic, aggregation windows, missingness handling → `wiki/concepts/imotions-integration.md`
+- **Methodology decisions or data quirks** — new gotchas discovered, new exclusions, fixed bugs worth remembering → `wiki/methods/known-quirks.md`
+- **Architecture or major code modules** — new top-level directories, new core modules → `wiki/tools/architecture.md`, plus a new article if warranted
+- **Workflow changes** — new sync procedures, new conventions → relevant `wiki/skills/*.md`
+
+### How to update
+
+1. Edit the affected article(s) directly with the Edit/Write tool. Keep the YAML frontmatter; bump `last_verified` to today's date.
+2. If a new article is needed, create it in the appropriate subdirectory (`concepts/`, `tools/`, `skills/`, `methods/`, `papers/`, `roadmap/`) with full frontmatter.
+3. If you delete an article, also remove its entry from `wiki/_index.md`.
+4. Update `wiki/_index.md` to add/remove entries and refresh the article count.
+5. Run `/kb lint` to verify frontmatter and links.
+6. Commit wiki changes in the same PR as the code changes that motivated them.
+7. After merge to `main`, run `/kb sync` to publish to the GitHub Wiki (or do it as part of the PR-merge workflow).
+
+### What NOT to wiki
+
+- Ephemeral task state, in-progress work, debugging scratch — those belong in memory or PR descriptions, not the wiki
+- Information already in this CLAUDE.md (avoid duplication — link from the wiki to CLAUDE.md instead)
+- Generated artifacts (tables, plots) — the wiki documents *what* exists and *why*, not the artifact contents
+
+### Recent activity snapshot
+
+`wiki/roadmap/recent-activity.md` is a point-in-time snapshot. When recent direction shifts substantially (multiple merged PRs in a new theme), update this file or note the shift in `## Recently Completed`.
