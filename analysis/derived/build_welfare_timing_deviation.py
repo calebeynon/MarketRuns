@@ -3,11 +3,11 @@ Purpose: Build welfare timing deviation dataset for issue #116.
 
 For each voluntary seller-round, compute pi at sale, merge the Magnani & Munro
 (2020) equilibrium sell-timing thresholds at two alpha values (0.0 and 0.5),
-and emit a long-format dataset where each seller contributes one row per alpha.
+merge the group-round welfare outcome, and emit a long-format dataset where
+each seller contributes one row per alpha.
 
-The resulting dataset powers an R regression of round_payoff on deviation from
-the equilibrium threshold (pi_at_sale - threshold_pi), split into negative and
-positive components (sold too early / too late).
+The resulting dataset powers an R regression of group welfare on the seller's
+deviation from the equilibrium threshold (pi_at_sale - threshold_pi).
 
 Author: Claude Code
 Date: 2026-04-19
@@ -21,6 +21,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DATASTORE = PROJECT_ROOT / "datastore"
 PERIOD_DATA_PATH = DATASTORE / "derived" / "individual_period_dataset_extended.csv"
 EQUILIBRIUM_PATH = DATASTORE / "derived" / "equilibrium_thresholds.csv"
+WELFARE_PATH = DATASTORE / "derived" / "group_round_welfare.csv"
 OUTPUT_PATH = DATASTORE / "derived" / "welfare_timing_deviation.csv"
 
 # tr1 uses the random-draw liquidation rule, tr2 uses the average rule
@@ -29,7 +30,7 @@ ALPHAS = [0.0, 0.5]
 VOLUNTARY_POSITIONS = {1, 2, 3}
 KEY_COLS = [
     "session_id", "segment", "round", "player", "alpha",
-    "n", "pi_at_sale", "threshold_pi", "pi_deviation", "round_payoff", "state",
+    "n", "pi_at_sale", "threshold_pi", "pi_deviation", "welfare", "state",
 ]
 
 
@@ -40,10 +41,12 @@ def main():
     """Build the welfare-timing-deviation dataset."""
     periods = load_periods()
     eq = load_equilibrium()
+    welfare = load_welfare()
 
     sales = extract_sale_rows(periods)
     voluntary = filter_voluntary(sales)
     long_df = expand_by_alpha(voluntary, eq)
+    long_df = merge_group_welfare(long_df, welfare)
     long_df = add_deviation_columns(long_df)
 
     validate(long_df)
@@ -70,6 +73,30 @@ def load_equilibrium() -> pd.DataFrame:
     eq = eq[["alpha", "treatment", "n", "threshold_pi"]]
     print(f"  {len(eq)} threshold rows for alphas {ALPHAS}")
     return eq
+
+
+def load_welfare() -> pd.DataFrame:
+    """Load group-round welfare and rename keys to match seller dataset."""
+    print(f"Loading group-round welfare from: {WELFARE_PATH}")
+    welfare = pd.read_csv(WELFARE_PATH)
+    welfare = welfare.rename(columns={
+        "session": "session_id", "segment_num": "segment", "round_num": "round",
+    })
+    print(f"  {len(welfare):,} group-round welfare rows")
+    return welfare
+
+
+def merge_group_welfare(long_df: pd.DataFrame, welfare: pd.DataFrame) -> pd.DataFrame:
+    """Merge group-round welfare onto each seller-row."""
+    merged = long_df.merge(
+        welfare, on=["session_id", "segment", "round", "group_id"], how="left",
+    )
+    if merged["welfare"].isna().any():
+        missing = merged[merged["welfare"].isna()][
+            ["session_id", "segment", "round", "group_id"]
+        ].drop_duplicates()
+        raise ValueError(f"Missing welfare for group-rounds:\n{missing}")
+    return merged
 
 
 # =====
@@ -155,7 +182,7 @@ def add_deviation_columns(df: pd.DataFrame) -> pd.DataFrame:
     output_cols = [
         "session_id", "segment", "round", "player", "group_id", "global_group_id",
         "treatment", "alpha", "n", "pi_at_sale", "threshold_pi",
-        "pi_deviation", "pi_dev_neg", "pi_dev_pos", "round_payoff", "state",
+        "pi_deviation", "pi_dev_neg", "pi_dev_pos", "welfare", "state",
     ]
     return df[output_cols]
 

@@ -24,7 +24,7 @@ PERIOD_DATA_PATH = DATASTORE / "derived" / "individual_period_dataset_extended.c
 REQUIRED_COLUMNS = [
     "session_id", "segment", "round", "player", "group_id", "global_group_id",
     "treatment", "alpha", "n", "pi_at_sale", "threshold_pi",
-    "pi_deviation", "pi_dev_neg", "pi_dev_pos", "round_payoff", "state",
+    "pi_deviation", "pi_dev_neg", "pi_dev_pos", "welfare", "state",
 ]
 
 
@@ -201,7 +201,7 @@ def test_equal_row_count_per_alpha(welfare_df):
 # =====
 def test_no_nan_in_key_columns(welfare_df):
     """Key analysis columns must be fully populated."""
-    key_cols = ["pi_at_sale", "threshold_pi", "pi_deviation", "round_payoff", "n"]
+    key_cols = ["pi_at_sale", "threshold_pi", "pi_deviation", "welfare", "n"]
     for col in key_cols:
         assert not welfare_df[col].isna().any(), f"NaN found in '{col}'"
 
@@ -253,6 +253,38 @@ def test_global_group_id_format(welfare_df):
         f"example: {welfare_df.loc[mismatches, 'global_group_id'].iloc[0]} "
         f"vs expected {expected[mismatches].iloc[0]}"
     )
+
+
+# =====
+# Test 15: welfare is constant within a group-round
+# =====
+def test_welfare_constant_within_group_round(welfare_df):
+    """All seller-rows sharing (session, segment, round, group, alpha) must have the same welfare."""
+    grouped = welfare_df.groupby(
+        ["session_id", "segment", "round", "group_id", "alpha"]
+    )["welfare"].nunique()
+    assert (grouped == 1).all(), (
+        f"welfare varies within group-round for {(grouped > 1).sum()} groups"
+    )
+
+
+# =====
+# Test 16: welfare matches group_round_welfare source for a sampled group-round
+# =====
+def test_welfare_matches_source(welfare_df):
+    """Cross-check: welfare equals group_round_welfare source on sampled rows."""
+    source = pd.read_csv(DATASTORE / "derived" / "group_round_welfare.csv")
+    sample = welfare_df.drop_duplicates(
+        subset=["session_id", "segment", "round", "group_id"]
+    ).sample(n=3, random_state=42)
+    for _, row in sample.iterrows():
+        src = source[
+            (source["session"] == row["session_id"])
+            & (source["segment_num"] == row["segment"])
+            & (source["round_num"] == row["round"])
+            & (source["group_id"] == row["group_id"])
+        ]
+        assert len(src) == 1 and np.isclose(row["welfare"], src["welfare"].iloc[0])
 
 
 # %%

@@ -2,34 +2,33 @@
 \begingroup
 \centering
 \scriptsize
-\begin{tabular}{lcccc}
+\begin{tabular}{lcc}
    \tabularnewline \midrule \midrule
-   Dependent Variable: & \multicolumn{4}{c}{round\_payoff}\\
-                                      & alpha=0 pooled & alpha=0 asym   & alpha=0.5 pooled & alpha=0.5 asym \\   
-   Model:                             & (1)            & (2)            & (3)              & (4)\\  
+   Dependent Variable: & \multicolumn{2}{c}{welfare}\\
+                    & $\alpha=0$     & $\alpha=0.5$ \\    
+   Model:           & (1)            & (2)\\  
    \midrule
    \emph{Variables}\\
-   $\pi$ deviation                    & 0.8902$^{***}$ &                & 0.8888$^{***}$   &   \\   
-                                      & (0.2876)       &                & (0.2880)         &   \\   
-   treatment\_2                       & 0.0802         & 0.0825         & 0.0794           & 0.0808\\   
-                                      & (0.1015)       & (0.1034)       & (0.1015)         & (0.1029)\\   
-   $\pi$ deviation (early, $\le 0$)   &                & 81.99          &                  & 2.009\\   
-                                      &                & (58.37)        &                  & (2.364)\\   
-   $\pi$ deviation (late, $> 0$)      &                & 0.8344$^{***}$ &                  & 0.8631$^{***}$\\   
-                                      &                & (0.2977)       &                  & (0.3077)\\   
+   $\pi$ deviation  & 0.1917$^{***}$ & 0.1914$^{***}$\\   
+                    & (0.0643)       & (0.0644)\\   
+   treatment\_2     & -0.0048        & -0.0049\\   
+                    & (0.0250)       & (0.0250)\\   
    \midrule
    \emph{Fixed-effects}\\
-   segment                            & Yes            & Yes            & Yes              & Yes\\  
-   n                                  & Yes            & Yes            & Yes              & Yes\\  
+   segment          & Yes            & Yes\\  
+   n                & Yes            & Yes\\  
    \midrule
    \emph{Fit statistics}\\
-   Observations                       & 255            & 255            & 255              & 255\\  
-   R$^2$                              & 0.66648        & 0.66721        & 0.66643          & 0.66653\\  
-   Adjusted R$^2$                     & 0.65703        & 0.65638        & 0.65697          & 0.65569\\  
+   Observations     & 255            & 255\\  
+   R$^2$            & 0.27126        & 0.27112\\  
+   Adjusted R$^2$   & 0.25061        & 0.25046\\  
    \midrule \midrule
-   \multicolumn{5}{l}{\emph{Clustered (global\_group\_id) standard-errors in parentheses}}\\
-   \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+   \multicolumn{3}{l}{\emph{Clustered (global\_group\_id) standard-errors in parentheses}}\\
+   \multicolumn{3}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
 \end{tabular}
+ 
+\par \raggedright 
+\textit{Notes:} $\pi$ deviation $= \pi_\text{sale} - \pi^*$, where $\pi_\text{sale}$ is the seller's posterior at the moment of sale and $\pi^*$ is the M\&M (2020) Appendix D equilibrium threshold for the seller's sale position $n$, risk aversion $\alpha$, and treatment-specific liquidation rule (T1 $\to$ random, T2 $\to$ average). Fixed effects: segment, sale position $n$. Standard errors clustered at the group level. We omit asymmetric (linear-spline-at-zero) and indicator specifications for the below-threshold region because only 6 sales at $\alpha=0$ and 8 at $\alpha=0.5$ fall below the threshold; at $\alpha=0$ all 6 share $\pi_\text{deviation} \approx -0.004$, so the below-threshold slope and indicator are not identified from within-sample variation. Significance codes: *** $p<0.01$, ** $p<0.05$, * $p<0.1$.
 \par\endgroup
 
 
