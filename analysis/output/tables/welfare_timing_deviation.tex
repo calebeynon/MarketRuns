@@ -1,0 +1,35 @@
+
+\begingroup
+\centering
+\scriptsize
+\begin{tabular}{lcccc}
+   \tabularnewline \midrule \midrule
+   Dependent Variable: & \multicolumn{4}{c}{round\_payoff}\\
+                                      & alpha=0 pooled & alpha=0 asym   & alpha=0.5 pooled & alpha=0.5 asym \\   
+   Model:                             & (1)            & (2)            & (3)              & (4)\\  
+   \midrule
+   \emph{Variables}\\
+   $\pi$ deviation                    & 0.8902$^{***}$ &                & 0.8888$^{***}$   &   \\   
+                                      & (0.2876)       &                & (0.2880)         &   \\   
+   treatment\_2                       & 0.0802         & 0.0825         & 0.0794           & 0.0808\\   
+                                      & (0.1015)       & (0.1034)       & (0.1015)         & (0.1029)\\   
+   $\pi$ deviation (early, $\le 0$)   &                & 81.99          &                  & 2.009\\   
+                                      &                & (58.37)        &                  & (2.364)\\   
+   $\pi$ deviation (late, $> 0$)      &                & 0.8344$^{***}$ &                  & 0.8631$^{***}$\\   
+                                      &                & (0.2977)       &                  & (0.3077)\\   
+   \midrule
+   \emph{Fixed-effects}\\
+   segment                            & Yes            & Yes            & Yes              & Yes\\  
+   n                                  & Yes            & Yes            & Yes              & Yes\\  
+   \midrule
+   \emph{Fit statistics}\\
+   Observations                       & 255            & 255            & 255              & 255\\  
+   R$^2$                              & 0.66648        & 0.66721        & 0.66643          & 0.66653\\  
+   Adjusted R$^2$                     & 0.65703        & 0.65638        & 0.65697          & 0.65569\\  
+   \midrule \midrule
+   \multicolumn{5}{l}{\emph{Clustered (global\_group\_id) standard-errors in parentheses}}\\
+   \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+\par\endgroup
+
+

@@ -4,7 +4,7 @@ type: tool
 tags: [regression, visualization, R, fixest, ggplot2]
 summary: "R scripts in analysis/analysis/ for regressions (fixest) and visualization (ggplot2), producing LaTeX tables and PDF plots"
 status: draft
-last_verified: "2026-04-06"
+last_verified: "2026-04-19"
 ---
 
 ## Summary
@@ -32,6 +32,8 @@ The `analysis/analysis/` directory contains R scripts that consume derived datas
 | `ordinal_logit_selling_position.R` | Ordinal logit | Selling position |
 | `first_seller_lpm_regression.R` | First seller LPM | Linear probability model |
 | `holdout_liquidation_regression.R` | Holdout strategy | Next-round prediction |
+| `welfare_regression.R` | Welfare on traits | OLS clustered (group) |
+| `welfare_timing_deviation.R` | Round payoff on π-deviation from M&M threshold; pooled + asymmetric spline, α∈{0, 0.5} | fixest + Wald symmetry test |
 | `selling_emotions_traits_unified.R` | Emotions + traits | Combined model |
 | `tobit_n_sellers.R` | Tobit model | Number of sellers |
 | `did_learning_communication.R` | Diff-in-diff | Learning × communication |

@@ -52,6 +52,7 @@ LaTeX inputs are bare filenames; sources live in `analysis/output/tables/<name>.
 | 9 | `cox_survival_regression` | Mixed-effects Cox PH; cascades, emotions, traits, controls | `analysis/analysis/cox_survival_regression.R` | coxme |
 | 10 | `holdout_liquidation_regression` | Effect of holdout payoff on next-round sale; group×round FE | `analysis/analysis/holdout_liquidation_regression.R` | LPM |
 | 11 | `welfare_regression` | OLS welfare on traits (z=1 only); SE clustered session×segment×group | `analysis/analysis/welfare_regression.R` | OLS clustered |
+| 12 | `welfare_timing_deviation` | Round payoff on π-at-sale minus M&M equilibrium threshold; pooled + asymmetric (linear spline at 0) for α∈{0, 0.5}; segment+n FE, SE clustered by group | `analysis/analysis/welfare_timing_deviation.R` (input: `analysis/derived/build_welfare_timing_deviation.py`) | OLS clustered |
 | App | `equilibrium_thresholds` | Avg equilibrium π at sale by seller position k and α (10k sims, both treatments) | `analysis/analysis/simulate_equilibrium.py` + `tabulate_equilibrium.py` | Numerical |
 | App G | `*_valence_only` | Valence-only emotion robustness | `*_valence_only.R` | Robustness |
 | App H | `*_no_valence` | Discrete-emotions-only robustness | `*_no_valence.R` | Robustness |

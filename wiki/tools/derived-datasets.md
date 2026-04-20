@@ -4,7 +4,7 @@ type: tool
 tags: [data-pipeline, derived-data, python, datasets]
 summary: "Python scripts in analysis/derived/ that transform raw parsed data into analysis-ready CSV/parquet datasets"
 status: draft
-last_verified: "2026-04-06"
+last_verified: "2026-04-19"
 ---
 
 ## Summary
@@ -35,6 +35,7 @@ The `analysis/derived/` directory contains Python scripts that use `market_data.
 | `build_imotions_missing_summary.py` | iMotions data missingness | Summary statistics |
 | `build_group_round_timing_dataset.py` | Group-round selling timing | Group × round |
 | `build_welfare_dataset.py` | Welfare computation | Group × round |
+| `build_welfare_timing_deviation.py` | π-at-sale − M&M equilibrium threshold π*, long-format over α∈{0, 0.5}; voluntary sellers only (n∈{1,2,3}), state=1 | Player × round × α |
 
 ## Data Dependencies
 

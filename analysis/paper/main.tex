@@ -577,6 +577,17 @@ Table \ref{tab:welfare_regression} reports OLS estimates of group-round welfare 
   \input{welfare_regression}
 \end{table}
 
+\subsubsection{Deviation from Equilibrium Sell Timing}
+
+For each voluntary seller in a state-1 round we compute $\pi_{\text{sale}}$, the seller's posterior belief at the moment of sale, and subtract the \cite{magnani2020informational} equilibrium threshold $\pi^*_{n,\alpha,\tau}$ corresponding to their sale position $n \in \{1,2,3\}$, the risk-aversion parameter $\alpha$, and the treatment-specific liquidation rule $\tau \in \{\text{random},\text{average}\}$, mapping experimental T1 to random and T2 to average. The deviation $\pi_{\text{dev}} = \pi_{\text{sale}} - \pi^*$ is negative for sales below the threshold and positive for sales above. We estimate pooled and asymmetric (linear-spline-at-zero) specifications of round payoff on $\pi_{\text{dev}}$, for $\alpha \in \{0, 0.5\}$, with segment and sale-position fixed effects and standard errors clustered at the group level.
+
+\begin{table}[H]
+  \centering
+  \caption{Round payoff on equilibrium-threshold sell-timing deviation}
+  \label{tab:welfare_timing_deviation}
+  \input{welfare_timing_deviation}
+\end{table}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion and Conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
