@@ -247,4 +247,4 @@ build_footer <- function() {
 }
 
 # %%
-if (!interactive()) main()
+if (sys.nframe() == 0L) main()
