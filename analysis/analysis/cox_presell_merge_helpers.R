@@ -30,6 +30,7 @@ merge_presell_window <- function(base_dt, presell_dt, window) {
   window_cols <- paste0(BASE_EMOTION_COLS, "_", window, "ms")
   frames_col <- paste0("n_frames_", window, "ms")
   sub <- build_presell_subset(presell_dt, window_cols, frames_col)
+  sub <- align_key_types(sub, base_dt)
   merged <- merge(base_dt, sub, by = MERGE_KEYS, all.x = TRUE, sort = FALSE)
   stopifnot(nrow(merged) == nrow(base_dt))
   merged <- overwrite_sold_emotions(merged)
@@ -42,6 +43,15 @@ merge_presell_window <- function(base_dt, presell_dt, window) {
 build_presell_subset <- function(presell_dt, window_cols, frames_col) {
   sub <- presell_dt[, c(MERGE_KEYS, window_cols, frames_col), with = FALSE]
   setnames(sub, window_cols, paste0(BASE_EMOTION_COLS, "_presell"))
+  sub
+}
+
+align_key_types <- function(sub, base_dt) {
+  for (k in MERGE_KEYS) {
+    if (is.factor(base_dt[[k]]) && !is.factor(sub[[k]])) {
+      sub[, (k) := factor(as.character(get(k)), levels = levels(base_dt[[k]]))]
+    }
+  }
   sub
 }
 
