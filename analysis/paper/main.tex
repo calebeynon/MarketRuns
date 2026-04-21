@@ -517,6 +517,14 @@ We also observe significant decreases in selling probability in segment 3 and 4,
 
 \input{cox_survival_regression}
 
+\subsubsection{Reactive sellers: pre-click emotion windows}
+
+A natural concern with the period-level Cox results is that the facial emotions measured during the selling period are contemporaneous with the sale itself, making it hard to separate an emotional antecedent of selling from a reaction to the act of clicking sell. To address this, we re-estimate the Cox model on the subset of ``reactive'' selling events — periods in which a participant sold immediately after a group-mate sold in the previous period ($N=101$ events out of 659 observed sales) — and replace the period-wide emotion average for sellers with the average over the 500 milliseconds immediately preceding the sell click. For non-sellers and non-reactive sellers, the emotion covariates remain the period average. Non-reactive sales stay in the risk set as non-events. Because reactive sales require prior group sales by construction, the cascade dummies and cumulative-by-previous-period interactions are mechanically collinear with the event and are dropped from the specification. Table~\ref{tab:cox_survival_reactive_500ms} reports hazard ratios from two complementary specifications: column~(1) is a random-intercept Cox model (coxme) with a player-level intercept; column~(2) is a Cox model with group-clustered robust standard errors.
+
+Two emotions emerge from this exercise. Surprise in the 500ms before a reactive click is associated with a substantially lower hazard of reactive selling (HR~$\approx 0.71$, significant in both specifications), suggesting that participants who were visibly surprised by a group-mate's sale were less, not more, likely to follow. Fear shows a positive association with reactive selling (HR~$\approx 1.18$) that is marginal in the random-effects column ($p=0.065$) but tightens sharply under cluster-robust standard errors. This is a substantial divergence (RE standard error $\approx 0.11$ on the hazard ratio versus $\approx 0.02$ under clustering), and we interpret the fear point estimate as suggestive rather than definitive: the player-level random intercept absorbs much of the within-player variation in fear, inflating its conditional standard error, while group-clustered errors may understate uncertainty given the modest number of reactive events ($N=101$). All other discrete emotions are null. A Schoenfeld-residual test of the proportional-hazards assumption finds no violations for any of the emotion covariates (global $p=0.29$). We read these results cautiously given the small reactive-event count, but the protective surprise effect is the most robust finding across the pre-click window.
+
+\input{cox_survival_reactive_500ms}
+
 
 % Holdout liquidation regression (standalone)
 
