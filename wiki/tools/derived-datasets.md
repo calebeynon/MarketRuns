@@ -43,14 +43,14 @@ Some `datastore/derived/` artifacts are produced by analysis scripts rather than
 
 | Artifact | Producer | Columns | Approx. rows |
 |----------|----------|---------|--------------|
-| `equilibrium_sigma_grid.parquet` | `analysis/analysis/simulate_equilibrium.py` | treatment, alpha, n, pi, sigma | ~33,128 (101 α × 2 treatments × 4 n × ~41 π) |
+| `equilibrium_sigma_grid.parquet` | `analysis/analysis/simulate_equilibrium.py` | treatment, alpha, n, pi, sigma | 328,328 (1001 α × 2 treatments × 4 n × 41 π) |
 
 ## Participant Risk Aversion Dataset
 
-`datastore/derived/participant_risk_aversion.csv` (95 rows, participant-granularity) maps each participant to two risk-aversion estimates:
+`datastore/derived/participant_risk_aversion.csv` (95 rows, participant-granularity) gives each participant's experiment-implied CRRA α with a confidence interval, plus a separately computed task-implied α from the survey lottery:
 
-- `alpha_mle` — grid-search MLE over α ∈ {0.00, 0.01, …, 1.00} against the Magnani & Munro (2020) equilibrium σ grid (`equilibrium_sigma_grid.parquet`), using the participant's hold/sell decisions.
-- `alpha_task` — Gneezy-Potters lottery inversion from `risk_tolerance` ∈ {0, …, 20} via α = log(2.5) / log((20 + 1.5a)/(20 − a)). Set to NaN and `alpha_task_edge_flag=True` when `risk_tolerance ∈ {0, 20}`.
+- `alpha_mle` — grid-search MLE over α ∈ {0.000, 0.001, …, 1.000} against the Magnani & Munro (2020) equilibrium σ grid (`equilibrium_sigma_grid.parquet`), using the participant's hold/sell decisions. Visualized in §5.5 (`implied_risk_aversion.pdf` / `visualize_implied_risk_aversion.R`).
+- `alpha_task` — Gneezy-Potters lottery inversion from `risk_tolerance` ∈ {0, …, 20} via α = log(2.5) / log((20 + 1.5a)/(20 − a)). Set to NaN and `alpha_task_edge_flag=True` when `risk_tolerance ∈ {0, 20}`. Retained for reference; not used in the paper because its support (≈[0.24, 7.41] for integer non-edge allocations) lies largely outside the MLE grid [0, 1].
 
 Columns: `session_id`, `player`, `treatment` (tr1/tr2), `n_decisions`, `alpha_mle`, `alpha_ci_low`, `alpha_ci_high` (95% likelihood-ratio set), `alpha_task`, `alpha_task_edge_flag`.
 

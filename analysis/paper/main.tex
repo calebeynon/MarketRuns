@@ -577,24 +577,18 @@ Table \ref{tab:welfare_regression} reports OLS estimates of group-round welfare 
   \input{welfare_regression}
 \end{table}
 
-\subsection{Risk Aversion Consistency}
-\label{sec:risk_aversion_consistency}
+\subsection{Implied Risk Aversion}
+\label{sec:implied_risk_aversion}
 
-We validate the equilibrium model by comparing two independent estimates of each participant's CRRA risk-aversion parameter $\alpha$. The first, $\alpha_{\text{MLE}}$, maximizes the likelihood of the participant's hold/sell decisions under the equilibrium selling probability $\sigma(n, \pi; \alpha)$ derived in Section~\ref{sec:market model}, pooled across all segments and rounds. The second, $\alpha_{\text{task}}$, is recovered from the Gneezy-Potters allocation task in the survey by inverting the indifference condition
-\[
-\alpha_{\text{task}} \;=\; \frac{\ln 2.5}{\ln\!\left(\dfrac{20 + 1.5\,a}{20 - a}\right)},
-\]
-where $a$ is the participant's risky-asset allocation. Edge allocations ($a = 0$ or $a = 20$) yield no finite $\alpha_{\text{task}}$ and are excluded (36 of 95 participants).
+We recover each participant's CRRA risk-aversion parameter $\alpha$ by maximum likelihood over their hold/sell decisions. For each participant we sum the Bernoulli log-likelihood of the observed outcome in every period they still hold the asset, using the equilibrium selling probability $\sigma(n, \pi; \alpha)$ derived in Section~\ref{sec:market model} evaluated at that period's holder count $n$ and group posterior $\pi$. The MLE is computed on a grid $\alpha \in [0, 1]$ with step $0.001$, and 95\% confidence intervals are the likelihood-ratio set $\{\alpha : 2(\mathrm{LL}_{\max} - \mathrm{LL}(\alpha)) \le 3.84\}$.
 
-Table~\ref{tab:risk_aversion_consistency} reports a regression of $\alpha_{\text{MLE}}$ on $\alpha_{\text{task}}$ with session fixed effects and session-clustered standard errors. Figure~\ref{fig:risk_aversion_consistency} plots the per-participant pair with likelihood-ratio 95\% confidence intervals on $\alpha_{\text{MLE}}$ and a 45-degree reference line.
-
-\input{risk_aversion_consistency}
+Figure~\ref{fig:implied_risk_aversion} sorts the 95 participants by their point estimate and plots the MLE with its LR confidence interval, colored by treatment. Most participants are estimated at or near the lower bound of the grid: 52 of 95 sit at $\alpha = 0$, and the median CI width is $0.014$. Participants with positive estimates cluster tightly around $\alpha \approx 0.11$. The upper end of the grid is never reached; the largest point estimate is $0.455$. The two treatments (Random and Average simultaneous-seller payoffs) produce visually indistinguishable distributions of implied $\alpha$.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\linewidth]{risk_aversion_consistency.pdf}
-  \caption{Experiment-implied $\alpha_{\text{MLE}}$ (with LR 95\% CIs) versus survey-implied $\alpha_{\text{task}}$. The dashed line is the 45-degree reference.}
-  \label{fig:risk_aversion_consistency}
+  \includegraphics[width=0.7\linewidth]{implied_risk_aversion.pdf}
+  \caption{Per-participant experiment-implied CRRA $\alpha_{\text{MLE}}$ with likelihood-ratio 95\% confidence intervals. Participants are sorted ascending by point estimate. Color indicates treatment.}
+  \label{fig:implied_risk_aversion}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

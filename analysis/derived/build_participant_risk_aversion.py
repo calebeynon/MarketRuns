@@ -28,7 +28,7 @@ SIGMA_GRID_PARQUET = DATASTORE / "equilibrium_sigma_grid.parquet"
 OUTPUT_CSV = DATASTORE / "participant_risk_aversion.csv"
 
 # CONSTANTS
-ALPHA_GRID = np.round(np.arange(0.0, 1.01, 0.01), 2)
+ALPHA_GRID = np.round(np.arange(0.0, 1.001, 0.001), 3)
 EPS = 1e-12
 LR_CHI2_95 = 3.841458820694124
 TREATMENT_MAP = {"tr1": "random", "tr2": "average"}
@@ -112,13 +112,13 @@ def build_sigma_lookup(sigma_df):
         g_sorted = g.sort_values("pi")
         pi_arr = g_sorted["pi"].to_numpy()
         sigma_arr = g_sorted["sigma"].to_numpy()
-        lookup[(tr, round(float(alpha), 2), int(n))] = (pi_arr, sigma_arr)
+        lookup[(tr, round(float(alpha), 3), int(n))] = (pi_arr, sigma_arr)
     return lookup
 
 
 def sigma_at(sigma_lookup, treatment, alpha, n, pi):
     """Strict σ lookup — fail loudly on off-grid π."""
-    key = (treatment, round(float(alpha), 2), int(n))
+    key = (treatment, round(float(alpha), 3), int(n))
     pi_arr, sigma_arr = sigma_lookup[key]
     matches = np.where(np.isclose(pi_arr, pi, atol=PI_ATOL))[0]
     if matches.size != 1:

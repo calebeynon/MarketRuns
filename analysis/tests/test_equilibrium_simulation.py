@@ -363,19 +363,19 @@ class TestSolverConvergence:
 # Wide α grid + persisted σ parquet (issue #117, Task 1 outputs)
 # =====
 class TestAlphaGridAndSigmaArtifact:
-    """ALPHA_VALUES widened to 101 points; σ grid persisted to parquet."""
+    """ALPHA_VALUES widened to 1001 points; σ grid persisted to parquet."""
 
     def test_alpha_values_wide_grid(self):
-        """ALPHA_VALUES must be 101 points in [0, 1], 2-dp rounded, no dupes."""
+        """ALPHA_VALUES must be 1001 points in [0, 1], 3-dp rounded, no dupes."""
         from analysis.analysis.simulate_equilibrium import ALPHA_VALUES
         values = list(ALPHA_VALUES)
-        assert len(values) == 101
+        assert len(values) == 1001
         assert min(values) == pytest.approx(0.0, abs=1e-12)
         assert max(values) == pytest.approx(1.0, abs=1e-12)
-        # All at most 2 decimal places
+        # All at most 3 decimal places
         for v in values:
-            assert round(v, 2) == pytest.approx(v, abs=1e-12), (
-                f"ALPHA_VALUES contains non-2dp value: {v}"
+            assert round(v, 3) == pytest.approx(v, abs=1e-12), (
+                f"ALPHA_VALUES contains non-3dp value: {v}"
             )
         assert len(set(values)) == len(values), "ALPHA_VALUES has duplicates"
 
@@ -391,5 +391,5 @@ class TestAlphaGridAndSigmaArtifact:
         assert df["sigma"].max() <= 1.0 + 1e-9
         assert set(df["n"].unique()) == {1, 2, 3, 4}
         assert set(df["treatment"].unique()) == {"random", "average"}
-        # α grid must have 101 unique values
-        assert df["alpha"].nunique() == 101
+        # α grid must have 1001 unique values
+        assert df["alpha"].nunique() == 1001

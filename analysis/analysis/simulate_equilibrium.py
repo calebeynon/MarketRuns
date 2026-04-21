@@ -25,7 +25,7 @@ OUTPUT_CSV = Path("datastore/derived/equilibrium_thresholds.csv")
 SIGMA_GRID_PARQUET = Path("datastore/derived/equilibrium_sigma_grid.parquet")
 
 # SIMULATION PARAMETERS
-ALPHA_VALUES = np.round(np.arange(0.00, 1.01, 0.01), 2).tolist()  # 0.00..1.00
+ALPHA_VALUES = np.round(np.arange(0.000, 1.001, 0.001), 3).tolist()  # 0.000..1.000
 TREATMENTS = ["random", "average"]
 N_SIMULATIONS = 10_000
 T_MAX = 20  # belief grid depth (41 points, converged per robustness checks)

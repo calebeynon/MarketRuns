@@ -88,7 +88,7 @@ class TestLikelihoodCorrectness:
     @pytest.fixture
     def tiny_sigma_lookup(self):
         """Hand-built σ lookup for treatment='random', alpha=0.30.
-        Keys: (treatment, round(alpha, 2), n) -> (pi_sorted, sigma_sorted).
+        Keys: (treatment, round(alpha, 3), n) -> (pi_sorted, sigma_sorted).
         Contains three (n, π) combos with known σ."""
         return {
             ("random", 0.30, 4): (
@@ -267,8 +267,7 @@ class TestEdgeFlagPassesThroughToOutput:
 
     def test_edge_allocate_zero(self):
         """allocate=0 → alpha_task NaN, edge flag True in output row."""
-        grid = np.round(np.arange(0.0, 1.01, 0.01), 2)
-        ll_profile = np.linspace(-12.0, -10.0, grid.size)
+        ll_profile = np.linspace(-12.0, -10.0, brab.ALPHA_GRID.size)
         decisions = pd.DataFrame({
             "n": [4, 4], "pi": [0.5, 0.675], "sold_indicator": [0, 0],
         })
@@ -286,8 +285,7 @@ class TestEdgeFlagPassesThroughToOutput:
 
     def test_edge_allocate_twenty(self):
         """allocate=20 → alpha_task NaN, edge flag True."""
-        grid = np.round(np.arange(0.0, 1.01, 0.01), 2)
-        ll_profile = np.linspace(-12.0, -10.0, grid.size)
+        ll_profile = np.linspace(-12.0, -10.0, brab.ALPHA_GRID.size)
         decisions = pd.DataFrame({
             "n": [4], "pi": [0.5], "sold_indicator": [0],
         })
@@ -302,8 +300,7 @@ class TestEdgeFlagPassesThroughToOutput:
 
     def test_interior_allocate_sets_alpha_task(self):
         """allocate=10 → alpha_task = ln(2.5)/ln(3.5), edge flag False."""
-        grid = np.round(np.arange(0.0, 1.01, 0.01), 2)
-        ll_profile = np.linspace(-12.0, -10.0, grid.size)
+        ll_profile = np.linspace(-12.0, -10.0, brab.ALPHA_GRID.size)
         decisions = pd.DataFrame({
             "n": [4], "pi": [0.5], "sold_indicator": [0],
         })
