@@ -6,6 +6,7 @@ dependencies = [
     "otree>=5.11.2",
     "matplotlib>=3.10.3",
     "scipy>=1.15.3",
+    "pyarrow>=24.0.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"

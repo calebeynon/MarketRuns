@@ -5,7 +5,10 @@ Author: Claude Code
 Date: 2026-04-05
 """
 
+from pathlib import Path
+
 import numpy as np
+import pandas as pd
 import pytest
 
 from analysis.analysis.equilibrium_model import (
@@ -26,6 +29,8 @@ from analysis.analysis.equilibrium_model import (
     _update_bad,
     _update_good,
 )
+
+SIGMA_GRID_PARQUET = Path("datastore/derived/equilibrium_sigma_grid.parquet")
 
 
 # =====
@@ -352,3 +357,39 @@ class TestSolverConvergence:
         result = solve_equilibrium(alpha=0.5, treatment="random")
         for n in range(1, N_INVESTORS + 1):
             assert np.all(np.isfinite(result["v_table"][n]))
+
+
+# =====
+# Wide α grid + persisted σ parquet (issue #117, Task 1 outputs)
+# =====
+class TestAlphaGridAndSigmaArtifact:
+    """ALPHA_VALUES widened to 101 points; σ grid persisted to parquet."""
+
+    def test_alpha_values_wide_grid(self):
+        """ALPHA_VALUES must be 101 points in [0, 1], 2-dp rounded, no dupes."""
+        from analysis.analysis.simulate_equilibrium import ALPHA_VALUES
+        values = list(ALPHA_VALUES)
+        assert len(values) == 101
+        assert min(values) == pytest.approx(0.0, abs=1e-12)
+        assert max(values) == pytest.approx(1.0, abs=1e-12)
+        # All at most 2 decimal places
+        for v in values:
+            assert round(v, 2) == pytest.approx(v, abs=1e-12), (
+                f"ALPHA_VALUES contains non-2dp value: {v}"
+            )
+        assert len(set(values)) == len(values), "ALPHA_VALUES has duplicates"
+
+    def test_sigma_grid_parquet_schema(self):
+        """σ grid parquet: schema, value ranges, coverage of treatments and n."""
+        if not SIGMA_GRID_PARQUET.exists():
+            pytest.skip(
+                "parquet not yet generated; run simulate_equilibrium.py first"
+            )
+        df = pd.read_parquet(SIGMA_GRID_PARQUET)
+        assert set(df.columns) == {"treatment", "alpha", "n", "pi", "sigma"}
+        assert df["sigma"].min() >= -1e-9
+        assert df["sigma"].max() <= 1.0 + 1e-9
+        assert set(df["n"].unique()) == {1, 2, 3, 4}
+        assert set(df["treatment"].unique()) == {"random", "average"}
+        # α grid must have 101 unique values
+        assert df["alpha"].nunique() == 101

@@ -4,12 +4,12 @@ type: paper
 tags: [paper, results, hypotheses, tables, market-runs]
 summary: "Hypotheses, main results, table inventory, and section structure of the working paper (Eynon & Jindapon)"
 status: active
-last_verified: "2026-04-19"
+last_verified: "2026-04-21"
 ---
 
 ## Citation
 
-Eynon, C. and Jindapon, P. *To Sell or not to Sell: The Psychology of Market Runs.* Working paper. Source: `analysis/paper/main.tex` (~976 lines).
+Eynon, C. and Jindapon, P. *To Sell or not to Sell: The Psychology of Market Runs.* Working paper. Source: `analysis/paper/main.tex` (~996 lines).
 
 ## Abstract (one-line)
 
@@ -34,6 +34,7 @@ LaTeX `\label`s reuse `chat_treatment` for several hypotheses; numbering in the 
 - **Average vs. random price**: T2 *increased* sellers by 0.4952 in Tobit (Table 4) — **contradicts H2**. Cox shows no significant treatment effect.
 - **Signal/round**: Higher signal sharply lowers hazard; selling falls with round number (learning).
 - **Welfare** (Table 9): OLS of group-round welfare on traits, restricted to good-state (z=1) rounds, clustered at session×segment×group.
+- **Risk Aversion Consistency** (§5.5): The two independent α estimates — `alpha_mle` from selling behavior vs. `alpha_task` from the Gneezy-Potters survey lottery — are essentially uncorrelated. Raw correlation = 0.027 (n = 59 after dropping 36 participants with edge-flagged lottery allocations). Regressing `alpha_mle` on `alpha_task` with session FE and session-clustered SE yields coef = −0.0072 (SE 0.0145), R² = 0.136, within-R² = 0.003. The survey-based instrument does not predict behavior-based risk aversion in this setting.
 
 ## Table Inventory
 
@@ -52,6 +53,7 @@ LaTeX inputs are bare filenames; sources live in `analysis/output/tables/<name>.
 | 9 | `cox_survival_regression` | Mixed-effects Cox PH; cascades, emotions, traits, controls | `analysis/analysis/cox_survival_regression.R` | coxme |
 | 10 | `holdout_liquidation_regression` | Effect of holdout payoff on next-round sale; group×round FE | `analysis/analysis/holdout_liquidation_regression.R` | LPM |
 | 11 | `welfare_regression` | OLS welfare on traits (z=1 only); SE clustered session×segment×group | `analysis/analysis/welfare_regression.R` | OLS clustered |
+| 12 | `risk_aversion_consistency` | α_MLE on α_task; session FE, session-clustered SE; uses `participant_risk_aversion.csv`; accompanied by `risk_aversion_consistency.pdf` (`visualize_risk_aversion_consistency.R`) | `analysis/analysis/risk_aversion_consistency.R` | OLS with FE |
 | App | `equilibrium_thresholds` | Avg equilibrium π at sale by seller position k and α (10k sims, both treatments) | `analysis/analysis/simulate_equilibrium.py` + `tabulate_equilibrium.py` | Numerical |
 | App G | `*_valence_only` | Valence-only emotion robustness | `*_valence_only.R` | Robustness |
 | App H | `*_no_valence` | Discrete-emotions-only robustness | `*_no_valence.R` | Robustness |
@@ -62,14 +64,14 @@ LaTeX inputs are bare filenames; sources live in `analysis/output/tables/<name>.
 - §2 Related Literature — line 117 (2.1 Market Runs 120, 2.2 Bank Runs 127, 2.3 Psychology 139)
 - §3 Design of the Experiment — line 178 (3.1 Market Model 182, 3.2 Welfare 207, 3.3 Equilibrium 230, 3.4 Implementation 246, 3.5 Data Collection 302)
 - §4 Hypotheses — line 308
-- §5 Main Results — line 348 (5.1 Summary Stats 351, 5.2 Selling Behavior 388 [group-round 390, DiD 439, player-period 494], 5.3 Relative Income 545, 5.4 Welfare 569)
-- §6 Discussion and Conclusion — line 581
-- Bibliography — lines 604–605
-- Appendix G Valence-Only — line 684
-- Appendix H No-Valence — line 694
-- Appendix Equilibrium Predictions — line 704
-- Appendix Instructions — line 715
-- Appendices A–F (lines 633–680) commented out
+- §5 Main Results — line 348 (5.1 Summary Stats 351, 5.2 Selling Behavior 388 [group-round 390, DiD 439, player-period 494], 5.3 Relative Income 545, 5.4 Welfare 569, 5.5 Risk Aversion Consistency 580)
+- §6 Discussion and Conclusion — line 601
+- Bibliography — lines 624–625
+- Appendix G Valence-Only — line 704
+- Appendix H No-Valence — line 714
+- Appendix Equilibrium Predictions — line 724
+- Appendix Instructions — line 735
+- Appendices A–F (lines 655–697) commented out
 
 ## Related
 

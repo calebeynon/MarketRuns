@@ -577,6 +577,26 @@ Table \ref{tab:welfare_regression} reports OLS estimates of group-round welfare 
   \input{welfare_regression}
 \end{table}
 
+\subsection{Risk Aversion Consistency}
+\label{sec:risk_aversion_consistency}
+
+We validate the equilibrium model by comparing two independent estimates of each participant's CRRA risk-aversion parameter $\alpha$. The first, $\alpha_{\text{MLE}}$, maximizes the likelihood of the participant's hold/sell decisions under the equilibrium selling probability $\sigma(n, \pi; \alpha)$ derived in Section~\ref{sec:market model}, pooled across all segments and rounds. The second, $\alpha_{\text{task}}$, is recovered from the Gneezy-Potters allocation task in the survey by inverting the indifference condition
+\[
+\alpha_{\text{task}} \;=\; \frac{\ln 2.5}{\ln\!\left(\dfrac{20 + 1.5\,a}{20 - a}\right)},
+\]
+where $a$ is the participant's risky-asset allocation. Edge allocations ($a = 0$ or $a = 20$) yield no finite $\alpha_{\text{task}}$ and are excluded (36 of 95 participants).
+
+Table~\ref{tab:risk_aversion_consistency} reports a regression of $\alpha_{\text{MLE}}$ on $\alpha_{\text{task}}$ with session fixed effects and session-clustered standard errors. Figure~\ref{fig:risk_aversion_consistency} plots the per-participant pair with likelihood-ratio 95\% confidence intervals on $\alpha_{\text{MLE}}$ and a 45-degree reference line.
+
+\input{risk_aversion_consistency}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{risk_aversion_consistency.pdf}
+  \caption{Experiment-implied $\alpha_{\text{MLE}}$ (with LR 95\% CIs) versus survey-implied $\alpha_{\text{task}}$. The dashed line is the 45-degree reference.}
+  \label{fig:risk_aversion_consistency}
+\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion and Conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -4,7 +4,7 @@ type: tool
 tags: [data-pipeline, derived-data, python, datasets]
 summary: "Python scripts in analysis/derived/ that transform raw parsed data into analysis-ready CSV/parquet datasets"
 status: draft
-last_verified: "2026-04-06"
+last_verified: "2026-04-21"
 ---
 
 ## Summary
@@ -35,6 +35,29 @@ The `analysis/derived/` directory contains Python scripts that use `market_data.
 | `build_imotions_missing_summary.py` | iMotions data missingness | Summary statistics |
 | `build_group_round_timing_dataset.py` | Group-round selling timing | Group × round |
 | `build_welfare_dataset.py` | Welfare computation | Group × round |
+| `build_participant_risk_aversion.py` | Participant-level CRRA α (experiment MLE + survey-inverted) | Participant |
+
+## Non-Builder Derived Artifacts
+
+Some `datastore/derived/` artifacts are produced by analysis scripts rather than dedicated builders:
+
+| Artifact | Producer | Columns | Approx. rows |
+|----------|----------|---------|--------------|
+| `equilibrium_sigma_grid.parquet` | `analysis/analysis/simulate_equilibrium.py` | treatment, alpha, n, pi, sigma | ~33,128 (101 α × 2 treatments × 4 n × ~41 π) |
+
+## Participant Risk Aversion Dataset
+
+`datastore/derived/participant_risk_aversion.csv` (95 rows, participant-granularity) maps each participant to two risk-aversion estimates:
+
+- `alpha_mle` — grid-search MLE over α ∈ {0.00, 0.01, …, 1.00} against the Magnani & Munro (2020) equilibrium σ grid (`equilibrium_sigma_grid.parquet`), using the participant's hold/sell decisions.
+- `alpha_task` — Gneezy-Potters lottery inversion from `risk_tolerance` ∈ {0, …, 20} via α = log(2.5) / log((20 + 1.5a)/(20 − a)). Set to NaN and `alpha_task_edge_flag=True` when `risk_tolerance ∈ {0, 20}`.
+
+Columns: `session_id`, `player`, `treatment` (tr1/tr2), `n_decisions`, `alpha_mle`, `alpha_ci_low`, `alpha_ci_high` (95% likelihood-ratio set), `alpha_task`, `alpha_task_edge_flag`.
+
+Inputs to `build_participant_risk_aversion.py`:
+- `individual_period_dataset.csv` — decision rows (`already_sold == 0`)
+- `survey_traits.csv` — `risk_tolerance`
+- `equilibrium_sigma_grid.parquet` — σ(α, n, π) lookup
 
 ## Data Dependencies
 
@@ -53,6 +76,11 @@ Raw oTree CSVs (datastore/<session>/)
         ├── build_imotions_period_emotions.py
         ├── build_group_round_timing_dataset.py
         └── build_welfare_dataset.py
+
+analysis/analysis/simulate_equilibrium.py
+    └── equilibrium_sigma_grid.parquet
+        └── build_participant_risk_aversion.py (+ individual_period_dataset.csv, survey_traits.csv)
+            └── participant_risk_aversion.csv
 ```
 
 ## Related

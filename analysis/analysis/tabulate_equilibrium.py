@@ -13,6 +13,9 @@ import pandas as pd
 INPUT_CSV = Path("datastore/derived/equilibrium_thresholds.csv")
 OUTPUT_TEX = Path("analysis/output/tables/equilibrium_thresholds.tex")
 
+# Display the original 10-value alpha subset in the paper table
+DISPLAY_ALPHAS = [round(a * 0.1, 1) for a in range(10)]
+
 
 # =====
 # Main function
@@ -21,6 +24,7 @@ def main():
     """Read simulation data and generate LaTeX table."""
     df = pd.read_csv(INPUT_CSV)
     df = df[df["n"] > 1]  # n=1 never sells, omit from table
+    df = df[df["alpha"].round(2).isin(DISPLAY_ALPHAS)]
     latex = build_latex_table(df)
     OUTPUT_TEX.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_TEX.write_text(latex)

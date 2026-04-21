@@ -22,9 +22,10 @@ from analysis.analysis.equilibrium_model import (
 
 # FILE PATHS
 OUTPUT_CSV = Path("datastore/derived/equilibrium_thresholds.csv")
+SIGMA_GRID_PARQUET = Path("datastore/derived/equilibrium_sigma_grid.parquet")
 
 # SIMULATION PARAMETERS
-ALPHA_VALUES = [round(a * 0.1, 1) for a in range(10)]  # 0.0 to 0.9
+ALPHA_VALUES = np.round(np.arange(0.00, 1.01, 0.01), 2).tolist()  # 0.00..1.00
 TREATMENTS = ["random", "average"]
 N_SIMULATIONS = 10_000
 T_MAX = 20  # belief grid depth (41 points, converged per robustness checks)
@@ -37,6 +38,7 @@ SEED = 42
 def main():
     """Solve equilibrium and simulate for all (alpha, treatment) pairs."""
     rows = []
+    sigma_rows = []
     for treatment in TREATMENTS:
         for alpha in ALPHA_VALUES:
             print(f"Solving alpha={alpha}, treatment={treatment}...", flush=True)
@@ -44,10 +46,14 @@ def main():
             threshold_rows = _extract_thresholds(alpha, treatment, result)
             sim_averages = _run_simulations(alpha, treatment, result)
             rows.extend(_merge_threshold_sim(threshold_rows, sim_averages))
+            sigma_rows.extend(_extract_sigma_rows(alpha, treatment, result))
     df = pd.DataFrame(rows)
     OUTPUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(OUTPUT_CSV, index=False)
     print(f"Wrote {len(df)} rows to {OUTPUT_CSV}")
+    sigma_df = pd.DataFrame(sigma_rows)
+    sigma_df.to_parquet(SIGMA_GRID_PARQUET, index=False)
+    print(f"Wrote {len(sigma_df)} rows to {SIGMA_GRID_PARQUET}")
     _print_validation(df)
 
 
@@ -64,6 +70,19 @@ def _extract_thresholds(alpha, treatment, result):
             n, alpha, treatment, v_table, grid)
         rows.append({"alpha": alpha, "treatment": treatment, "n": n,
                       "threshold_pi": threshold})
+    return rows
+
+
+def _extract_sigma_rows(alpha, treatment, result):
+    """Flatten the (n x pi) sigma table into long-format rows."""
+    grid = result["belief_grid"]
+    sigma_table = result["sigma"]
+    rows = []
+    for n in range(1, N_INVESTORS + 1):
+        sig_n = sigma_table[n]
+        for pi, sigma in zip(grid, sig_n):
+            rows.append({"treatment": treatment, "alpha": alpha,
+                         "n": n, "pi": float(pi), "sigma": float(sigma)})
     return rows
 
 
