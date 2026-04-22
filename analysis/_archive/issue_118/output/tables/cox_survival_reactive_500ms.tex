@@ -1,0 +1,72 @@
+
+\begingroup
+\centering
+\scriptsize
+\setlength{\LTcapwidth}{\textwidth}
+\begin{longtable}{l*{2}{>{\centering\arraybackslash}p{3.0cm}}}
+\caption{Cox survival regression on reactive sellers (500ms pre-click emotion window)} \label{tab:cox_survival_reactive_500ms} \\
+   \midrule \midrule
+   & (1) & (2) \\
+   & RE Cox & Clustered Cox \\
+   \midrule
+\endfirsthead
+\multicolumn{3}{l}{\emph{(continued)}} \\
+   \midrule \midrule
+   & (1) & (2) \\
+   & RE Cox & Clustered Cox \\
+   \midrule
+\endhead
+   \midrule
+   \multicolumn{3}{r}{\emph{continued on next page}} \\
+\endfoot
+\endlastfoot
+   Signal                    & 0.0130$^{***}$ & 0.0199$^{***}$ \\
+                             & (0.0096) & (0.0155) \\
+   Fear                      & 2.7974$^{***}$ & 2.1027$^{***}$ \\
+                             & (0.9936) & (0.4469) \\
+   Anger                     & 0.7147$^{*}$ & 0.7506$^{*}$ \\
+                             & (0.1284) & (0.1102) \\
+   Contempt                  & 1.0150 & 1.0110 \\
+                             & (0.0179) & (0.0101) \\
+   Disgust                   & 1.1242$^{*}$ & 1.1013 \\
+                             & (0.0742) & (0.0839) \\
+   Joy                       & 1.0371 & 1.0382$^{**}$ \\
+                             & (0.0275) & (0.0171) \\
+   Sadness                   & 1.0042 & 0.9896 \\
+                             & (0.0360) & (0.0216) \\
+   Surprise                  & 0.2609$^{***}$ & 0.3879$^{***}$ \\
+                             & (0.1322) & (0.0908) \\
+   Engagement                & 0.9951 & 0.9992 \\
+                             & (0.0078) & (0.0119) \\
+   Valence                   & 0.9845 & 0.9775$^{**}$ \\
+                             & (0.0225) & (0.0087) \\
+   Round                     & 0.9052$^{**}$ & 0.9097$^{**}$ \\
+                             & (0.0396) & (0.0391) \\
+   Segment 2                 & 0.5531$^{*}$ & 0.5548 \\
+                             & (0.1844) & (0.2241) \\
+   Segment 3                 & 0.5090$^{*}$ & 0.5072$^{***}$ \\
+                             & (0.1899) & (0.1218) \\
+   Segment 4                 & 0.5153$^{**}$ & 0.6601 \\
+                             & (0.1521) & (0.2540) \\
+   Treatment 2               & 1.4141 & 1.3931 \\
+                             & (0.4573) & (0.3868) \\
+   Age                       & 1.0403 & 1.0385 \\
+                             & (0.0499) & (0.0390) \\
+   Female                    & 1.9652$^{**}$ & 1.6586$^{**}$ \\
+                             & (0.6628) & (0.4051) \\
+   \midrule
+   \emph{Fit statistics} & & \\
+   Observations              & 1,082 & 1,082 \\
+   Events                    & 101 & 101 \\
+   Participants              & 94 & --- \\
+   Log-likelihood            & -487.4 & -500.9 \\
+   \midrule \midrule
+   \multicolumn{3}{l}{\emph{Hazard ratios reported. Column (1): random-intercept Cox (coxme) with player random effect. Column (2): Cox (coxph) with group-clustered robust SEs.}} \\
+   \multicolumn{3}{l}{\emph{Sample restricted to rows with group\_sold\_prev\_period $=$ 1 (person-periods immediately following a group-mate's sale).}} \\
+   \multicolumn{3}{l}{\emph{Event: any sale within the restricted risk set; equals the reactive\_sale count under the restriction.}} \\
+   \multicolumn{3}{l}{\emph{HR $>$ 1: increased hazard of a reactive sale. HR $<$ 1: decreased hazard.}} \\
+   \multicolumn{3}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}} \\
+\end{longtable}
+\par\endgroup
+
+
