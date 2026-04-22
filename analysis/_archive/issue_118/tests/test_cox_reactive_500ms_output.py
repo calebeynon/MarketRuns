@@ -12,8 +12,18 @@ from pathlib import Path
 import pytest
 
 # FILE PATHS
-REPO_ROOT = Path(__file__).resolve().parents[2]
-TEX_PATH = REPO_ROOT / "analysis" / "output" / "tables" / "cox_survival_reactive_500ms.tex"
+# Archived: table lives under _archive/issue_118/output/tables/ (moved from
+# analysis/output/tables/ when the 500ms driver was retired from the paper path).
+REPO_ROOT = Path(__file__).resolve().parents[4]
+TEX_PATH = (
+    REPO_ROOT
+    / "analysis"
+    / "_archive"
+    / "issue_118"
+    / "output"
+    / "tables"
+    / "cox_survival_reactive_500ms.tex"
+)
 
 EMOTION_LABELS = [
     "Fear", "Anger", "Contempt", "Disgust",
