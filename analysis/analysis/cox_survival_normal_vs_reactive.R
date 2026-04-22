@@ -71,9 +71,12 @@ normal_cox_formula <- function() {
 # Column (2): clustered coxph on 500ms-filtered reactive sample.
 # =====
 fit_reactive_cox_cluster <- function() {
+  # Risk set restricted to group_sold_prev_period==1 rows (reviewer finding: prior code used all rows as reactive sample)
   df_r <- build_reactive_500ms_sample()
+  df_r <- restrict_to_reactive_risk_set(df_r)
   nclusters <- uniqueN(df_r$global_group_id)
-  cat(sprintf("[Reactive] Clusters: %d\n", nclusters))
+  cat(sprintf("[Reactive] Restricted rows: %d | Events (sold==1): %d | Clusters: %d\n",
+              nrow(df_r), sum(df_r$sold == 1, na.rm = TRUE), nclusters))
   m <- coxph(reactive_cox_formula(), data = df_r,
              cluster = global_group_id)
   attr(m, "nclusters") <- nclusters
@@ -81,7 +84,7 @@ fit_reactive_cox_cluster <- function() {
 }
 
 reactive_cox_formula <- function() {
-  Surv(period_start, period, reactive_sale) ~
+  Surv(period_start, period, sold) ~
     fear_mean + anger_mean + contempt_mean + disgust_mean +
     joy_mean + sadness_mean + surprise_mean + engagement_mean +
     valence_mean +

@@ -135,18 +135,29 @@ build_footer_nvr <- function() {
     "\\end{table}", "", "")
 }
 
+build_footer_note_paragraph_nvr <- function() {
+  paste0("\\emph{Notes}: Hazard ratios reported. Both columns: Cox ",
+         "(coxph) with cluster-robust standard errors, clustered at the ",
+         "session $\\times$ segment $\\times$ group level ",
+         "(global\\_group\\_id). Column (1) event = any sale; sample = ",
+         "full emotions+traits dataset. Column (2) sample is restricted ",
+         "to rows with group\\_sold\\_prev\\_period $=$ 1, so every row ",
+         "in the risk set is mechanically at risk of a cascade-triggered ",
+         "(reactive) sale; the Column (2) event is any sale within that ",
+         "restricted risk set, which equals the reactive\\_sale count ",
+         "under the restriction. Emotion covariates use the average over ",
+         "the 500 ms immediately preceding the period's sell click for ",
+         "sellers and the period average for non-sellers. HR $>$ 1: ",
+         "increased hazard; HR $<$ 1: decreased hazard. Cascade and ",
+         "cumulative-by-previous-period interaction terms are omitted ",
+         "from Column (2) to keep the specification parallel with how a ",
+         "reactive sale is conceptualized: every row in the restricted ",
+         "risk set already follows at least one group-mate's sale by ",
+         "construction.")
+}
+
 build_footer_notes_nvr <- function() {
-  c(paste0("\\emph{Notes}: Hazard ratios reported. Both columns: Cox ",
-           "(coxph) with cluster-robust standard errors, clustered at the ",
-           "session $\\times$ segment $\\times$ group level ",
-           "(global\\_group\\_id). Column (1) event = any sale; sample = ",
-           "full emotions+traits dataset. Column (2) event = reactive sale ",
-           "(sold in the period immediately after a group-mate's sale); ",
-           "sample = 500ms pre-click emotion window. HR $>$ 1: increased ",
-           "hazard; HR $<$ 1: decreased hazard. Cascade and cumulative-by-",
-           "previous-period interaction terms are omitted from Column (2) ",
-           "because reactive\\_sale $=$ 1 implies prior group sales ",
-           "$\\geq 1$ (mechanical collinearity)."),
+  c(build_footer_note_paragraph_nvr(),
     "",
     "\\emph{Signif.\\ Codes}: ***: 0.01, **: 0.05, *: 0.1.")
 }

@@ -20,50 +20,51 @@
    \multicolumn{3}{r}{\emph{continued on next page}} \\
 \endfoot
 \endlastfoot
-   Signal                    & 0.0019$^{***}$ & 0.0023$^{***}$ \\
-                             & (0.0013) & (0.0012) \\
-   Fear                      & 1.1846$^{*}$ & 1.1795$^{***}$ \\
-                             & (0.1088) & (0.0234) \\
-   Anger                     & 0.9510 & 0.9254 \\
-                             & (0.0793) & (0.0698) \\
-   Contempt                  & 1.0099 & 1.0062 \\
-                             & (0.0146) & (0.0103) \\
-   Disgust                   & 0.9928 & 0.9887 \\
-                             & (0.0651) & (0.0764) \\
-   Joy                       & 1.0128 & 1.0162$^{*}$ \\
-                             & (0.0205) & (0.0087) \\
-   Sadness                   & 0.9991 & 0.9946 \\
-                             & (0.0272) & (0.0152) \\
-   Surprise                  & 0.7123$^{**}$ & 0.7206$^{***}$ \\
-                             & (0.1151) & (0.0460) \\
-   Engagement                & 1.0028 & 1.0040 \\
-                             & (0.0067) & (0.0098) \\
-   Valence                   & 0.9917 & 0.9862$^{*}$ \\
-                             & (0.0181) & (0.0079) \\
-   Round                     & 0.8620$^{***}$ & 0.8668$^{***}$ \\
-                             & (0.0359) & (0.0426) \\
-   Segment 2                 & 0.4426$^{***}$ & 0.4440$^{***}$ \\
-                             & (0.1385) & (0.1125) \\
-   Segment 3                 & 0.1753$^{***}$ & 0.1981$^{***}$ \\
-                             & (0.0602) & (0.0268) \\
-   Segment 4                 & 0.2954$^{***}$ & 0.3333$^{**}$ \\
-                             & (0.0785) & (0.1865) \\
-   Treatment 2               & 1.5976 & 1.6519 \\
-                             & (0.4784) & (0.7073) \\
-   Age                       & 1.0483 & 1.0414 \\
-                             & (0.0481) & (0.0368) \\
-   Female                    & 1.8731$^{**}$ & 1.6394$^{***}$ \\
-                             & (0.5991) & (0.3033) \\
+   Signal                    & 0.0130$^{***}$ & 0.0199$^{***}$ \\
+                             & (0.0096) & (0.0155) \\
+   Fear                      & 2.7974$^{***}$ & 2.1027$^{***}$ \\
+                             & (0.9936) & (0.4469) \\
+   Anger                     & 0.7147$^{*}$ & 0.7506$^{*}$ \\
+                             & (0.1284) & (0.1102) \\
+   Contempt                  & 1.0150 & 1.0110 \\
+                             & (0.0179) & (0.0101) \\
+   Disgust                   & 1.1242$^{*}$ & 1.1013 \\
+                             & (0.0742) & (0.0839) \\
+   Joy                       & 1.0371 & 1.0382$^{**}$ \\
+                             & (0.0275) & (0.0171) \\
+   Sadness                   & 1.0042 & 0.9896 \\
+                             & (0.0360) & (0.0216) \\
+   Surprise                  & 0.2609$^{***}$ & 0.3879$^{***}$ \\
+                             & (0.1322) & (0.0908) \\
+   Engagement                & 0.9951 & 0.9992 \\
+                             & (0.0078) & (0.0119) \\
+   Valence                   & 0.9845 & 0.9775$^{**}$ \\
+                             & (0.0225) & (0.0087) \\
+   Round                     & 0.9052$^{**}$ & 0.9097$^{**}$ \\
+                             & (0.0396) & (0.0391) \\
+   Segment 2                 & 0.5531$^{*}$ & 0.5548 \\
+                             & (0.1844) & (0.2241) \\
+   Segment 3                 & 0.5090$^{*}$ & 0.5072$^{***}$ \\
+                             & (0.1899) & (0.1218) \\
+   Segment 4                 & 0.5153$^{**}$ & 0.6601 \\
+                             & (0.1521) & (0.2540) \\
+   Treatment 2               & 1.4141 & 1.3931 \\
+                             & (0.4573) & (0.3868) \\
+   Age                       & 1.0403 & 1.0385 \\
+                             & (0.0499) & (0.0390) \\
+   Female                    & 1.9652$^{**}$ & 1.6586$^{**}$ \\
+                             & (0.6628) & (0.4051) \\
    \midrule
    \emph{Fit statistics} & & \\
-   Observations              & 13,590 & 13,590 \\
+   Observations              & 1,082 & 1,082 \\
    Events                    & 101 & 101 \\
-   Participants              & 95 & --- \\
-   Log-likelihood            & -656.7 & -669.4 \\
+   Participants              & 94 & --- \\
+   Log-likelihood            & -487.4 & -500.9 \\
    \midrule \midrule
    \multicolumn{3}{l}{\emph{Hazard ratios reported. Column (1): random-intercept Cox (coxme) with player random effect. Column (2): Cox (coxph) with group-clustered robust SEs.}} \\
-   \multicolumn{3}{l}{\emph{Event: reactive sale (sold in period immediately after a group-mate's sale). Non-reactive sales included in risk set as non-events.}} \\
-   \multicolumn{3}{l}{\emph{HR $>$ 1: increased hazard of reactive sale. HR $<$ 1: decreased hazard.}} \\
+   \multicolumn{3}{l}{\emph{Sample restricted to rows with group\_sold\_prev\_period $=$ 1 (person-periods immediately following a group-mate's sale).}} \\
+   \multicolumn{3}{l}{\emph{Event: any sale within the restricted risk set; equals the reactive\_sale count under the restriction.}} \\
+   \multicolumn{3}{l}{\emph{HR $>$ 1: increased hazard of a reactive sale. HR $<$ 1: decreased hazard.}} \\
    \multicolumn{3}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}} \\
 \end{longtable}
 \par\endgroup

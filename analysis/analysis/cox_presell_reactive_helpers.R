@@ -30,6 +30,15 @@ add_reactive_flag <- function(df) {
   df
 }
 
+restrict_to_reactive_risk_set <- function(df) {
+  input_n <- nrow(df)
+  df <- df[group_sold_prev_period == 1]
+  cat("Reactive risk set restriction: input rows =", input_n,
+      "| kept rows =", nrow(df),
+      "| events (sold==1) =", sum(df$sold == 1, na.rm = TRUE), "\n")
+  df
+}
+
 compute_group_period_sold <- function(df, group_keys) {
   by_cols <- c(group_keys, "period")
   df[, .(group_sold = sum(as.integer(sold), na.rm = TRUE)), by = by_cols]
@@ -71,14 +80,16 @@ run_cox_panel_r <- function(df) {
 }
 
 # =====
-# Model 1: No traits RE Cox, event = reactive_sale
+# Model 1: No traits RE Cox, event = sold
 # =====
-# Cascade dummies (dummy_*_cum) and interactions (int_*_*) are omitted
-# because reactive_sale==1 requires prior_group_sales>=1 by definition,
-# making them mechanically collinear with the event.
+# Within the restricted risk set (rows with group_sold_prev_period == 1)
+# every row is mechanically at risk of a cascade-triggered sale; cascade
+# dummies and cumulative-by-previous-period interactions are nearly constant
+# and are omitted.
 run_cox_panel_r_no_traits <- function(df) {
+  df <- restrict_to_reactive_risk_set(df)
   cat("[Panel R M1] No traits RE Cox (coxme)...\n")
-  f <- Surv(period_start, period, reactive_sale) ~
+  f <- Surv(period_start, period, sold) ~
     fear_mean + anger_mean + contempt_mean + disgust_mean +
     joy_mean + sadness_mean + surprise_mean + engagement_mean +
     valence_mean +
@@ -89,11 +100,12 @@ run_cox_panel_r_no_traits <- function(df) {
 }
 
 # =====
-# Model 2: With traits RE Cox, event = reactive_sale
+# Model 2: With traits RE Cox, event = sold
 # =====
 run_cox_panel_r_with_traits <- function(df) {
+  df <- restrict_to_reactive_risk_set(df)
   cat("[Panel R M2] With traits RE Cox (coxme)...\n")
-  f <- Surv(period_start, period, reactive_sale) ~
+  f <- Surv(period_start, period, sold) ~
     fear_mean + anger_mean + contempt_mean + disgust_mean +
     joy_mean + sadness_mean + surprise_mean + engagement_mean +
     valence_mean +
@@ -106,11 +118,12 @@ run_cox_panel_r_with_traits <- function(df) {
 }
 
 # =====
-# Model 3: Cluster-robust Cox (group_id sandwich SEs), event = reactive_sale
+# Model 3: Cluster-robust Cox (group_id sandwich SEs), event = sold
 # =====
 run_cox_panel_r_cluster <- function(df) {
+  df <- restrict_to_reactive_risk_set(df)
   cat("[Panel R M3] Cluster-robust Cox (coxph, cluster=group_id)...\n")
-  f <- Surv(period_start, period, reactive_sale) ~
+  f <- Surv(period_start, period, sold) ~
     fear_mean + anger_mean + contempt_mean + disgust_mean +
     joy_mean + sadness_mean + surprise_mean + engagement_mean +
     valence_mean +
