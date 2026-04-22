@@ -1,0 +1,85 @@
+
+\begin{table}[!htbp]
+\centering
+\caption{Cox survival regression: all-sellers (normal) vs.\ reactive sellers (500ms pre-click window)} \label{tab:cox_normal_vs_reactive}
+\begin{minipage}{\textwidth}
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{0.9}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} l c c @{\hspace{4em}}}
+   \toprule \toprule
+   & (1) & (2) \\
+   & Normal & Reactive \\
+   & All sellers & 500ms pre-click \\
+   \midrule
+   1 prior sale              & 0.9740 &  \\
+                             & (0.2653) &  \\
+   2 prior sales             & 0.3170$^{***}$ &  \\
+                             & (0.1084) &  \\
+   3 prior sales             & 0.0729$^{***}$ &  \\
+                             & (0.0730) &  \\
+   1 prior $\times$ 1 prev.  & 1.0774 &  \\
+                             & (0.2638) &  \\
+   2 prior $\times$ 1 prev.  & 2.7717$^{**}$ &  \\
+                             & (1.1141) &  \\
+   2 prior $\times$ 2 prev.  & 2.3836$^{**}$ &  \\
+                             & (1.0158) &  \\
+   3 prior $\times$ 1 prev.  & 0.0000$^{***}$ &  \\
+                             & (0.0000) &  \\
+   3 prior $\times$ 2 prev.  & 0.0000$^{***}$ &  \\
+                             & (0.0000) &  \\
+   3 prior $\times$ 3 prev.  & 7.2270 &  \\
+                             & (9.9338) &  \\
+   Signal                    & 0.0052$^{***}$ & 0.0023$^{***}$ \\
+                             & (0.0020) & (0.0023) \\
+   Fear                      & 0.9588 & 1.1795$^{***}$ \\
+                             & (0.0260) & (0.0601) \\
+   Anger                     & 0.9293 & 0.9254 \\
+                             & (0.0491) & (0.0668) \\
+   Contempt                  & 0.9910 & 1.0062 \\
+                             & (0.0102) & (0.0128) \\
+   Disgust                   & 0.9636 & 0.9887 \\
+                             & (0.0337) & (0.0533) \\
+   Joy                       & 1.0175$^{*}$ & 1.0162 \\
+                             & (0.0095) & (0.0171) \\
+   Sadness                   & 0.9840 & 0.9946 \\
+                             & (0.0140) & (0.0182) \\
+   Surprise                  & 1.0132 & 0.7206$^{***}$ \\
+                             & (0.0191) & (0.0443) \\
+   Engagement                & 1.0037 & 1.0040 \\
+                             & (0.0028) & (0.0080) \\
+   Valence                   & 0.9801$^{**}$ & 0.9862 \\
+                             & (0.0094) & (0.0143) \\
+   Round                     & 0.9565$^{**}$ & 0.8668$^{***}$ \\
+                             & (0.0206) & (0.0477) \\
+   Segment 2                 & 0.7521 & 0.4440$^{*}$ \\
+                             & (0.1631) & (0.2162) \\
+   Segment 3                 & 0.3815$^{***}$ & 0.1981$^{***}$ \\
+                             & (0.0986) & (0.0782) \\
+   Segment 4                 & 0.3530$^{***}$ & 0.3333$^{**}$ \\
+                             & (0.1042) & (0.1498) \\
+   Treatment 2               & 1.3967$^{*}$ & 1.6519 \\
+                             & (0.2422) & (0.5067) \\
+   Age                       & 1.0155 & 1.0414 \\
+                             & (0.0216) & (0.0396) \\
+   Female                    & 1.3241$^{**}$ & 1.6394$^{**}$ \\
+                             & (0.1795) & (0.3768) \\
+   \midrule
+   \emph{Fit statistics} & & \\
+   Observations              & 13,590 & 13,590 \\
+   Events                    & 659 & 101 \\
+   Clusters                  & 96 & 96 \\
+   Log-likelihood            & -4621.6 & -669.4 \\
+   \bottomrule \bottomrule
+\end{tabular*}
+\vspace{0.4em}
+\begin{minipage}{\textwidth}
+\footnotesize
+\emph{Notes}: Hazard ratios reported. Both columns: Cox (coxph) with cluster-robust standard errors, clustered at the session $\times$ segment $\times$ group level (global\_group\_id). Column (1) event = any sale; sample = full emotions+traits dataset. Column (2) event = reactive sale (sold in the period immediately after a group-mate's sale); sample = 500ms pre-click emotion window. HR $>$ 1: increased hazard; HR $<$ 1: decreased hazard. Cascade and cumulative-by-previous-period interaction terms are omitted from Column (2) because reactive\_sale $=$ 1 implies prior group sales $\geq 1$ (mechanical collinearity).
+
+\emph{Signif.\ Codes}: ***: 0.01, **: 0.05, *: 0.1.
+\end{minipage}
+\end{minipage}
+\end{table}
+
+

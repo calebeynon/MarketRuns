@@ -366,20 +366,6 @@ As expected, more sales occur in bad state markets than good state markets. We a
 
 \begin{table}[H]
   \centering
-  \caption{Pairwise correlations of trait measures}
-  \label{tab:trait_correlations}
-  \input{trait_correlations}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Pairwise correlations of emotion measures}
-  \label{tab:emotion_correlations}
-  \input{emotion_correlations}
-\end{table}
-
-\begin{table}[H]
-  \centering
   \caption{Group-round counts, seller counts, and selling timing by treatment and chat condition}
   \label{tab:summary_seller_counts}
   \input{summary_seller_counts}
@@ -493,7 +479,7 @@ Figure \ref{fig:did_segment_effects} displays the learning trend and communicati
 
 \subsubsection{Player-period-level regression analysis}
 
-We estimate Cox proportional hazards survival models treating the within-round period as the survival time axis and selling as the failure event. Table~\ref{tab:cox_survival_regression} reports hazard ratios from random-effects Cox models (coxme) for two samples, All Sellers and First Seller, each estimated with and without personality traits. All specifications include eight discrete emotions (fear, anger, contempt, disgust, joy, sadness, surprise, engagement) and a composite valence measure. Columns~(1) and~(3) present the base specification; columns~(2) and~(4) add personality traits as additional covariates. Equation \ref{eq:coxph} presents the specification for the all sellers model with traits included. 
+We estimate Cox proportional hazards survival models treating the within-round period as the survival time axis and selling as the failure event. Table~\ref{tab:cox_normal_vs_reactive} reports hazard ratios from two Cox models with cluster-robust standard errors, clustered at the session $\times$ segment $\times$ group level (96 clusters). Column~(1) (\emph{Normal}) uses the full emotions+traits sample with any sale as the event ($N=659$); period-average emotion covariates, cascade dummies, and cumulative-by-previous-period interactions are all included. Column~(2) (\emph{Reactive}) addresses the concern that period-level emotions are contemporaneous with the click: we restrict the event to the $N=101$ sales that occurred in the period immediately after a group-mate sold, and replace the period-wide emotion average for those sellers with the average over the 500 milliseconds immediately preceding the sell click. Cascade and interaction terms are mechanically omitted from Column~(2) because a reactive sale requires prior group sales by construction. Both specifications include the eight discrete emotions (fear, anger, contempt, disgust, joy, sadness, surprise, engagement), a composite valence measure, signal, round, segment, treatment, age, and gender.
 
   \begin{equation}                                                                                                                                                                    
   \begin{split}                                                                                                                                                                       
@@ -515,16 +501,7 @@ This level of observation allows us to also view the effect of signal and round 
 We also observe significant decreases in selling probability in segment 3 and 4, but not in segment 2, relative to segment 1. Recall that communication is permitted in segments 3 and 4. This provides evidence that communication causes a decrease in selling probability. This provides support for hypothesis 2. However, we do not observe any significant effect from the average liquidation vs random liquidation. This does not support hypothesis 1. 
 
 
-\input{cox_survival_regression}
-
-\subsubsection{Reactive sellers: pre-click emotion windows}
-
-A natural concern with the period-level Cox results is that the facial emotions measured during the selling period are contemporaneous with the sale itself, making it hard to separate an emotional antecedent of selling from a reaction to the act of clicking sell. To address this, we re-estimate the Cox model on the subset of ``reactive'' selling events — periods in which a participant sold immediately after a group-mate sold in the previous period ($N=101$ events out of 659 observed sales) — and replace the period-wide emotion average for sellers with the average over the 500 milliseconds immediately preceding the sell click. For non-sellers and non-reactive sellers, the emotion covariates remain the period average. Non-reactive sales stay in the risk set as non-events. Because reactive sales require prior group sales by construction, the cascade dummies and cumulative-by-previous-period interactions are mechanically collinear with the event and are dropped from the specification. Table~\ref{tab:cox_survival_reactive_500ms} reports hazard ratios from two complementary specifications: column~(1) is a random-intercept Cox model (coxme) with a player-level intercept; column~(2) is a Cox model with group-clustered robust standard errors.
-
-Two emotions emerge from this exercise. Surprise in the 500ms before a reactive click is associated with a substantially lower hazard of reactive selling (HR~$\approx 0.71$, significant in both specifications), suggesting that participants who were visibly surprised by a group-mate's sale were less, not more, likely to follow. Fear shows a positive association with reactive selling (HR~$\approx 1.18$) that is marginal in the random-effects column ($p=0.065$) but tightens sharply under cluster-robust standard errors. This is a substantial divergence (RE standard error $\approx 0.11$ on the hazard ratio versus $\approx 0.02$ under clustering), and we interpret the fear point estimate as suggestive rather than definitive: the player-level random intercept absorbs much of the within-player variation in fear, inflating its conditional standard error, while group-clustered errors may understate uncertainty given the modest number of reactive events ($N=101$). All other discrete emotions are null. A Schoenfeld-residual test of the proportional-hazards assumption finds no violations for any of the emotion covariates (global $p=0.29$). We read these results cautiously given the small reactive-event count, but the protective surprise effect is the most robust finding across the pre-click window.
-
-\input{cox_survival_reactive_500ms}
-
+\input{cox_survival_normal_vs_reactive}
 
 % Holdout liquidation regression (standalone)
 
@@ -691,7 +668,7 @@ This paper provides multiple avenues of future exploration. First, understanding
 
 \section*{Appendix G. Valence-Only Emotion Specifications}
 
-Table~\ref{tab:ro_logit_selling_position_valence_only} replicates the rank-ordered logit analysis from Table~\ref{tab:ro_logit_selling_position} using only Valence as the emotion variable, omitting the eight discrete emotions. Table~\ref{tab:cox_survival_regression_valence_only} does the same for the Cox survival regression from Table~\ref{tab:cox_survival_regression}.
+Table~\ref{tab:ro_logit_selling_position_valence_only} replicates the rank-ordered logit analysis from Table~\ref{tab:ro_logit_selling_position} using only Valence as the emotion variable, omitting the eight discrete emotions. Table~\ref{tab:cox_survival_regression_valence_only} does the same for the Cox survival regression from Table~\ref{tab:cox_normal_vs_reactive}.
 
 \input{ro_logit_selling_position_valence_only}
 
@@ -701,11 +678,29 @@ Table~\ref{tab:ro_logit_selling_position_valence_only} replicates the rank-order
 
 \section*{Appendix H. No-Valence Emotion Specifications}
 
-Table~\ref{tab:ro_logit_selling_position_no_valence} replicates the rank-ordered logit analysis from Table~\ref{tab:ro_logit_selling_position} using only the eight discrete emotions, omitting Valence. Table~\ref{tab:cox_survival_regression_no_valence} does the same for the Cox survival regression from Table~\ref{tab:cox_survival_regression}.
+Table~\ref{tab:ro_logit_selling_position_no_valence} replicates the rank-ordered logit analysis from Table~\ref{tab:ro_logit_selling_position} using only the eight discrete emotions, omitting Valence. Table~\ref{tab:cox_survival_regression_no_valence} does the same for the Cox survival regression from Table~\ref{tab:cox_normal_vs_reactive}.
 
 \input{ro_logit_selling_position_no_valence}
 
 \input{cox_survival_regression_no_valence}
+
+\newpage
+
+\section*{Appendix I. Pairwise Correlations}
+
+\begin{table}[H]
+  \centering
+  \caption{Pairwise correlations of trait measures}
+  \label{tab:trait_correlations}
+  \input{trait_correlations}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Pairwise correlations of emotion measures}
+  \label{tab:emotion_correlations}
+  \input{emotion_correlations}
+\end{table}
 
 \newpage
 
