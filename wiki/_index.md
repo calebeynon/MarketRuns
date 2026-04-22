@@ -1,7 +1,7 @@
 # Project Wiki
 
 <!-- AUTO:stats -->
-Total articles: 10
+Total articles: 11
 <!-- /AUTO:stats -->
 
 ## Articles by Type
@@ -19,6 +19,7 @@ Total articles: 10
 - [Analysis Scripts (R)](tools/analysis-scripts.md) — R scripts in analysis/analysis/ for regressions (fixest) and visualization (ggplot2), producing LaTeX tables and PDF plots
 
 ### skill
+- [Getting Started: New Collaborator Onboarding](skills/getting-started.md) — Day-1 orientation for a new collaborator: what the project is, how to set it up, the repo layout, data pipeline, and the commit/PR conventions
 - [Overleaf Sync Workflow](skills/overleaf-sync.md) — How to pull and push paper changes between the local repo and Overleaf using the configured git remote
 
 ### method
