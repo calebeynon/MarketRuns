@@ -49,7 +49,7 @@ build_presell_subset <- function(presell_dt, window_cols, frames_col) {
 align_key_types <- function(sub, base_dt) {
   for (k in MERGE_KEYS) {
     if (is.factor(base_dt[[k]]) && !is.factor(sub[[k]])) {
-      sub[, (k) := factor(as.character(get(k)), levels = levels(base_dt[[k]]))]
+      sub[, (k) := factor(as.character(sub[[k]]), levels = levels(base_dt[[k]]))]
     }
   }
   sub

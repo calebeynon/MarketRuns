@@ -69,9 +69,9 @@ run_cox_panel_r <- function(df) {
   m3 <- run_cox_panel_r_cluster(df)
 
   cat("\n--- Panel R Cox Model Summaries ---\n")
-  cat("\nModel 1 (No Traits RE Cox, reactive_sale):\n")
+  cat("\nModel 1 (No Traits Cox, reactive_sale):\n")
   print(summary(m1))
-  cat("\nModel 2 (With Traits RE Cox, reactive_sale):\n")
+  cat("\nModel 2 (With Traits Cox, reactive_sale):\n")
   print(summary(m2))
   cat("\nModel 3 (Cluster-robust Cox, reactive_sale):\n")
   print(summary(m3))
@@ -80,7 +80,7 @@ run_cox_panel_r <- function(df) {
 }
 
 # =====
-# Model 1: No traits RE Cox, event = sold
+# Model 1: No traits Cox, event = sold
 # =====
 # Within the restricted risk set (rows with group_sold_prev_period == 1)
 # every row is mechanically at risk of a cascade-triggered sale; cascade
@@ -88,23 +88,22 @@ run_cox_panel_r <- function(df) {
 # and are omitted.
 run_cox_panel_r_no_traits <- function(df) {
   df <- restrict_to_reactive_risk_set(df)
-  cat("[Panel R M1] No traits RE Cox (coxme)...\n")
+  cat("[Panel R M1] No traits Cox (coxph, cluster=global_group_id)...\n")
   f <- Surv(period_start, period, sold) ~
     fear_mean + anger_mean + contempt_mean + disgust_mean +
     joy_mean + sadness_mean + surprise_mean + engagement_mean +
     valence_mean +
     signal + round + segment + treatment +
-    age + gender_female +
-    (1 | player_id)
-  coxme(f, data = df, init = get_coxph_init(f, df))
+    age + gender_female
+  coxph(f, data = df, cluster = global_group_id)
 }
 
 # =====
-# Model 2: With traits RE Cox, event = sold
+# Model 2: With traits Cox, event = sold
 # =====
 run_cox_panel_r_with_traits <- function(df) {
   df <- restrict_to_reactive_risk_set(df)
-  cat("[Panel R M2] With traits RE Cox (coxme)...\n")
+  cat("[Panel R M2] With traits Cox (coxph, cluster=global_group_id)...\n")
   f <- Surv(period_start, period, sold) ~
     fear_mean + anger_mean + contempt_mean + disgust_mean +
     joy_mean + sadness_mean + surprise_mean + engagement_mean +
@@ -112,22 +111,21 @@ run_cox_panel_r_with_traits <- function(df) {
     state_anxiety + impulsivity + risk_tolerance +
     conscientiousness + extraversion + agreeableness + neuroticism + openness +
     signal + round + segment + treatment +
-    age + gender_female +
-    (1 | player_id)
-  coxme(f, data = df, init = get_coxph_init(f, df))
+    age + gender_female
+  coxph(f, data = df, cluster = global_group_id)
 }
 
 # =====
-# Model 3: Cluster-robust Cox (group_id sandwich SEs), event = sold
+# Model 3: Cluster-robust Cox (global_group_id sandwich SEs), event = sold
 # =====
 run_cox_panel_r_cluster <- function(df) {
   df <- restrict_to_reactive_risk_set(df)
-  cat("[Panel R M3] Cluster-robust Cox (coxph, cluster=group_id)...\n")
+  cat("[Panel R M3] Cluster-robust Cox (coxph, cluster=global_group_id)...\n")
   f <- Surv(period_start, period, sold) ~
     fear_mean + anger_mean + contempt_mean + disgust_mean +
     joy_mean + sadness_mean + surprise_mean + engagement_mean +
     valence_mean +
     signal + round + segment + treatment +
     age + gender_female
-  coxph(f, data = df, cluster = df$group_id)
+  coxph(f, data = df, cluster = global_group_id)
 }
