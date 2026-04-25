@@ -4,7 +4,7 @@ type: tool
 tags: [data-pipeline, derived-data, python, datasets]
 summary: "Python scripts in analysis/derived/ that transform raw parsed data into analysis-ready CSV/parquet datasets"
 status: draft
-last_verified: "2026-04-06"
+last_verified: "2026-04-25"
 ---
 
 ## Summary
@@ -19,22 +19,23 @@ The `analysis/derived/` directory contains Python scripts that use `market_data.
 
 ## Dataset Builders
 
-| Script | Output | Unit of Analysis |
-|--------|--------|-----------------|
-| `build_individual_period_dataset.py` | Individual-period panel | Player × period |
-| `build_individual_period_dataset_extended.py` | Extended period panel (with emotions) | Player × period |
-| `build_individual_round_dataset.py` | Individual-round panel | Player × round |
-| `build_first_sale_dataset.py` | First sale events | Player × round (sellers only) |
-| `build_first_seller_round_dataset.py` | First seller in each round | Group × round |
-| `build_first_seller_analysis_dataset.py` | First seller traits analysis | First seller events with traits |
-| `build_holdout_next_round_dataset.py` | Holdout prediction data | Player × round |
-| `build_ordinal_selling_position.py` | Selling order position | Seller × round |
-| `build_survey_traits_dataset.py` | Survey personality traits | Player-level |
-| `build_emotions_traits_dataset.py` | iMotions emotion + traits | Player-level |
-| `build_imotions_period_emotions.py` | Period-level emotions | Player × period |
-| `build_imotions_missing_summary.py` | iMotions data missingness | Summary statistics |
-| `build_group_round_timing_dataset.py` | Group-round selling timing | Group × round |
-| `build_welfare_dataset.py` | Welfare computation | Group × round |
+| Script | Output | Unit of Analysis | Description |
+|--------|--------|-----------------|-------------|
+| `build_individual_period_dataset.py` | Individual-period panel | Player × period | |
+| `build_individual_period_dataset_extended.py` | Extended period panel (with emotions) | Player × period | |
+| `build_individual_round_dataset.py` | Individual-round panel | Player × round | |
+| `build_first_sale_dataset.py` | First sale events | Player × round (sellers only) | |
+| `build_first_seller_round_dataset.py` | First seller in each round | Group × round | |
+| `build_first_seller_analysis_dataset.py` | First seller traits analysis | First seller events with traits | |
+| `build_holdout_next_round_dataset.py` | Holdout prediction data | Player × round | |
+| `build_ordinal_selling_position.py` | Selling order position | Seller × round | |
+| `build_survey_traits_dataset.py` | Survey personality traits | Player-level | |
+| `build_emotions_traits_dataset.py` | iMotions emotion + traits | Player-level | |
+| `build_imotions_period_emotions.py` | Period-level emotions | Player × period | |
+| `build_imotions_missing_summary.py` | iMotions data missingness | Summary statistics | |
+| `build_group_round_timing_dataset.py` | Group-round selling timing | Group × round | |
+| `build_welfare_dataset.py` | Welfare computation (good-state only; superseded by market_runs in main text) | Group × round | |
+| `build_market_runs_dataset.py` | `market_runs_dataset.csv` | Player × round | Market-run indicators, belief-space equilibrium deviations (sellers: $\pi_{\text{sale}} - \text{ref}$; non-sellers: $\min(0, \min_t \pi_t - \text{ref})$ at $n_{\text{at\_dip}}$), group traits, signal accuracy |
 
 ## Data Dependencies
 
@@ -52,7 +53,11 @@ Raw oTree CSVs (datastore/<session>/)
         ├── build_survey_traits_dataset.py
         ├── build_imotions_period_emotions.py
         ├── build_group_round_timing_dataset.py
-        └── build_welfare_dataset.py
+        ├── build_welfare_dataset.py
+        └── build_market_runs_dataset.py
+            ├── (helper) market_runs_helpers.py
+            ├── (helper) equilibrium_reference.py  # reads equilibrium_thresholds.csv
+            └── (helper) group_traits.py            # reads survey_traits.csv
 ```
 
 ## Related

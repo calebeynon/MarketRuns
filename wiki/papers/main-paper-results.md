@@ -4,7 +4,7 @@ type: paper
 tags: [paper, results, hypotheses, tables, market-runs]
 summary: "Hypotheses, main results, table inventory, and section structure of the working paper (Eynon & Jindapon)"
 status: active
-last_verified: "2026-04-19"
+last_verified: "2026-04-25"
 ---
 
 ## Citation
@@ -33,7 +33,7 @@ LaTeX `\label`s reuse `chat_treatment` for several hypotheses; numbering in the 
 - **Chat treatment** (Tables 4, 6, 8): Chat segments reduce sellers per group-round by 1.07 and 1.29 (Tobit). DiD decomposition (Table 6) isolates pure communication effect = -0.4863 sellers (marginally significant, parallel-trends p=0.7553). Supports H3.
 - **Average vs. random price**: T2 *increased* sellers by 0.4952 in Tobit (Table 4) — **contradicts H2**. Cox shows no significant treatment effect.
 - **Signal/round**: Higher signal sharply lowers hazard; selling falls with round number (learning).
-- **Welfare** (Table 9): OLS of group-round welfare on traits, restricted to good-state (z=1) rounds, clustered at session×segment×group.
+- **Market Runs**: LPM and logit estimates of a binary market-run indicator (≥k distinct sellers within a (w+1)-period window) on group-mean traits, belief-space deviations from the Magnani-Munro equilibrium (`dev_from_threshold`, `dev_from_avg_pi`), signal accuracy, alpha, and treatment. Deviations are defined for both sellers (π at sale minus equilibrium reference at realized n) and non-sellers (min(0, min_t π_t - ref) evaluated at n_at_dip — so a non-seller whose belief never dips below equilibrium has deviation 0). Logit columns are dropped when feglm fails to converge in sparse (w,k) cells. Sweep `(w, k) ∈ {0,1,2,3} × {2,3,4}` for robustness; SEs clustered at the group-round level.
 
 ## Table Inventory
 
@@ -51,10 +51,11 @@ LaTeX inputs are bare filenames; sources live in `analysis/output/tables/<name>.
 | 8 | `did_learning_communication` | DiD decomposing learning vs. communication | `analysis/analysis/did_learning_communication.R` | DiD with FE |
 | 9 | `cox_survival_regression` | Mixed-effects Cox PH; cascades, emotions, traits, controls | `analysis/analysis/cox_survival_regression.R` | coxme |
 | 10 | `holdout_liquidation_regression` | Effect of holdout payoff on next-round sale; group×round FE | `analysis/analysis/holdout_liquidation_regression.R` | LPM |
-| 11 | `welfare_regression` | OLS welfare on traits (z=1 only); SE clustered session×segment×group | `analysis/analysis/welfare_regression.R` | OLS clustered |
+| 11 | `market_runs_regression` | §5.4. LPM + logit on market-run indicator (3 k-panels × 8 cols); SEs clustered at session×segment×group×round | `analysis/analysis/market_runs_regression.R` | LPM + logit |
 | App | `equilibrium_thresholds` | Avg equilibrium π at sale by seller position k and α (10k sims, both treatments) | `analysis/analysis/simulate_equilibrium.py` + `tabulate_equilibrium.py` | Numerical |
 | App G | `*_valence_only` | Valence-only emotion robustness | `*_valence_only.R` | Robustness |
 | App H | `*_no_valence` | Discrete-emotions-only robustness | `*_no_valence.R` | Robustness |
+| App J | `welfare_regression` | OLS welfare on traits (z=1 only); SE clustered session×segment×group | `analysis/analysis/welfare_regression.R` | OLS clustered |
 
 ## Section Structure (line numbers in main.tex)
 
@@ -62,13 +63,14 @@ LaTeX inputs are bare filenames; sources live in `analysis/output/tables/<name>.
 - §2 Related Literature — line 117 (2.1 Market Runs 120, 2.2 Bank Runs 127, 2.3 Psychology 139)
 - §3 Design of the Experiment — line 178 (3.1 Market Model 182, 3.2 Welfare 207, 3.3 Equilibrium 230, 3.4 Implementation 246, 3.5 Data Collection 302)
 - §4 Hypotheses — line 308
-- §5 Main Results — line 348 (5.1 Summary Stats 351, 5.2 Selling Behavior 388 [group-round 390, DiD 439, player-period 494], 5.3 Relative Income 545, 5.4 Welfare 569)
-- §6 Discussion and Conclusion — line 581
+- §5 Main Results — line 348 (5.1 Summary Stats 351, 5.2 Selling Behavior 388 [group-round 390, DiD 439, player-period 494], 5.3 Relative Income 545, 5.4 Market Runs 554)
+- §6 Discussion and Conclusion — line 568
 - Bibliography — lines 604–605
 - Appendix G Valence-Only — line 684
 - Appendix H No-Valence — line 694
 - Appendix Equilibrium Predictions — line 704
 - Appendix Instructions — line 715
+- Appendix J Welfare Regression
 - Appendices A–F (lines 633–680) commented out
 
 ## Related

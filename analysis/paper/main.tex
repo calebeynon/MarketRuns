@@ -551,15 +551,17 @@ Although the coefficients on the differences for a payoff of 4 and a payoff of 6
 
 We can conclude though, that there is a relative income effect for participants who received 8 versus 2 in the random liquidation event. Participants who are unlucky during these events are more likely to sell in future events, holding all else equal.
 
-\subsection{Welfare}
+\subsection{Market Runs}
 
-Table \ref{tab:welfare_regression} reports OLS estimates of group-round welfare on individual traits and controls, restricted to state=1 rounds where welfare varies. Welfare is defined as the proportion of the theoretical maximum surplus captured by the group in a given round. Standard errors are clustered at the group level (session $\times$ segment $\times$ group).
+We now turn to predicting market run incidence directly. We define a $(w,k)$-run in a group-round as the event that at least $k$ distinct participants liquidate their asset within some $(w+1)$-period window during the round. Sweeping $k \in \{2,3,4\}$ (Panels A, B, C) and $w \in \{0,1,2,3\}$ (columns 1--4 within each estimator) lets us trace how trait and state predictors operate across both the intensity of selling (how many of the four players sell) and its concentration in time (how tightly clustered the sales are). Smaller $w$ isolates panic-like, near-simultaneous selling, while larger $w$ captures more diffuse runs that unfold over multiple periods. The run indicator is well-defined in both states, so unlike the welfare metric (Appendix~\ref{sec:app_welfare}) the regression uses every group-round in the sample.
+
+For each $(w,k)$ combination we estimate both a linear probability model and a logit model on the same covariates: group-mean Big Five traits, group-mean impulsivity, group-mean state anxiety, group-mean risk tolerance, the deviation of each player's realized belief $\pi$ from the equilibrium selling threshold (\texttt{dev\_from\_threshold}) and from the equilibrium average belief at sale (\texttt{dev\_from\_avg\_pi}), the fraction of correct signals received in the round (\texttt{signal\_correct\_frac}), the equilibrium risk aversion parameter $\alpha$, treatment, and segment fixed effects. For sellers, the deviation is the realized $\pi$ at sale minus the equilibrium reference at the realized seller-position $n$. For non-sellers, the deviation is $\min(0,\, \min_{t} \pi_t - \text{ref})$, where $\min_t \pi_t$ is the player's lowest belief over the round and the equilibrium reference is evaluated at the player's $n_{\text{at\_dip}}$ (the number of investors still holding at the period of the dip); thus a non-seller whose belief never falls below the equilibrium reference receives a deviation of exactly zero. Standard errors are clustered at the group-round level. Logit columns for which \texttt{feglm} did not converge (a sparse $(w,k)$ cell with separation) are omitted from the table; the corresponding LPM column is retained.
 
 \begin{table}[H]
   \centering
-  \caption{Welfare regression on individual traits}
-  \label{tab:welfare_regression}
-  \input{welfare_regression}
+  \caption{Market run regression on group-mean traits and round-level controls. Each panel corresponds to a different threshold $k$ for the number of distinct sellers; columns sweep the window width $w$. Columns (1)--(4) report linear probability model (LPM) estimates; columns (5)--(8) report logit estimates on the same outcomes. Standard errors are clustered at the group-round level.}
+  \label{tab:market_runs_regression}
+  \input{market_runs_regression}
 \end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -700,6 +702,20 @@ Table~\ref{tab:ro_logit_selling_position_no_valence} replicates the rank-ordered
   \caption{Pairwise correlations of emotion measures}
   \label{tab:emotion_correlations}
   \input{emotion_correlations}
+\end{table}
+
+\newpage
+
+\section*{Appendix J. Welfare Regression}
+\label{sec:app_welfare}
+
+Table \ref{tab:welfare_regression} reports OLS estimates of group-round welfare on individual traits and controls, restricted to state=1 rounds where welfare varies. Welfare is defined as the proportion of the theoretical maximum surplus captured by the group in a given round. Standard errors are clustered at the group level (session $\times$ segment $\times$ group).
+
+\begin{table}[H]
+  \centering
+  \caption{Welfare regression on individual traits}
+  \label{tab:welfare_regression}
+  \input{welfare_regression}
 \end{table}
 
 \newpage
