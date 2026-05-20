@@ -4,7 +4,7 @@ type: paper
 tags: [paper, results, hypotheses, tables, market-runs]
 summary: "Hypotheses, main results, table inventory, and section structure of the working paper (Eynon & Jindapon)"
 status: active
-last_verified: "2026-04-19"
+last_verified: "2026-05-20"
 ---
 
 ## Citation
@@ -34,6 +34,17 @@ LaTeX `\label`s reuse `chat_treatment` for several hypotheses; numbering in the 
 - **Average vs. random price**: T2 *increased* sellers by 0.4952 in Tobit (Table 4) — **contradicts H2**. Cox shows no significant treatment effect.
 - **Signal/round**: Higher signal sharply lowers hazard; selling falls with round number (learning).
 - **Welfare** (Table 9): OLS of group-round welfare on traits, restricted to good-state (z=1) rounds, clustered at session×segment×group.
+
+## Selling Behavior Tables (§5.2, Tables 4–7)
+
+The §5.2 Selling Behavior subsection presents four tables, numbered 4–7 in the compiled paper. Float order in `main.tex` is enforced to match (the Tobit float sits first in the section — LaTeX numbers floats by physical position, so it must precede the others). Tables 6 and 7 are `longtable`s that carry their own `\caption`/`\label`, so they are `\input` bare, not wrapped in a `table` float.
+
+| # | Label | Contents | Source script |
+|---|-------|----------|---------------|
+| 4 | `tobit_n_sellers` | Tobit on # sellers/group-round, 2 cols: M1 base (treatment, segment, round); M2 adds `bad_state`. SE clustered at `global_group_id`. | `tobit_n_sellers.R` |
+| 5 | `ols_first_sale_behavior` | Pooled OLS of first-sale behavior, 4 cols: `signal_at_first_sale` ±`bad_state`, then `first_sale_period` ±`bad_state`. Group-clustered SE. | `ols_first_sale_behavior.R` |
+| 6 | `cox_selling_four_column` | 4-col Cox by risk set: (1) first sellers, (2) reactive/rushed-second sellers, (3) all sellers, (4) all participants. M2 is a clustered `coxph`; M1/M3/M4 are `coxme` random-effects. Hazard ratios. | `cox_selling_four_column.R` + `cox_selling_four_column_helpers.R` |
+| 7 | `ro_logit_two_column` | Rank-ordered logit of selling position, 2 cols: sellers-only and all-participants. | `ro_logit_two_column.R` |
 
 ## Table Inventory
 

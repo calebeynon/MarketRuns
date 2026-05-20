@@ -89,6 +89,9 @@ get_coxph_init <- function(formula, data, cap = 5) {
   fe_formula <- remove_random_effect(formula)
   m <- coxph(fe_formula, data = data)
   init <- coef(m)
+  # Perfectly separated terms yield NA/infinite coxph estimates in restricted
+  # samples; start coxme from 0 there rather than passing NA (which errors).
+  init[is.na(init)] <- 0
   init[abs(init) > cap] <- sign(init[abs(init) > cap]) * cap
   init
 }
