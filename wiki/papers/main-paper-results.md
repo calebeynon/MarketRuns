@@ -4,7 +4,7 @@ type: paper
 tags: [paper, results, hypotheses, tables, market-runs]
 summary: "Hypotheses, main results, table inventory, and section structure of the working paper (Eynon & Jindapon)"
 status: active
-last_verified: "2026-04-19"
+last_verified: "2026-05-20"
 ---
 
 ## Citation
@@ -32,6 +32,7 @@ LaTeX `\label`s reuse `chat_treatment` for several hypotheses; numbering in the 
 - **Personality traits** (Tables 5, 8): Conscientiousness, neuroticism, anxiety raise hazard (consistent with H4). Risk tolerance lowers hazard (marginal). Agreeableness becomes significantly negative in sellers subsample. Effects ~3× stronger in sellers-only.
 - **Chat treatment** (Tables 4, 6, 8): Chat segments reduce sellers per group-round by 1.07 and 1.29 (Tobit). DiD decomposition (Table 6) isolates pure communication effect = -0.4863 sellers (marginally significant, parallel-trends p=0.7553). Supports H3.
 - **Average vs. random price**: T2 *increased* sellers by 0.4952 in Tobit (Table 4) — **contradicts H2**. Cox shows no significant treatment effect.
+- **Equilibrium treatment prediction** (App `equilibrium_tau_cutoffs`): The structural equilibrium does **not** predict more selling under the Average scheme. The MPS sits on both the sale price and the bad-state forced liquidation, and equilibrium sales occur at pessimistic beliefs (π≈0.18–0.36) where the bad-state pooling helps holding nearly as much as it helps selling. The onset cutoff τ̄ is identical across treatments and the certain-run cutoff τ̲ is weakly *higher* under Average — i.e. theory is null-to-slightly-against H2's direction, so the +0.495 Tobit effect is a data fact the model doesn't reproduce. (See also `equilibrium_thresholds`: at high α the Random scheme sells at slightly higher π.)
 - **Signal/round**: Higher signal sharply lowers hazard; selling falls with round number (learning).
 - **Welfare** (Table 9): OLS of group-round welfare on traits, restricted to good-state (z=1) rounds, clustered at session×segment×group.
 
@@ -53,6 +54,7 @@ LaTeX inputs are bare filenames; sources live in `analysis/output/tables/<name>.
 | 10 | `holdout_liquidation_regression` | Effect of holdout payoff on next-round sale; group×round FE | `analysis/analysis/holdout_liquidation_regression.R` | LPM |
 | 11 | `welfare_regression` | OLS welfare on traits (z=1 only); SE clustered session×segment×group | `analysis/analysis/welfare_regression.R` | OLS clustered |
 | App | `equilibrium_thresholds` | Avg equilibrium π at sale by seller position k and α (10k sims, both treatments) | `analysis/analysis/simulate_equilibrium.py` + `tabulate_equilibrium.py` | Numerical |
+| App | `equilibrium_tau_cutoffs` | Run-region cutoffs τ̄ (onset of selling, σ>0) and τ̲ (certain selling, σ=1) by seller position and θ∈{1,0.5} (θ=1−α), both treatments, in Pr(z=G) units | `analysis/analysis/tabulate_tau_cutoffs.py` (reads `equilibrium_sigma_grid.parquet`) | Numerical |
 | App G | `*_valence_only` | Valence-only emotion robustness | `*_valence_only.R` | Robustness |
 | App H | `*_no_valence` | Discrete-emotions-only robustness | `*_no_valence.R` | Robustness |
 

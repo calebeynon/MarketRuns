@@ -287,15 +287,20 @@ At the conclusion of the survey portion, each participants earnings were calcula
 
 \vspace{1in}
 
+We parameterize preferences with the power utility $u = w^{\theta}$, where $\theta$ is risk tolerance (consistent with our trait measure); this is the CRRA family with coefficient $\alpha = 1 - \theta$, so $\theta = 1$ is risk neutral and $\theta < 1$ is risk averse. Table~\ref{tab:equilibrium_tau_cutoffs} reports the equilibrium run-region cutoffs for Treatment~1 (Random) and Treatment~2 (Average) at $\theta = 1$ and $\theta = 0.5$, derived from the equilibrium selling strategy $\sigma(n, \pi)$. We report $\overline{\tau}$, the highest belief at which selling begins ($\sigma > 0$), and $\underline{\tau}$, the highest belief at which selling is certain ($\sigma = 1$); a run occurs whenever $\pi < \overline{\tau}$. Beliefs are expressed as $\pi = \Pr(z = G)$, the mirror image of the $\Pr(z = B)$ convention in \cite{magnani2020dynamic}.
+
+At $\theta = 1$ (risk neutrality) the two treatments coincide, as expected, since the average and random payoff schemes share the same mean. Under risk aversion ($\theta = 0.5$) the onset cutoff $\overline{\tau}$ remains identical across treatments, while the certain-run cutoff $\underline{\tau}$ is weakly higher in the Average treatment for the second and third sellers. The Average scheme thus does not begin runs at less pessimistic beliefs than the Random scheme; if anything it reaches the certain-run regime at slightly more optimistic beliefs, deeper into the cascade.
+
+\begin{table}[H]
+  \centering
+  \caption{Equilibrium run-region cutoffs $\overline{\tau}$ and $\underline{\tau}$ by seller position and risk tolerance $\theta$, under the Random (Treatment~1) and Average (Treatment~2) payoff schemes. $\overline{\tau}$ marks the onset of selling ($\sigma > 0$) and $\underline{\tau}$ the onset of certain selling ($\sigma = 1$); a run occurs for $\pi = \Pr(z = G) < \overline{\tau}$.}
+  \label{tab:equilibrium_tau_cutoffs}
+  \input{equilibrium_tau_cutoffs}
+\end{table}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-$u=w^{\theta}$ and use $\theta$ as risk tolerance (consistent with trait measure).
-
-Calculate $\overline{\tau}$ and  $\underline{\tau}$ for Treatment 1 and Treatment 2 given $\theta=1,0.5,1.5$? Perhaps we can show something like Figure 6 in Magnani and Munro (they use prob of bad but we use prob of good).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\vspace{1in}
+\vspace{0.5in}
 
 Suppose that we are in a market with four participants. Suppose at time $t-1$, no market participant has sold. Then in period $t$, both participants A and B decide to sell their asset. In treatment 1, according to our specified price schedule, A receives $p_4 = 8$ with probability 0.5 and $p_3 = 6$ with probability 0.5. B then receives whichever price A does not. In treatment 2, both A and B would receive $\bar{p}_{4,2} = (p_4+p_3)/2 = (8+6)/2 = 7$.
 
