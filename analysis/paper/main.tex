@@ -77,7 +77,7 @@
 \begin{singlespace}
 
 \noindent
-We investigate the psychological predictors of market runs in an experimental setting. Specifically, we examine the effect of emotions, personality traits, luck, communication, and peer liquidation on the probability of a run occurring in a financial market. We conduct a laboratory experiment with a 2x2 design, varying the liquidation value distribution and the availability of pre-play communication. The participants act as investors with incentive to beat the market by preempting other investors when the fundamental value is sufficiently low. We use facial reading technology and surveys to measure emotions and personality traits among participants during the experiment. We find that traits and emotions associated with worry or negativity increase the likelihood of an investor entering a market run while investors that get ``lucky'' are less likely to sell in subsequent markets. Our results suggest that individual psychological factors are significant predictors of participation in financial market runs. 
+We investigate the psychological predictors of market runs in an experimental setting. Specifically, we examine the effect of emotions, personality traits, luck, communication, and peer liquidation on the probability of a run occurring in a financial market. We conduct a laboratory experiment with a 2x2 design, varying the liquidation value distribution and the availability of pre-play communication. The participants act as investors with incentive to beat the market by preempting other investors when the fundamental value of an asset is sufficiently low. We use facial reading technology and surveys to measure emotions and personality traits among participants during the experiment. We find that traits and emotions associated with worry or negativity increase the likelihood of an investor entering a market run while investors that get ``lucky'' are less likely to sell in subsequent markets. We find evidence for cascade effects, investors quickly selling after each other. Finally, we find that the trait of anxiety decreases welfare. Our results suggest that individual psychological factors and reactions to non-fundamental events are significant predictors of participation in financial market runs. 
 
 \end{singlespace}
 \newpage
@@ -179,7 +179,12 @@ Using a questionnaire based on the State-Trait Anger Expression Inventory (STAXI
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 We experimentally implement the \cite{bernardo2004liquidity} framework in a laboratory setting. Our implementation is similar to that of \cite{magnani2020dynamic} and \cite{choi2022market}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Market Model} \label{sec:market model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 There are two types of agents in a market, a risk averse market-maker and risk-neutral individual investors. Each investor is endowed with a unit of an asset. There are $N=4$ investors\footnote{For a more general representation of the market model, see \cite{magnani2020dynamic}.} in each market. The market-maker is willing to absorb these assets upon demand. The market lasts for $T \in \mathbb{N}$ discrete time periods. Each investor has the choice to sell their asset in any discrete period $t < T$, but cannot repurchase, making the decision to sell final for that investor in the market. $T$ is a random variable following a geometric distribution with probability of termination $\lambda = 0.125$.
 
 There are two possible states of the world, good and bad. In the good state, any investor that still holds their asset at time $T$ receives the asset's ``final value'', $v$ ,which is interpretable as an asset return. In our case, $v=20$. This \textit{does not} depend on the number of market participants that have not sold their asset. In the bad state, investors face a liquidity shock at time $T$ and are forced to sell their asset at the market price.
@@ -204,30 +209,12 @@ This model captures key components of a market run environment.
     \item Investors have incentive to sell before their market counterparts if the state of the market is bad.
 \end{itemize}
 
-\subsection{Investor Welfare}
 
-We now show that early liquidations decrease investor welfare when $z = G$. Define investor welfare as the ratio of total utility
-received by investors to the maximum total possible utility received by investors. Let $u(\cdot)$ be a generic utility function. When $z=B$, the maximum total possible utility is $\sum_{n=1}^{4} u(p_n)$
-since each investor will either voluntarily sell during the market or be forced to sell at the terminal period. When $z=G$, the maximum possible total utility is $4 \cdot u(v=20)$ since each investor cannot sell
-their asset during the market for any more than $p_4=8$. Thus welfare when $z=B$ is given by,
-\begin{equation}
-  w_m = \dfrac{\sum_{n=m+1}^{4} u(p_n) + \sum_{n=1}^{m} u(p_n)}{\sum_{n=1}^{4} u(p_n)} = 1 \; \forall m \in \{0,1,2,3,4\}
-  \label{eq:welfare_bad}
-\end{equation}
-where $m$ is the number of participants that do not sell their asset during the market. In the bad state, welfare is always maximized. When $z=G$, the welfare function is,
 
-\begin{equation}
-  w_m = \dfrac{\sum_{n=m+1}^{4} u(p_n) + m\cdot u(v=20)}{4 \cdot u(v=20)} \le 1 \; \forall m \in \{0,1,2,3,4\}
-  \label{eq:welfare_good}
-\end{equation}
-
-Suppose that $u(\cdot)$ is CRRA, with $u(p_n) = \dfrac{p_n^{1-\alpha}}{1-\alpha}$. Then we can examine the relationship between risk aversion and welfare
-in each of the five cases of $m$. Figure \ref{fig:welfare} plots each welfare possibility against risk aversion, $\alpha$. Since $z=G$, welfare is maximized
-when $m=4$ and minimized when $m=0$. The differences in welfare for each scenario are largest when investors are risk neutral ($\alpha = 0$). The differences
-are the smallest when investors are risk averse ($\alpha \rightarrow 1$). This can be interpreted as investors gaining some utility from becoming certain about
-their payoff earlier in the market.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Best Replies and Equilibrium}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \begin{figure}
   \centering
@@ -292,7 +279,24 @@ At the conclusion of the survey portion, each participants earnings were calcula
   \input{randomized_params}
 \end{table}
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{A Liquidation Example, Treatment 1 vs. Treatment 2}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{1in}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+$u=w^{\theta}$ and use $\theta$ as risk tolerance (consistent with trait measure).
+
+Calculate $\overline{\tau}$ and  $\underline{\tau}$ for Treatment 1 and Treatment 2 given $\theta=1,0.5,1.5$? Perhaps we can show something like Figure 6 in Magnani and Munro (they use prob of bad but we use prob of good).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{1in}
+
 Suppose that we are in a market with four participants. Suppose at time $t-1$, no market participant has sold. Then in period $t$, both participants A and B decide to sell their asset. In treatment 1, according to our specified price schedule, A receives $p_4 = 8$ with probability 0.5 and $p_3 = 6$ with probability 0.5. B then receives whichever price A does not. In treatment 2, both A and B would receive $\bar{p}_{4,2} = (p_4+p_3)/2 = (8+6)/2 = 7$.
 
 Now suppose that in period $t$, participants A, B, and C decided to sell their asset (as opposed to just A and B). In treatment 1, each participant would be assigned a price from the schedule $\{p_4=8,p_3=6,p_2=4\}$ with exclusivity. In treatment 2, participants A, B, and C would each receive $\bar{p}_{4,3} = (p_4+p_3+p_2)/3 = (8+6+4)/3 = 6$.
@@ -303,6 +307,36 @@ Finally, suppose that in period $t$, just participant A decides to sell her asse
 We used the oTree  Python package developed by \cite{otree} to program the experiment. We used the backend design of this program to collect experimental market data (selling prices, signals, payoffs, and market groupings). We also used it to collect survey responses, communication data (segments 3 and 4 only), and quiz answers. 
 
 We also collected data on the facial expressions and body language of participants throughout the entirety of the experiment. We used standard front-facing webcams on each computer monitor. Participants were informed that they could be filmed. All footage was uploaded to the Affectiva software at the conclusion of the experiment for post-processing.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Investor Welfare}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We now show that early liquidations decrease investor welfare when $z = G$. Define investor welfare as the ratio of total utility
+received by investors to the maximum total possible utility received by investors. Let $u(\cdot)$ be a generic utility function. When $z=B$, the maximum total possible utility is $\sum_{n=1}^{4} u(p_n)$
+since each investor will either voluntarily sell during the market or be forced to sell at the terminal period. When $z=G$, the maximum possible total utility is $4 \cdot u(v=20)$ since each investor cannot sell
+their asset during the market for any more than $p_4=8$. Thus welfare when $z=B$ is given by,
+\begin{equation}
+  w_m = \dfrac{\sum_{n=m+1}^{4} u(p_n) + \sum_{n=1}^{m} u(p_n)}{\sum_{n=1}^{4} u(p_n)} = 1 \; \forall m \in \{0,1,2,3,4\}
+  \label{eq:welfare_bad}
+\end{equation}
+where $m$ is the number of participants that do not sell their asset during the market. In the bad state, welfare is always maximized. When $z=G$, the welfare function is,
+
+\begin{equation}
+  w_m = \dfrac{\sum_{n=m+1}^{4} u(p_n) + m\cdot u(v=20)}{4 \cdot u(v=20)} \le 1 \; \forall m \in \{0,1,2,3,4\}
+  \label{eq:welfare_good}
+\end{equation}
+
+Suppose that $u(\cdot)$ is CRRA, with $u(p_n) = \dfrac{p_n^{1-\alpha}}{1-\alpha}$. Then we can examine the relationship between risk aversion and welfare
+in each of the five cases of $m$. Figure \ref{fig:welfare} plots each welfare possibility against risk aversion, $\alpha$. Since $z=G$, welfare is maximized
+when $m=4$ and minimized when $m=0$. The differences in welfare for each scenario are largest when investors are risk neutral ($\alpha = 0$). The differences
+are the smallest when investors are risk averse ($\alpha \rightarrow 1$). This can be interpreted as investors gaining some utility from becoming certain about
+their payoff earlier in the market.
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Hypotheses}
@@ -371,7 +405,97 @@ As expected, more sales occur in bad state markets than good state markets. We a
   \input{summary_seller_counts}
 \end{table}
 
+
+\vspace{1in}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \subsection{Selling Behavior}
+
+
+
+\subsubsection{Overall}
+
+Table 4 Tobit regression. 2 columns:
+
+Model (1) No of Sellers on Treatment2 Segment2 Segment3 Segment4 Round
+
+Model (2) No of Sellers on Treatment2 Segment2 Segment3 Segment4 Round BadState
+
+\subsubsection{First Sellers}
+
+Table 5 Pooled OLS. 4 columns:
+
+Model (1)  Belief at first sale on Treatment2 Segment2 Segment3 Segment4 Round
+
+Model (2)  Belief at first sale on Treatment2 Segment2 Segment3 Segment4 Round BadState
+
+Model (3) Period of first sale  on Treatment2 Segment2 Segment3 Segment4 Round
+
+Model (4) Period of first sale  on Treatment2 Segment2 Segment3 Segment4 Round BadState
+
+
+Table 6 Cox survival model. 4 columns:
+
+Model (1)  First sellers only on all variables like Model (4) in Table 11
+
+Model (2)  Reactive sellers only (rushed second sellers) on all variables-fear, surprise, female 
+
+Model (3)  Sellers only on all variables
+
+Model (4)  all participants (sellers and non-sellers) on all variables-valence, female
+
+
+
+\subsubsection{Rushed Second Sellers}
+
+Refer to Table 6 model (2)
+
+
+
+\subsubsection{All Sellers}
+
+
+Refer to Table 6 model (3)
+
+Refer to Table 6 model (4)
+
+
+
+Table 7 Rank-ordered logit model. 2 columns:
+
+Model (1)  Sellers only on all variables (same period, same rank?)-disgust, joy, female, agreeableness, conscientiousness, anxiety
+
+Model (2)  all participants (sellers and non-sellers) on all variables-Valence,  conscientiousness, anxiety, risk tolerance
+
+
+--I'm not sure if we should use rank = 4 for all non-sellers or should we just use multinomial logit with 1 = first sellers, 2 = other sellers, and 3 =non-sellers.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{1in}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsubsection{Group-round-level regression analysis}
 Table \ref{tab:tobit_n_sellers} reports results from a Tobit regression specification with number of sellers in a group-round as the output variable. Equation \ref{eq:tobit} is the regression specification with $n\_sellers^*_{gr}$ is the censored number of sellers at 0 and 4.
@@ -420,7 +544,7 @@ In the sellers only sample, conscientiousness and anxiety both experience around
 
 % Rank-ordered logit table (
 %longtable with built-in caption/label)
-\input{ro_logit_selling_position}
+%\input{ro_logit_selling_position}
 
 \subsubsection{Decomposing learning and communication effects}
 
@@ -665,6 +789,9 @@ This paper provides multiple avenues of future exploration. First, understanding
 % \input{ordinal_logit_selling_position}
 
 \newpage
+
+\section*{Appendix A. Group-round with Emotions and Traits}
+\input{ro_logit_selling_position}
 
 \section*{Appendix G. Valence-Only Emotion Specifications}
 

@@ -1,0 +1,1154 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usetheme{Madrid}
+\usecolortheme{beaver}
+
+
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{bbm}
+\usepackage{svg}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{arrows}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{pgfplots}
+\usepackage{xcolor}
+\usepackage{comment}
+\usepackage{float}
+\usepackage{csvsimple}
+\usepackage[authoryear,round]{natbib}
+\usepackage{hyperref}
+\usepackage{threeparttable}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{dcolumn}
+\usepackage{longtable}
+
+
+\usetikzlibrary{automata,arrows,positioning,calc}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{decorations.pathreplacing}
+
+\newcolumntype{.}{D{.}{.}{-1}}
+
+\setbeamertemplate{navigation symbols}{}
+
+\pgfplotsset{compat=1.17}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\graphicspath{{plots/}{../output/plots/}{images/}}
+\makeatletter
+\def\input@path{{tables/}{../output/tables/}}
+\makeatother
+
+
+\title[Market Run Psychology]{To Sell or not to Sell:\\ The Psychology of Market Runs}
+
+
+\author[Eynon \& Jindapon]{Caleb Eynon and Paan Jindapon}
+
+\institute[]{
+  University of Alabama
+}
+
+\date[5/27/2026] % (optional)
+{
+Beijing Normal–Hong Kong Baptist University
+\\
+May 27th, 2026
+
+}
+
+\logo{\includegraphics[height=1.0cm]{A-Square.eps}}
+
+\begin{document}
+
+\frame{\titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Motivation}
+
+ Financial volatility and panic-induced liquidation are recurring features of crises
+        \begin{itemize}
+        \item U.S. Liberation Day (April, 2 2025):  Dow fell 9\% the next day
+        \item COVID-19 lockdowns (March 2020): Dow fell 26\% in four days
+        \item Black Monday (October 19, 1987): Dow fell 22.6\% in one day
+        \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Research Questions}
+\begin{itemize}
+    \item Market runs: Panic investors sell too soon
+            \begin{itemize}
+        \item How much do investors \textbf{overreact} to bad news?
+        \item Do investors herd?
+        \end{itemize}
+    \item What psychological factors predict participation in market runs?
+        \begin{itemize}
+        \item Personal traits
+        \item Primary emotions
+        \end{itemize}
+    \item Can communication mitigate market runs?
+    
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Background}
+
+\textbf{Bank Runs}
+
+\vspace{0.1in}
+
+\begin{itemize}
+    \item \cite{diamond1983bank}
+    \item \textbf{Some} players suffer individual liquidity shocks
+    \item Bank-run equilibrium: \textbf{All} players withdraw early
+\end{itemize}
+
+\vspace{0.2in}
+
+\textbf{Market Runs}
+
+\vspace{0.1in}
+
+\begin{itemize}
+    \item \cite{bernardo2004liquidity}
+    \item Possibility of liquidity shocks in the future
+%    \item Each sale \textbf{immediately} lowers price
+    \item Market-run equilibrium: \textbf{All}  players sell early
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Bank Runs in the Lab}
+\begin{itemize}
+    \item \cite{schotter2009dynamics}: dynamic games
+    \item \cite{dijk2017bank}: Fear inducement increases withdrawal probability
+    \item \cite{shakina2018coordination}: Communication slows withdrawals
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Market Runs in the Lab}
+\begin{itemize}
+    \item \cite{magnani2020dynamic}: First experimental implementation; circuit-breakers
+    \item \cite{choi2022market}: Role of liquidity in investor sensitivity
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Other Market Runs in the Lab}
+ %Park and Sgroi (2012) study herding and contrarian behavior in the setup of Park and Sabourian (2011). Their experiment confirms qualitative predictions about when trades should occur, but their environment differs in  that private information does not improve with time and it is not amenable to precise  theoretical predictions.
+The environment of Shachat and Srinivasan (2011) features  these same two differences. They study trading in continuous double auctions with the  sequential arrival of private or public information. Asparouhova, Bossaerts, and Tran  (2016) study a credit rollover game in which subjects must decide when to convert an  asset to cash. Their environment does not feature private information. %Brunnermeier and Morgan (2010) study clock games theoretically and experimentally. Their game features something akin to a market rush, but absent informational inefficiencies.  Finally, several experiments consider timing decisions with precise theoretical timing predictions but in  nonmarket settings. 
+Sgroi (2003) and Ziegelmeyer et al. (2005) both implement the irreversible investment model of Chamley and Gale (1994). Ivanov, Levin, and Peck (2009, 2013) and Çelen and Hyndham (2012) study similar environments. Incentives to wait are quite different in these papers, as observing others’ decisions can be beneficial when their information is not incorporated into prices.
+
+\begin{itemize}
+    \item \cite{kendall2020market}: 
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{ Personality Traits}
+
+\textbf{The Big Five}
+
+    \begin{itemize}
+    \item \textbf{O}penness: willingness to embrace new ideas or  experiences
+    \item \textbf{C}onscientiousness: being responsible, organized, and reliable
+    \item \textbf{E}xtraversion: being outgoing, energetic, and social
+    \item \textbf{A}greeableness: tendency to avoid conflict and cooperate
+    \item \textbf{N}euroticism: emotional instability, anxiety
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{ Traits and Emotions}
+ 
+\begin{itemize}
+    \item Neuroticism $\rightarrow$ lower risk tolerance \citep{rustichini2016toward}
+    \item Conscientiousness $\rightarrow$ higher trading volume \citep{bajo2023psychological}
+    \item Conscientiousness $\rightarrow$ less cooperation \citep{proto2019intelligence}
+    \item Anxiety $\rightarrow$ conservative financial decisions \citep{gambetti2012effect}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{What We Do}
+\begin{itemize}
+    \item Experimentally implement \cite{bernardo2004liquidity} theoretical framework with \cite{magnani2020dynamic} experimental design
+    \item Measure \textbf{personality traits} via validated surveys (TIPI, BIS-11, STAI)
+    \item Measure \textbf{primary emotions} via facial reading technology (Affectiva)
+    \item 2$\times$2 mixed design:
+    \begin{itemize}
+        \item \textbf{Within-subjects}: without and with communication
+        \item \textbf{Between-subjects}:  multiple random prices vs single average price (tie-breaking rules)
+    \end{itemize}
+    %\item 6 sessions, 96 subjects, 720 group-rounds
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Preview of Results}
+\begin{enumerate}
+
+    \item \textbf{Primary Emotions}
+\begin{itemize}
+    \item Positive effects:
+    \item Negative effects:
+\end{itemize}   
+
+    \item \textbf{Personality traits}
+\begin{itemize}
+    \item Positive effects: conscientiousness and anxiety 
+    \item Negative effects: risk tolerance
+\end{itemize}   
+
+    \item \textbf{Communication reduces runs:}  fewer sellers and later first sales when subjects are allowed to chat.
+
+    \item \textbf{Market clearing price matters:} more sellers under average price rule. 
+        
+    \item \textbf{Emotional Herding:} Sales in the immediately prior period and fear increase selling probability
+ %   \item \textbf{Luck matters:} ``Lucky'' liquidation payoffs decrease future selling
+\end{enumerate}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Market Model}
+\begin{itemize}
+    \item $4$ investors in a market round, each endowed with one asset with the value of 20 units.
+    \item Each market round has multiple market periods.  
+    \begin{itemize}
+    \item Each investor can sell the asset at market price in any period.
+    \item Number of market periods is random. 
+    \item Termination probability after each period is  $0.125$.
+    \end{itemize} 
+    
+    \item Two possible states of the world for each market round
+     \begin{itemize}
+    \item Good ($G$) and Bad ($B$) with an equal chance ($50/50$)
+    \end{itemize} 
+    
+    \item The state of the world will be revealed at the end of the round. 
+     \begin{itemize}
+     \item Each will receive the asset value (20 units) in Good state. 
+     \item Each will be forced to sell the asset at market price in Bad state.
+     \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Market Model}
+\begin{itemize}
+
+ \item Market price schedule: $p_n = 2n$
+    \begin{center}
+    \begin{tabular}{cc}
+    \toprule
+    \textbf{Investors remaining ($n$)} & \textbf{Price  ($p_n$)} \\
+    \midrule
+    4 & 8 \\
+    3 & 6 \\
+    2 & 4 \\
+    1 & 2 \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+  
+    \item At the beginning of each period, all investors receives a noisy binary signal ($g$ or $b$) about the state.
+    \item Signal accuracy: \\$Prob( signal = g|state = G ) =  Prob( signal = b|state = B ) = 0.675$
+    \item In each period, each investors update their belief about the state of the world and decide whether \textbf{to sell of not to sell} the asset.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Bayesian Updating}
+\begin{itemize}
+    \item $\pi(t)$ is the posterior belief of $Prob(state = G)$ in period $t$  
+    \item $y(t)$ is public signal in period $t$  
+\end{itemize}
+
+\begin{equation*}
+    \pi(t) :=
+    \begin{cases}
+        \dfrac{\pi(t\!-\!1) \times 0.675}{\pi(t\!-\!1)\times 0.675 + (1\!-\!\pi(t\!-\!1))\times 0.325}, & \text{if } y(t) = g \\[12pt]
+        \dfrac{\pi(t\!-\!1)\times 0.325}{\pi(t\!-\!1)\times 0.325 + (1\!-\!\pi(t\!-\!1))\times 0.675}, & \text{if } y(t) = b
+    \end{cases}
+\end{equation*}
+
+\vspace{0.1in}
+
+\begin{itemize}
+    \item $\pi(0) = 0.5$ (common prior)
+    \item $\pi(t) \overset{a.s.}{\to} 1$ if Good state; $\pi(t) \overset{a.s.}{\to} 0$ if Bad state
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Equilibrium}
+
+\begin{itemize}
+    \item If all assets are owned by a risk-neutral mutual fund manager, they should never sell. 
+    \item Symmetric equilibrium strategy is mixed.
+    \item If all investors are risk neutral, the first sale will occur when the posterior belief is lower than $1/3$ and higher than $1/5$.
+    
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Experiment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Experimental Implementation}
+\begin{itemize}
+    \item TIDE Lab, University of Alabama
+    \item  6 sessions $\times$ 16 subjects = 96 total subjects
+    \item October-December, 2025
+    \item IRB approved and preregistered
+    \item Show-up fee: 7.50 USD for 75-minute session
+    \item Part 1: Market runs (8-80 Experimental Currency Units) 
+    \item Part 2: Personality survey (0-50 Experimental Currency Units) 
+    \item Conversion rate: 4 ECU = 1 USD
+    \item Possible total earnings: 9.50-40.00 USD
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Part 1: Market Runs}
+\begin{itemize}
+    \item Each session: 4 segments   
+    \item Each segment: 
+    \begin{itemize}
+    \item uncertain number of market rounds
+    \item groups of 4, reshuffled each segment
+    \item no repeated interaction with another participant across segments
+\end{itemize}
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+& \textbf{Segments 1--2} & \textbf{Segments 3--4} \\
+\midrule
+\textbf{Treatment 1} (Random Price) & No chat & Chat \\
+\textbf{Treatment 2} (Average Price) & No chat & Chat \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Treatments (Between Subjects)}
+
+\textbf{Random Price VS Average Price}
+
+imposed when 
+\begin{itemize}
+    \item multiple sellers in a market period, or 
+    \item multiple investors liquidate at the end of round (in Bad state).
+\end{itemize}
+
+\vspace{0.2in}
+
+\textbf{Example 1:} Suppose at time $t-1$, no one has sold. In period $t$, Players A and B both sell.
+
+\vspace{0.1in}
+
+\textbf{Treatment 1 (Random Price):}
+\begin{itemize}
+    \item Either A gets $8$ and B gets $6$, or A gets $6$ and B gets  $8$ (50/50)
+\end{itemize}
+
+\vspace{0.1in}
+
+\textbf{Treatment 2 (Average Price):}
+\begin{itemize}
+    \item Both get $\bar{p} = (8+6)/2 = 7$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Treatments (Between Subjects)}
+
+\textbf{Random Price VS Average Price}
+
+imposed when 
+\begin{itemize}
+    \item multiple sellers in a market period, or 
+    \item multiple investors liquidate at the end of round (in Bad state).
+\end{itemize}
+
+\vspace{0.2in}
+
+\textbf{Example 2:} Suppose market round has ended and the state for the round is Bad.  A have B have sold. C and D hold the asset at the end.
+
+\vspace{0.1in}
+
+\textbf{Treatment 1 (Random Price):}
+\begin{itemize}
+    \item Either C gets $4$ and D gets $2$, or C gets $2$ and D gets $4$ (50/50)
+\end{itemize}
+
+\vspace{0.1in}
+
+\textbf{Treatment 2 (Average Price):}
+\begin{itemize}
+    \item Both get $\bar{p} = (4+2)/2 = 3$
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Treatments (Within Subjects)}
+
+\textbf{Communication}
+
+\begin{itemize}
+    \item Subjects can chat within their group for seconds at the beginning \\of Segment 3 and Segment 4.
+    \item They did not know that they were allowed to chat until after Segment~2.
+    \item Within-subjects design to avoid idle time under ``No Communication'' treatment.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Important Features}
+
+\begin{itemize}
+    \item The computer randomly selects \textbf{only 1 round} from each of the four segments to calculate cash payment.
+    \item Utilized video instructions: \href{https://youtu.be/5h83uTS_RMc}{link} (show 0:29 to 1:24) 
+    \item After the instructions, subjects complete a quiz, average of 85\% correct first attempt
+    \item Facial motion recording via webcams throughout the experiment
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Part 1 Summary}
+\begin{center}
+\begin{minipage}{10cm}
+
+\input{experiment_flow_diagram}
+
+\end{minipage}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Participant Interface}
+\begin{center}
+    \includegraphics[width=0.85\linewidth]{interface.jpeg}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Part 2: Survey}
+
+\textbf{Five Sections}
+
+\begin{enumerate}
+    \item 6 questions (Anxiety: I feel ...)
+    \item 10 questions (Ten Item Personality Inventory: I see myself as ...)
+    \begin{itemize}
+    \item \textbf{O}penness 
+    \item \textbf{C}onscientiousness 
+    \item \textbf{E}xtraversion 
+    \item \textbf{A}greeableness 
+    \item \textbf{N}euroticism 
+    \end{itemize}
+    \item 8 questions (Impulsivity: I do ....  )
+    \item 4 questions (age, gender, classification, major)
+    \item 1 risk-taking task 
+\end{enumerate}
+   
+\end{frame}
+
+\begin{frame}{Part 2: Survey}
+
+\textbf{Risk-taking Task} \citep{gneezy1997experiment}
+
+
+\begin{itemize}
+    \item  You will be asked to choose a portion of 20 ECUs that you earned from completing Sections 1 to 4 to invest in a risky option.  The rest of the earnings (those you do not invest) will be kept in your balance.
+    
+    \item   There is a 50\% probability that the investment will fail and a 50\% probability that the investment will succeed. If the investment fails, you will lose the amount you invested. If the investment succeeds, you will receive 2.5 times the amount invested. 
+
+    \item   You will be asked to choose Heads or Tails. At the end of the study, we will flip a coin. Your investment succeeds if the outcome of the coin flip matches your choice. 
+
+\end{itemize}
+   
+\end{frame}
+
+
+
+\begin{frame}{Facial Expressions}
+
+
+\textbf{Affectiva Software}
+
+
+\begin{minipage}[0.5\textheight]{\textwidth}
+\begin{columns}[T]
+\begin{column}{0.05\textwidth}
+\end{column}
+\begin{column}{0.25\textwidth}
+\vspace{0.2in}
+\begin{itemize}
+    \item Fear
+    \item Anger
+    \item Contemp
+    \item Disgust
+    \item Joy
+    \item Sadness 
+    \item Surprise
+    \item Engagement
+    \item Valence
+
+\end{itemize}
+\end{column}
+\begin{column}{0.05\textwidth}
+\end{column}
+\begin{column}{0.7\textwidth}
+\vspace{0.2in}
+\includegraphics[width=8cm]{images/6_core_expressions.png}
+\end{column}
+\end{columns}
+\end{minipage}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HYPOTHESES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Hypotheses}
+\textbf{H1:} Subjects are less likely to sell in the chat treatment than in the no-chat treatment.
+
+\vspace{0.3cm}
+
+
+\textbf{H2:} Subjects are less likely to sell in the average-price treatment than in the random-price treatment.
+
+\vspace{0.3cm}
+
+\textbf{H3 (Personality Survey):}
+\begin{itemize}
+    \item \textcolor{red}{More likely to sell:} Impulsivity, anxiety, conscientiousness
+    \item \textcolor{green!50!black}{Less likely to sell:} Agreeableness, risk tolerance, openness
+\end{itemize}
+\vspace{0.3cm}
+
+\textbf{H4 (Facial Expressions):}
+\begin{itemize}
+    \item \textcolor{red}{More likely to sell:} Fear, anger, disgust, engagement
+    \item \textcolor{green!50!black}{Less likely to sell:} Joy, valence
+\end{itemize}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{Subject Pool}
+\begin{center}
+\scalebox{0.72}{
+\begin{tabular}{lcccc}
+\toprule
+ & Range & Full Sample & Treatment 1 & Treatment 2 \\
+\midrule
+  $N$ (subjects) & & 96 & 48 & 48 \\
+  $N$ (sessions) & & 6 & 3 & 3 \\
+  Age & & 21.13 (3.23) & 21.21 (3.19) & 21.04 (3.30) \\
+  Female (\%) & & 56.8 & 58.3 & 55.3 \\
+\midrule
+  Extraversion & [1,7] & 4.48 (1.48) & 4.31 (1.66) & 4.66 (1.26) \\
+  Agreeableness & [1,7] & 4.83 (1.07) & 4.90 (1.09) & 4.77 (1.05) \\
+  Conscientiousness & [1,7] & 5.57 (1.14) & 5.29 (1.13) & 5.85 (1.09) \\
+  Neuroticism & [1,7] & 3.32 (1.43) & 3.49 (1.46) & 3.15 (1.38) \\
+  Openness & [1,7] & 5.17 (1.12) & 5.21 (1.12) & 5.13 (1.12) \\
+  Impulsivity & [1,7] & 3.09 (0.82) & 3.08 (0.79) & 3.10 (0.86) \\
+  State Anxiety & [1,4] & 1.69 (0.55) & 1.65 (0.56) & 1.73 (0.55) \\
+  Risk Tolerance & [0,20] & 11.80 (6.75) & 12.27 (6.44) & 11.32 (7.08) \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+\vspace{-0.2cm}
+{\tiny\textit{Note:} Trait values as Mean (SD). Based on 95 survey respondents.}
+\end{frame}
+
+
+\begin{frame}{Selling Behavior Summary}
+\begin{center}
+\scalebox{0.62}{
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{Treatment 1} & \multicolumn{2}{c}{Treatment 2} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+ & No Chat & Chat & No Chat & Chat \\
+\midrule
+  Total group-rounds & 180 & 180 & 180 & 180 \\
+\midrule
+  Group-rounds by seller count & & & & \\
+  \quad 0 sellers & 68 & 123 & 56 & 91 \\
+  \quad 1 seller & 53 & 26 & 54 & 43 \\
+  \quad 2 sellers & 37 & 26 & 42 & 23 \\
+  \quad 3 sellers & 20 & 4 & 25 & 19 \\
+  \quad 4 sellers & 2 & 1 & 3 & 4 \\
+\midrule
+  Avg sellers per group-round & 1.08 & 0.52 & 1.25 & 0.90 \\
+  \quad Good state & 0.89 & 0.28 & 0.99 & 0.52 \\
+  \quad Bad state & 1.40 & 0.70 & 1.52 & 1.23 \\
+\midrule
+  Avg sell period by seller position & & & & \\
+  \quad 1st seller & 2.3 & 3.2 & 2.5 & 2.6 \\
+  \quad 2nd seller & 4.0 & 5.5 & 3.9 & 3.8 \\
+  \quad 3rd seller & 4.5 & 8.8 & 4.9 & 4.0 \\
+\midrule
+  Avg sell period & 2.7 & 3.9 & 3.0 & 3.0 \\
+  \quad Good state & 2.5 & 3.0 & 2.7 & 2.2 \\
+  \quad Bad state & 3.0 & 4.2 & 3.2 & 3.3 \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MAIN RESULTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TOBIT: GROUP-ROUND LEVEL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Group-Round Level (Tobit)}
+\vspace{-0.3cm}
+\begin{equation*}
+    n\_sellers^*_{gr} = \beta_0 + \beta_1 \text{BadState}_r + \beta_2 \text{Tr2}_g + \textstyle\sum_{s=2}^{4} \gamma_s \mathbf{1}[\text{Seg}\!=\!s] + \delta \text{Round}_r + \varepsilon_{gr}
+\end{equation*}
+\vspace{-0.4cm}
+\begin{center}
+\scalebox{0.72}{\input{tobit_n_sellers}}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Tobit Takeaways}
+\begin{itemize}
+    \item \textbf{Treatment 2} (average liquidation) \textit{increases} sellers by $\approx 0.5$ per group-round 
+    \begin{itemize}
+        \item Contradicts H1 --- pooling payoffs does not reduce runs (two competing channels)
+    \end{itemize}
+    \item \textbf{Chat segments} (3 \& 4) significantly decrease sellers by $\approx 1.1$--$1.3$
+    \begin{itemize}
+        \item Supports H2 --- communication reduces market runs
+    \end{itemize}
+    \item \textbf{Bad state} increases sellers by $\approx 1.0$ (participants understood signals)
+    \item \textbf{Round} has a negative effect
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% RANK-ORDERED LOGIT: GROUP-ROUND LEVEL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Selling Position (Rank-Ordered Logit)}
+\vspace{-0.2cm}
+\begin{equation*}
+    \lambda_i(t \mid s) = \lambda_{0s}(t) \exp\bigl(
+    \boldsymbol{\beta}_{\text{emo}}^{\prime} \mathbf{Emotion}_i + \boldsymbol{\beta}_{\text{demo}}^{\prime} \mathbf{Demo}_i
+     + \boldsymbol{\beta}_{\text{trait}}^{\prime} \mathbf{Trait}_i \bigr)
+\end{equation*}
+
+\begin{itemize}
+    \item Stratified at session-segment-group-round level
+    \item Absorbs round, segment, and treatment effects
+    \item Isolates emotional and personality trait effects
+    \item Coefficients: log-hazard ratios (positive $=$ earlier selling)
+    \item Two samples: Full (sellers + non-sellers) and sellers only
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Rank-Ordered Logit: Emotions}
+\begin{center}
+\scalebox{0.65}{
+\begin{tabular}{l*{4}{>{\centering\arraybackslash}p{1.8cm}}}
+   \toprule
+   & \multicolumn{2}{c}{Full Sample} & \multicolumn{2}{c}{Sellers Only} \\
+   \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+   & (1) & (2) & (3) & (4) \\
+   \midrule
+   Fear          & $-$0.006 & 0.006 & $-$0.183 & 0.022 \\
+                 & (0.026) & (0.024) & (0.124) & (0.087) \\
+   Anger         & $-$0.015 & $-$0.016$^{*}$ & $-$0.124 & 0.000 \\
+                 & (0.009) & (0.009) & (0.235) & (0.235) \\
+   Contempt      & $-$0.002 & $-$0.002 & 0.042 & 0.034 \\
+                 & (0.012) & (0.013) & (0.045) & (0.045) \\
+   Disgust       & 0.007 & 0.005 & 0.173$^{***}$ & 0.149$^{**}$ \\
+                 & (0.006) & (0.007) & (0.060) & (0.059) \\
+   Joy           & 0.034$^{*}$ & 0.031 & $-$0.247$^{***}$ & $-$0.215$^{**}$ \\
+                 & (0.019) & (0.020) & (0.086) & (0.096) \\
+   Sadness       & $-$0.007 & $-$0.005 & $-$0.037 & 0.009 \\
+                 & (0.010) & (0.010) & (0.055) & (0.059) \\
+   Surprise      & $-$0.016 & $-$0.018 & 0.238$^{*}$ & 0.079 \\
+                 & (0.028) & (0.026) & (0.128) & (0.073) \\
+   Engagement    & 0.016 & 0.009 & 0.135$^{**}$ & 0.087 \\
+                 & (0.018) & (0.017) & (0.061) & (0.065) \\
+   Valence       & $-$0.055$^{**}$ & $-$0.049$^{**}$ & 0.130 & 0.122 \\
+                 & (0.024) & (0.024) & (0.104) & (0.108) \\
+   \bottomrule
+   \multicolumn{5}{l}{\scriptsize\emph{Log-hazard ratios, z-scored. SE clustered at player level. ***: 0.01, **: 0.05, *: 0.1}} \\
+\end{tabular}
+}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Rank-Ordered Logit: Emotions --- Takeaways}
+\begin{itemize}
+    \item \textbf{Disgust}: significant positive predictor among sellers
+    \begin{itemize}
+        \item May operate like anger/fear --- pessimism or desire to punish
+    \end{itemize}
+    \item \textbf{Joy}: positive in full sample, but \textit{negative} among sellers
+    \begin{itemize}
+        \item Sarcastic joy cannot be distinguished by facial reading software
+    \end{itemize}
+    \item \textbf{Valence}: overall positivity $\rightarrow$ later selling in full sample
+    \begin{itemize}
+        \item May capture non-sarcastic piece of joy reading
+    \end{itemize}
+    \item \textbf{Engagement}: significant among sellers (more attentive $\rightarrow$ more sensitive to downward updates)
+    \item \textbf{Anger}: marginally significant negative effect, opposite of expected.
+    \item \textbf{Surprise}: marginally significant positive effect among sellers, not in hypotheses, but makes intuitive sense.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Rank-Ordered Logit: Personality Traits}
+\begin{center}
+\scalebox{0.75}{
+\begin{tabular}{l*{2}{>{\centering\arraybackslash}p{2.5cm}}}
+   \toprule
+   & Full Sample (2) & Sellers Only (4) \\
+   \midrule
+   Extraversion       & $-$0.011 & $-$0.010 \\
+                      & (0.029) & (0.060) \\
+   Agreeableness      & $-$0.030 & $-$0.150$^{***}$ \\
+                      & (0.025) & (0.056) \\
+   Conscientiousness  & 0.090$^{**}$ & 0.297$^{***}$ \\
+                      & (0.045) & (0.082) \\
+   Neuroticism        & 0.038$^{*}$ & $-$0.028 \\
+                      & (0.023) & (0.051) \\
+   Openness           & 0.023 & 0.037 \\
+                      & (0.016) & (0.034) \\
+   Impulsivity        & 0.017 & 0.049 \\
+                      & (0.032) & (0.059) \\
+   State anxiety      & 0.052$^{***}$ & 0.162$^{***}$ \\
+                      & (0.019) & (0.044) \\
+   Risk tolerance     & $-$0.048$^{*}$ & 0.044 \\
+                      & (0.026) & (0.046) \\
+   \bottomrule
+   \multicolumn{3}{l}{\scriptsize\emph{Log-hazard ratios, z-scored. SE in parentheses. ***: 0.01, **: 0.05, *: 0.1}} \\
+\end{tabular}
+}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Rank-Ordered Logit: Traits --- Takeaways}
+\begin{itemize}
+    \item \textbf{Conscientiousness} \& \textbf{anxiety}: increase selling hazard
+    \begin{itemize}
+        \item Effects amplify $\approx 3\times$ in sellers-only subsample
+    \end{itemize}
+    \item \textbf{Agreeableness}: decreases hazard among sellers (supports H3)
+    \item \textbf{Neuroticism}: marginally significant in full sample (negativity bias)
+    \item \textbf{Risk tolerance}: marginally decreases hazard in full sample (supports H3)
+    \item Round, segment, treatment absorbed by strata
+\end{itemize}
+
+\vspace{0.3cm}
+\begin{center}
+\scalebox{0.70}{
+\begin{tabular}{l*{2}{>{\centering\arraybackslash}p{2.0cm}}}
+   \toprule
+   & Full Sample & Sellers Only \\
+   \midrule
+   Observations  & 2,845 & 486 \\
+   Strata        & 720 & 202 \\
+   \bottomrule
+\end{tabular}
+}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COX SURVIVAL: PLAYER-PERIOD LEVEL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Player-Period Level (Cox Survival)}
+\vspace{-0.2cm}
+\begin{equation*}
+\begin{split}
+    \lambda_{it}(t) = \lambda_0(t) \exp\bigl(
+    & \beta_1 D_{1,it} + \beta_2 D_{2,it} + \beta_3 D_{3,it} \\
+    & + \boldsymbol{\gamma}^{\prime} \mathbf{Cascade}_{it} + \beta_s \, \text{Signal}_{it} \\
+    & + \boldsymbol{\beta}_{\text{emo}}^{\prime} \mathbf{Emotion}_{it} + \boldsymbol{\beta}_{\text{trait}}^{\prime} \mathbf{Trait}_i + u_i \bigr)
+\end{split}
+\end{equation*}
+
+\begin{itemize}
+    \item Random-effects Cox model (coxme); player random intercept
+    \item Hazard ratios: $>1 \Rightarrow$ increased selling probability
+    \item Period within round as survival time axis
+    \item Two samples: All sellers and first sellers only
+    \item Each with and without personality traits
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Cox Results: Cascade Effects}
+\begin{center}
+\scalebox{0.75}{
+\begin{tabular}{l*{2}{>{\centering\arraybackslash}p{2.5cm}}}
+   \toprule
+   & All Sellers (1) & All Sellers (2) \\
+   & No Traits & With Traits \\
+   \midrule
+   1 prior sale              & 0.815 & 0.824 \\
+                             & (0.126) & (0.127) \\
+   2 prior sales             & 0.234$^{***}$ & 0.241$^{***}$ \\
+                             & (0.075) & (0.078) \\
+   3 prior sales             & 0.049$^{***}$ & 0.050$^{***}$ \\
+                             & (0.050) & (0.051) \\
+   \midrule
+   1 prior $\times$ 1 prev.  & 1.177 & 1.174 \\
+                             & (0.210) & (0.209) \\
+   2 prior $\times$ 1 prev.  & 2.807$^{***}$ & 2.791$^{***}$ \\
+                             & (1.086) & (1.080) \\
+   2 prior $\times$ 2 prev.  & 3.254$^{***}$ & 3.205$^{***}$ \\
+                             & (1.410) & (1.388) \\
+   \bottomrule
+   \multicolumn{3}{l}{\scriptsize\emph{Hazard ratios. SE in parentheses. ***: 0.01, **: 0.05, *: 0.1}} \\
+\end{tabular}
+}
+\end{center}
+
+\begin{itemize}
+    \item More cumulative sales $\rightarrow$ \textbf{lower} hazard (lower opportunity cost of holding)
+    \item Sales in the \textbf{immediately prior period} $\rightarrow$ \textbf{higher} hazard
+    \item Cascade/herding despite public signals and no new information
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Cox Results: Emotions}
+\begin{center}
+\scalebox{0.70}{
+\begin{tabular}{l*{4}{>{\centering\arraybackslash}p{1.8cm}}}
+   \toprule
+   & \multicolumn{2}{c}{All Sellers} & \multicolumn{2}{c}{First Sellers} \\
+   \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+   & (1) & (2) & (3) & (4) \\
+   \midrule
+   Fear          & 0.979 & 0.982 & 1.010 & 1.019 \\
+                 & (0.026) & (0.027) & (0.033) & (0.033) \\
+   Anger         & 0.973 & 0.969 & 0.976 & 0.975 \\
+                 & (0.034) & (0.034) & (0.042) & (0.042) \\
+   Contempt      & 0.986 & 0.986 & 1.008 & 1.008 \\
+                 & (0.009) & (0.009) & (0.009) & (0.009) \\
+   Disgust       & 0.971 & 0.971 & 1.013 & 1.013 \\
+                 & (0.027) & (0.027) & (0.034) & (0.034) \\
+   Joy           & 1.016$^{*}$ & 1.017$^{*}$ & 1.001 & 1.001 \\
+                 & (0.009) & (0.009) & (0.011) & (0.011) \\
+   Sadness       & 1.001 & 1.000 & 1.002 & 1.003 \\
+                 & (0.013) & (0.013) & (0.021) & (0.020) \\
+   Surprise      & 1.015 & 1.012 & 1.009 & 1.000 \\
+                 & (0.019) & (0.020) & (0.025) & (0.025) \\
+   Engagement    & 0.998 & 0.998 & 0.995 & 0.995 \\
+                 & (0.003) & (0.003) & (0.004) & (0.004) \\
+   Valence       & 0.988$^{*}$ & 0.987$^{*}$ & 1.003 & 1.003 \\
+                 & (0.007) & (0.007) & (0.009) & (0.009) \\
+   \bottomrule
+   \multicolumn{5}{l}{\scriptsize\emph{Hazard ratios. SE in parentheses. ***: 0.01, **: 0.05, *: 0.1}} \\
+\end{tabular}
+}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Cox Results: Emotions --- Takeaways}
+\begin{itemize}
+    \item \textbf{Joy}: marginally significant increase in selling hazard (all sellers)
+    \begin{itemize}
+        \item May reflect sarcastic joy detected by facial reading software \citep{forman2020capturing}
+    \end{itemize}
+    \item \textbf{Valence}: marginally significant decrease in selling hazard (all sellers)
+    \begin{itemize}
+        \item Could capture non-sarcastic positivity $\rightarrow$ later selling
+    \end{itemize}
+    \item No individual emotion significant for first sellers
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Cox Results: Personality Traits}
+\begin{center}
+\scalebox{0.75}{
+\begin{tabular}{l*{2}{>{\centering\arraybackslash}p{2.5cm}}}
+   \toprule
+   & All Sellers (2) & First Sellers (4) \\
+   \midrule
+   Extraversion       & 0.946 & 1.080 \\
+                      & (0.074) & (0.091) \\
+   Agreeableness      & 0.882 & 0.834 \\
+                      & (0.098) & (0.098) \\
+   Conscientiousness  & 1.428$^{***}$ & 1.388$^{**}$ \\
+                      & (0.194) & (0.195) \\
+   Neuroticism        & 1.064 & 1.059 \\
+                      & (0.099) & (0.105) \\
+   Openness           & 1.072 & 1.054 \\
+                      & (0.106) & (0.108) \\
+   Impulsivity        & 1.202 & 1.278 \\
+                      & (0.194) & (0.213) \\
+   State anxiety      & 1.546$^{**}$ & 1.324 \\
+                      & (0.313) & (0.287) \\
+   Risk tolerance     & 0.964$^{**}$ & 1.012 \\
+                      & (0.016) & (0.018) \\
+   \bottomrule
+   \multicolumn{3}{l}{\scriptsize\emph{Hazard ratios. SE in parentheses. ***: 0.01, **: 0.05, *: 0.1}} \\
+\end{tabular}
+}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Cox Results: Traits --- Takeaways}
+\begin{itemize}
+    \item \textbf{Conscientiousness}: 43\% increase in selling hazard, significant in both samples
+    \begin{itemize}
+        \item Duty to sell at the ``correct'' moment $\rightarrow$ premature selling
+    \end{itemize}
+    \item \textbf{State anxiety}: 55\% increase in selling hazard (all sellers)
+    \begin{itemize}
+        \item More sensitive to downward signal updates
+    \end{itemize}
+    \item \textbf{Risk tolerance}: 3.6\% decrease per unit (all sellers)
+    \begin{itemize}
+        \item Willing to tolerate more uncertainty about the state
+    \end{itemize}
+    \item All three effects consistent with rank-ordered logit and hypotheses
+    \item Conscientiousness is the only trait significant for first sellers
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Cox Results: Controls}
+\begin{center}
+\scalebox{0.75}{
+\begin{tabular}{l*{2}{>{\centering\arraybackslash}p{2.5cm}}}
+   \toprule
+   & All Sellers (2) & First Sellers (4) \\
+   \midrule
+   Signal            & 0.004$^{***}$ & 0.003$^{***}$ \\
+                     & (0.001) & (0.001) \\
+   Round             & 0.942$^{***}$ & 0.946$^{**}$ \\
+                     & (0.016) & (0.022) \\
+   Segment 2         & 0.847 & 0.591$^{***}$ \\
+                     & (0.102) & (0.094) \\
+   Segment 3 (Chat)  & 0.336$^{***}$ & 0.389$^{***}$ \\
+                     & (0.044) & (0.064) \\
+   Segment 4 (Chat)  & 0.329$^{***}$ & 0.402$^{***}$ \\
+                     & (0.038) & (0.063) \\
+   Treatment 2       & 1.140 & 0.855 \\
+                     & (0.245) & (0.192) \\
+   \bottomrule
+   \multicolumn{3}{l}{\scriptsize\emph{Hazard ratios. SE in parentheses. ***: 0.01, **: 0.05, *: 0.1}} \\
+\end{tabular}
+}
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Signal}: strong negative effect --- participants understood signals
+    \item \textbf{Chat} (Segments 3--4): $\approx 65\%$ reduction in selling hazard (supports H2)
+    \item \textbf{Treatment 2}: not significant (does not support H1)
+    \item \textbf{Round}: less selling as segment progresses
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ADDITIONAL RESULTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Result 4: Luck and Future Selling}
+Does being ``unlucky'' in a liquidation event predict future selling?
+\begin{equation*}
+\text{Sold}_{i,g,r+1} = \sum_{k \in \{4,6,8\}} \beta_k \cdot \mathbf{1}[\text{Payoff}_{i,g,r} = k] + \gamma \cdot \text{PriorSales}_{i,g,r} + \alpha_{g \times r} + \varepsilon_{i,g,r}
+\end{equation*}
+
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\begin{itemize}
+    \item Reference: Payoff = 2 (unluckiest)
+    \item Group-round fixed effects
+    \item Treatment 1 only (random liquidation)
+    \item Prior sales: number of sales made by the participant in the past
+\end{itemize}
+\end{column}
+\begin{column}{0.4\textwidth}
+\vspace{-0.3cm}
+\centering
+\scriptsize
+\begin{tabular}{@{}lc@{}}
+   \midrule \midrule
+   Dep.\ Var:    & Sold next round \\
+   \midrule
+   Payoff 4                & $-$0.035\\
+                           & (0.032)\\
+   Payoff 6                & $-$0.066\\
+                           & (0.044)\\
+   Payoff 8                & $-$0.092$^{*}$\\
+                           & (0.053)\\
+   Prior sales             & 0.015$^{**}$\\
+                           & (0.007)\\
+   \midrule
+   Group-Round FE          & Yes\\
+   Observations            & 416\\
+   R$^2$                   & 0.420\\
+   \midrule \midrule
+   \multicolumn{2}{l}{\tiny\emph{***: 0.01, **: 0.05, *: 0.1}}\\
+\end{tabular}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Result 4: Luck Plot}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.8\linewidth]{holdout_payoff_coefficients.png}
+        \caption{Coefficients from Luck specification. Note the monotonically decreasing coefficients. Confidence intervals are 95\% and 90\%.}
+        \label{fig:luck}
+    \end{figure}
+\end{frame}
+
+
+
+\begin{frame}{Result 4: Luck Takeaways}
+\begin{itemize}
+    \item Receiving payoff of 8 (vs.\ 2) $\rightarrow$ \textbf{9.2\% less likely} to sell next round
+    \item Coefficients are \textbf{monotonically decreasing}: luckier $\rightarrow$ less likely to sell
+    \item Payoffs of 4 and 6 (vs.\ 2) not significant
+    \item \textbf{Relative income effect}: being unlucky causes more future selling, even though round states and signals are independent
+    \item Evidence against purely rational updating
+\end{itemize}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONCLUSION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Summary of Hypothesis Tests}
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Hypothesis} & \textbf{Prediction} & \textbf{Evidence} \\
+\midrule
+H1: Average treatment & Fewer sellers & \textcolor{red}{Not supported} \\
+H2: Chat treatment & Fewer sellers & \textcolor{green!50!black}{Supported} \\
+H3: Conscientiousness & More sellers & \textcolor{green!50!black}{Supported} \\
+H3: Impulsivity & More sellers & \textcolor{red}{Not supported}\\
+H3: Anxiety & More sellers & \textcolor{green!50!black}{Supported} \\
+H3: Risk tolerance & Fewer sellers & \textcolor{green!50!black}{Supported} \\
+H3: Openness & Fewer sellers & \textcolor{red}{Not supported}\\
+H3: Agreeableness & Fewer sellers & \textcolor{green!50!black}{Supported (sellers)} \\
+H4: Joy & Fewer sellers & \textcolor{orange}{Mixed} \\
+H4: Engagement & More sellers & \textcolor{orange}{Mixed}\\
+H4: Fear, Anger & More sellers & \textcolor{red}{Not supported}\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Conclusion}
+\begin{itemize}
+    \item Individual psychological factors are significant predictors of market run participation
+    \item \textbf{Emotions:} Engagement increases selling; overall positivity (valence) decreases it
+    \item \textbf{Traits:} Conscientiousness and anxiety increase selling; risk tolerance and agreeableness decrease it
+    \item \textbf{Cascades:} Recent sales trigger panic despite providing no new information
+    \item \textbf{Luck:} ``Unlucky'' payoffs increase future selling (relative income effect)
+    \item \textbf{Communication:} Chat reduces market runs significantly
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Policy implications:}
+\begin{itemize}
+    \item Communication increases market stability
+    \item Language that avoids stimulating negative emotions may prevent runs
+    \item Prices are not solely driven by fundamentals
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Future Work}
+\begin{itemize}
+    \item Survey professional traders on personality traits
+    \begin{itemize}
+        \item Use sufficient statistics to compare with experimental panic sellers
+    \end{itemize}
+    \item Test interventions to mitigate negative emotional reactions
+    \item Semi-private signals for a more realistic market setting
+    \begin{itemize}
+        \item Sales would then provide additional information beyond price changes
+    \end{itemize}
+\end{itemize}
+
+\vspace{1cm}
+\centering
+\Large Thank you!
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]{References}
+\bibliographystyle{aea}
+\scriptsize
+\bibliography{refs}
+\end{frame}
+
+\end{document}
