@@ -74,8 +74,8 @@ report_cell_counts <- function(dt) {
 # Model fitting
 # =====
 fit_models <- function(dt) {
-  cat("\nFitting Model 1 (interactions)...\n")
-  m1 <- tobit(n_sellers ~ bad_state + treatment * segment_num,
+  cat("\nFitting Model 1 (interactions, round)...\n")
+  m1 <- tobit(n_sellers ~ round_num + treatment * segment_num,
               left = 0, right = 4, data = dt)
 
   cat("Fitting Model 2 (+ round)...\n")
