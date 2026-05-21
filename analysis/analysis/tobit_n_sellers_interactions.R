@@ -74,11 +74,11 @@ report_cell_counts <- function(dt) {
 # Model fitting
 # =====
 fit_models <- function(dt) {
-  cat("\nFitting Model 1 (interactions, round)...\n")
+  cat("\nFitting Model 1 (round + treatment x segment)...\n")
   m1 <- tobit(n_sellers ~ round_num + treatment * segment_num,
               left = 0, right = 4, data = dt)
 
-  cat("Fitting Model 2 (+ round)...\n")
+  cat("Fitting Model 2 (+ bad_state)...\n")
   m2 <- tobit(n_sellers ~ bad_state + treatment * segment_num + round_num,
               left = 0, right = 4, data = dt)
 
@@ -195,12 +195,27 @@ table_footer <- function(n_models) {
   span <- n_models + 1
   c("   \\midrule \\midrule",
     sprintf(paste0("   \\multicolumn{%d}{l}{\\emph{Cluster-robust",
-                   " standard errors clustered at the group level",
-                   " in parentheses}}\\\\"), span),
+                   " standard errors clustered at the session $\\times$",
+                   " segment $\\times$ group level in parentheses}}\\\\"), span),
     sprintf(paste0("   \\multicolumn{%d}{l}{\\emph{Signif. Codes:",
                    " ***: 0.01, **: 0.05, *: 0.1}}\\\\"), span),
     "\\end{tabular}",
     "\\par\\endgroup", "", "")
+}
+
+# =====
+# Joint significance of the treatment x segment interactions
+# =====
+# Wald test that all three T2 x Segment interactions are jointly zero, using the
+# cluster-robust vcov. Guards against reading a single marginal star when no
+# multiple-comparison correction is applied to the three interaction terms.
+joint_interaction_test <- function(model, dt) {
+  vc <- vcovCL(model, cluster = dt$global_group_id)
+  terms <- grep("^treatment2:segment_num", names(coef(model)), value = TRUE)
+  b <- coef(model)[terms]
+  stat <- as.numeric(t(b) %*% solve(vc[terms, terms]) %*% b)
+  list(stat = stat, df = length(terms),
+       pval = pchisq(stat, df = length(terms), lower.tail = FALSE))
 }
 
 # =====
@@ -214,6 +229,9 @@ print_summaries <- function(models, dt) {
     cat("\n", name, ":\n")
     cl_vcov <- vcovCL(models[[name]], cluster = dt$global_group_id)
     print(coeftest(models[[name]], vcov. = cl_vcov))
+    jt <- joint_interaction_test(models[[name]], dt)
+    cat(sprintf("Joint Wald test, T2 x Segment interactions = 0: chi2(%d) = %.3f, p = %.4f\n",
+                jt$df, jt$stat, jt$pval))
   }
 }
 
