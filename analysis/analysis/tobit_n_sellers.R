@@ -1,6 +1,6 @@
 # Purpose: Tobit regression for number of sellers per group-round
 # Author: Caleb Eynon w/ Claude Code
-# Date: 2026-02-22
+# Date: 2026-05-20
 #
 # DV is n_sellers (0-4), censored at both boundaries.
 # Cluster-robust SEs at the global_group_id level.
@@ -15,6 +15,8 @@ INPUT_PATH <- "datastore/derived/group_round_timing.csv"
 OUTPUT_PATH <- "analysis/output/tables/tobit_n_sellers.tex"
 
 # TABLE CONFIGURATION
+# bad_state appears only in Model 2, so it is listed first to keep the
+# state-of-the-world effect visible at the top of the coefficient block.
 VAR_ORDER <- c(
   "(Intercept)", "bad_state", "treatment2",
   "segment_num2", "segment_num3", "segment_num4",
@@ -34,8 +36,10 @@ VAR_LABELS <- c(
 # Main function
 # =====
 main <- function() {
-  dt <- load_and_prepare(INPUT_PATH)
-  cat("Loaded", nrow(dt), "observations\n")
+  raw <- fread(INPUT_PATH)
+  dt <- prepare(raw)
+  cat("Raw observations:", nrow(raw), "\n")
+  cat("Modeled observations:", nrow(dt), "\n")
 
   models <- fit_models(dt)
   coef_tabs <- lapply(models, function(m) extract_coefs(m, dt))
@@ -49,8 +53,7 @@ main <- function() {
 # =====
 # Data loading and preparation
 # =====
-load_and_prepare <- function(path) {
-  dt <- fread(path)
+prepare <- function(dt) {
   dt[, bad_state := as.integer(state == 0)]
   dt[, segment_num := factor(segment_num, levels = 1:4)]
   dt[, treatment := factor(treatment, levels = c(1, 2))]
@@ -61,19 +64,15 @@ load_and_prepare <- function(path) {
 # Model fitting
 # =====
 fit_models <- function(dt) {
-  cat("Fitting Model 1 (baseline)...\n")
-  m1 <- tobit(n_sellers ~ bad_state + treatment,
+  cat("Fitting Model 1 (treatment + segment + round)...\n")
+  m1 <- tobit(n_sellers ~ treatment + segment_num + round_num,
               left = 0, right = 4, data = dt)
 
-  cat("Fitting Model 2 (+ segments)...\n")
-  m2 <- tobit(n_sellers ~ bad_state + treatment + segment_num,
+  cat("Fitting Model 2 (+ bad state)...\n")
+  m2 <- tobit(n_sellers ~ treatment + segment_num + round_num + bad_state,
               left = 0, right = 4, data = dt)
 
-  cat("Fitting Model 3 (full)...\n")
-  m3 <- tobit(n_sellers ~ bad_state + treatment + segment_num + round_num,
-              left = 0, right = 4, data = dt)
-
-  list(m1 = m1, m2 = m2, m3 = m3)
+  list(m1 = m1, m2 = m2)
 }
 
 # =====
@@ -122,13 +121,13 @@ write_table <- function(lines, path) {
 
 table_preamble <- function() {
   c("", "\\begingroup", "\\centering", "\\scriptsize",
-    "\\begin{tabular}{lccc}")
+    "\\begin{tabular}{lcc}")
 }
 
 table_header <- function() {
   c("   \\tabularnewline \\midrule \\midrule",
-    "   Dependent Variable: & \\multicolumn{3}{c}{Number of Sellers in Round}\\\\",
-    "   Model:               & (1)  & (2)  & (3)\\\\",
+    "   Dependent Variable: & \\multicolumn{2}{c}{Number of Sellers in Round}\\\\",
+    "   Model:               & (1)  & (2)\\\\",
     "   \\midrule",
     "   \\emph{Variables}\\\\")
 }
@@ -146,7 +145,7 @@ coef_rows <- function(vars, labels, coef_tabs) {
 }
 
 format_cells <- function(var_name, coef_tabs) {
-  vals <- ses <- rep("", 3)
+  vals <- ses <- rep("", 2)
   for (i in seq_along(coef_tabs)) {
     row <- coef_tabs[[i]][var == var_name]
     if (nrow(row) == 0) next
@@ -165,8 +164,8 @@ get_stars <- function(pval) {
 }
 
 row_line <- function(label, cells) {
-  sprintf("   %-25s & %s & %s & %s\\\\",
-          label, cells[1], cells[2], cells[3])
+  sprintf("   %-25s & %s & %s\\\\",
+          label, cells[1], cells[2])
 }
 
 fit_rows <- function(fits) {
@@ -174,18 +173,19 @@ fit_rows <- function(fits) {
   lls <- sapply(fits, function(f) sprintf("%.1f", f$log_lik))
   c("   \\midrule",
     "   \\emph{Fit statistics}\\\\",
-    sprintf("   %-25s & %s & %s & %s\\\\",
-            "Observations", ns[1], ns[2], ns[3]),
-    sprintf("   %-25s & %s & %s & %s\\\\",
-            "Log-likelihood", lls[1], lls[2], lls[3]))
+    sprintf("   %-25s & %s & %s\\\\",
+            "Observations", ns[1], ns[2]),
+    sprintf("   %-25s & %s & %s\\\\",
+            "Log-likelihood", lls[1], lls[2]))
 }
 
 table_footer <- function() {
   c("   \\midrule \\midrule",
-    paste0("   \\multicolumn{4}{l}{\\emph{Cluster-robust",
+    paste0("   \\multicolumn{3}{l}{\\emph{Cluster-robust",
            " standard errors clustered at the group level",
-           " in parentheses}}\\\\"),
-    paste0("   \\multicolumn{4}{l}{\\emph{Signif. Codes:",
+           " (session $\\times$ segment $\\times$ group,",
+           " global\\_group\\_id) in parentheses}}\\\\"),
+    paste0("   \\multicolumn{3}{l}{\\emph{Signif. Codes:",
            " ***: 0.01, **: 0.05, *: 0.1}}\\\\"),
     "\\end{tabular}",
     "\\par\\endgroup", "", "")

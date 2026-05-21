@@ -4,7 +4,7 @@ type: method
 tags: [gotchas, bugs, methodology, data-quirks, conventions]
 summary: "Non-obvious data quirks, past bug fixes, and methodology decisions distilled from closed issues and merged PRs"
 status: active
-last_verified: "2026-04-19"
+last_verified: "2026-05-20"
 ---
 
 ## Summary
@@ -31,6 +31,9 @@ Annotation `m{N}` maps to oTree period `N - 1`. Any new join script must apply t
 Surv(period_start, period, sold)   # period_start := period - 1L
 ```
 This changed all hazard ratio estimates in Table 7.
+
+### Perfectly-separated terms in restricted Cox samples (#124)
+`get_coxph_init()` in `cox_survival_regression.R` seeds `coxme` from a `coxph` fit. In restricted risk sets (e.g. the 4-column Cox sub-samples), perfectly-separated terms yield `NA`/infinite `coxph` estimates; passing those as `coxme` starting values errors. The fix zeroes them (`init[is.na(init)] <- 0`) and caps large magnitudes. Reuse this helper rather than reinventing init logic for any restricted-sample Cox model.
 
 ### Treatment × FE collinearity (#68)
 `treatment` is session-level constant → perfectly collinear with `player_id` fixed effects. The original `feglm(... | player_id)` couldn't include it. Switched to `glmer(... + (1|player_id))` so the treatment dummy could be estimated (PR #71). Trade-off accepted vs. consistency concern in #31.
