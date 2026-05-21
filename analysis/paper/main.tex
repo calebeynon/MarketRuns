@@ -422,60 +422,45 @@ As expected, more sales occur in bad state markets than good state markets. We a
 
 \subsubsection{Overall}
 
-Table 4 Tobit regression. 2 columns:
+Table~\ref{tab:tobit_n_sellers} reports a Tobit regression of the number of sellers per group-round. Model~(1) regresses the seller count on treatment, segment, and round; Model~(2) adds the bad-state indicator. Detailed interpretation appears in the group-round-level analysis below.
 
-Model (1) No of Sellers on Treatment2 Segment2 Segment3 Segment4 Round
-
-Model (2) No of Sellers on Treatment2 Segment2 Segment3 Segment4 Round BadState
+% Table 4: Tobit regression, number of sellers per group-round
+\begin{table}[H]
+  \centering
+  \caption{Tobit regression: number of sellers per group-round}
+  \label{tab:tobit_n_sellers}
+  \input{tobit_n_sellers}
+\end{table}
 
 \subsubsection{First Sellers}
 
-Table 5 Pooled OLS. 4 columns:
+Table~\ref{tab:ols_first_sale_behavior} reports pooled OLS regressions characterizing each group-round's first sale. Models~(1)--(2) use the seller's belief at the time of first sale as the outcome; Models~(3)--(4) use the period of the first sale. The even-numbered models add the bad-state indicator to the treatment, segment, and round controls.
 
-Model (1)  Belief at first sale on Treatment2 Segment2 Segment3 Segment4 Round
-
-Model (2)  Belief at first sale on Treatment2 Segment2 Segment3 Segment4 Round BadState
-
-Model (3) Period of first sale  on Treatment2 Segment2 Segment3 Segment4 Round
-
-Model (4) Period of first sale  on Treatment2 Segment2 Segment3 Segment4 Round BadState
-
-
-Table 6 Cox survival model. 4 columns:
-
-Model (1)  First sellers only on all variables like Model (4) in Table 11
-
-Model (2)  Reactive sellers only (rushed second sellers) on all variables-fear, surprise, female 
-
-Model (3)  Sellers only on all variables
-
-Model (4)  all participants (sellers and non-sellers) on all variables-valence, female
-
-
+Table~\ref{tab:cox_selling_four_column} reports Cox survival regressions of selling hazard across four risk sets. Model~(1) restricts attention to first sellers, Model~(2) to reactive (rushed second) sellers, Model~(3) to all sellers, and Model~(4) to all participants including non-sellers. Each model reports hazard ratios with the full set of emotion, demographic, and personality-trait covariates.
 
 \subsubsection{Rushed Second Sellers}
 
-Refer to Table 6 model (2)
-
-
+Rushed second sellers are analyzed in Model~(2) of Table~\ref{tab:cox_selling_four_column}, which restricts the risk set to person-periods that immediately follow a group-mate's sale.
 
 \subsubsection{All Sellers}
 
+All-seller and full-sample selling behavior are summarized in Models~(3) and~(4) of Table~\ref{tab:cox_selling_four_column}.
 
-Refer to Table 6 model (3)
+Table~\ref{tab:ro_logit_two_column} reports rank-ordered logit regressions of selling position within the group-round. Model~(1) uses the sellers-only sample; Model~(2) uses the full sample of sellers and non-sellers, with all emotion, demographic, and personality-trait covariates.
 
-Refer to Table 6 model (4)
+% Table 5: pooled OLS first-sale behavior (tabular without internal caption)
+\begin{table}[H]
+  \centering
+  \caption{Pooled OLS: belief and period at first sale}
+  \label{tab:ols_first_sale_behavior}
+  \input{ols_first_sale_behavior}
+\end{table}
 
+% Table 6: four-column Cox survival (longtable with built-in caption/label)
+\input{cox_selling_four_column}
 
-
-Table 7 Rank-ordered logit model. 2 columns:
-
-Model (1)  Sellers only on all variables (same period, same rank?)-disgust, joy, female, agreeableness, conscientiousness, anxiety
-
-Model (2)  all participants (sellers and non-sellers) on all variables-Valence,  conscientiousness, anxiety, risk tolerance
-
-
---I'm not sure if we should use rank = 4 for all non-sellers or should we just use multinomial logit with 1 = first sellers, 2 = other sellers, and 3 =non-sellers.
+% Table 7: two-column rank-ordered logit (longtable with built-in caption/label)
+\input{ro_logit_two_column}
 
 
 
@@ -539,14 +524,6 @@ In the full sample, conscientiousness, neuroticism, and anxiety are all associat
 In the sellers only sample, conscientiousness and anxiety both experience around a three times increase in effect and become more significant. This means that the effects of these traits are amplified within the seller sub-sample. Additionally, agreeableness has a significant negative effect on selling hazard rate. All of these effects are in line with hypothesis 3. 
 
 
-% Tobit regression: number of sellers per group-round
-\begin{table}[H]
-  \centering
-  \caption{Tobit regression: number of sellers per group-round}
-  \label{tab:tobit_n_sellers}
-  \input{tobit_n_sellers}
-\end{table}
-
 % Rank-ordered logit table (
 %longtable with built-in caption/label)
 %\input{ro_logit_selling_position}
@@ -602,7 +579,7 @@ Figure \ref{fig:did_segment_effects} displays the learning trend and communicati
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\linewidth]{did_segment_effects.pdf}
-  \caption{Segment effects on number of sellers. Points show estimated segment coefficients from Model~(3) in Table~\ref{tab:tobit_n_sellers} with 95\% standard error clustered confidence intervals. Segment~1 is the reference category.} 
+  \caption{Segment effects on number of sellers. Points show estimated segment coefficients from Model~(3) in Table~\ref{tab:did_learning_communication} with 95\% standard error clustered confidence intervals. Segment~1 is the reference category.}
   \label{fig:did_segment_effects}
 \end{figure}
 

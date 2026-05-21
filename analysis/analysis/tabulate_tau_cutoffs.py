@@ -143,16 +143,28 @@ def _table_footer():
         r"\par",
         r"\vspace{0.5em}",
         r"\footnotesize",
-        (r"\textit{Note:} Cutoffs are reported as $\pi = \Pr(z = G)$. "
-         r"$\overline{\tau}$ is the highest belief at which selling begins "
-         r"in equilibrium ($\sigma > 0$); $\underline{\tau}$ is the highest "
-         r"belief at which selling is certain ($\sigma = 1$). A run occurs "
-         r"for $\pi < \overline{\tau}$. Utility is $u = w^{\theta}$, so the "
-         r"CRRA coefficient is $\alpha = 1 - \theta$ ($\theta = 1$ is risk "
-         r"neutral). Values are read from the equilibrium $\sigma(n, \pi)$ "
-         r"grid on the reachable-belief lattice."),
+        _table_note(),
         r"\endgroup",
     ]
+
+
+def _table_note():
+    """Return the explanatory note text, including the M&M precision caveat."""
+    return (
+        r"\textit{Note:} Cutoffs are reported as $\pi = \Pr(z = G)$. "
+        r"$\overline{\tau}$ is the highest belief at which selling begins "
+        r"in equilibrium ($\sigma > 0$); $\underline{\tau}$ is the highest "
+        r"belief at which selling is certain ($\sigma = 1$). A run occurs "
+        r"for $\pi < \overline{\tau}$. Utility is $u = w^{\theta}$, so the "
+        r"CRRA coefficient is $\alpha = 1 - \theta$ ($\theta = 1$ is risk "
+        r"neutral). Values are read from the equilibrium $\sigma(n, \pi)$ "
+        r"grid on the reachable-belief lattice. Because beliefs update at "
+        r"signal precision $\mu_B = 0.675$, the reachable cutoffs are "
+        r"$\pi = 0.325, 0.188$ rather than the $0.333, 0.200$ of "
+        r"\cite{magnani2020dynamic}, whose HIGH treatment uses $\mu_B = 2/3$; "
+        r"in $\Pr(z = B)$ units these are $0.675, 0.812$ versus their "
+        r"$0.667, 0.800$."
+    )
 
 
 # %%
