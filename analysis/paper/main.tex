@@ -422,19 +422,9 @@ As expected, more sales occur in bad state markets than good state markets. We a
 
 \subsubsection{Overall}
 
-Table~\ref{tab:tobit_n_sellers} reports a Tobit regression of the number of sellers per group-round. Model~(1) regresses the seller count on treatment, segment, and round; Model~(2) adds the bad-state indicator. Detailed interpretation appears in the group-round-level analysis below.
+Table~\ref{tab:tobit_n_sellers_interactions} reports a Tobit regression of the number of sellers per group-round, including Treatment~2~$\times$~Segment interaction terms that allow the treatment effect on the number of sellers to vary across segments. Model~(1) regresses the seller count on round, treatment, segment, and the treatment-segment interactions; Model~(2) adds the bad-state indicator. The interaction with Segment~3 is marginally significant, indicating a stronger Treatment~2 effect in that chat-available segment. Detailed interpretation appears in the group-round-level analysis below.
 
-% Table 4: Tobit regression, number of sellers per group-round
-\begin{table}[H]
-  \centering
-  \caption{Tobit regression: number of sellers per group-round}
-  \label{tab:tobit_n_sellers}
-  \input{tobit_n_sellers}
-\end{table}
-
-Table~\ref{tab:tobit_n_sellers_interactions} extends this specification with Treatment~2~$\times$~Segment interaction terms, allowing the treatment effect on the number of sellers to vary across segments. Model~(1) controls for round, treatment, and segment; Model~(2) adds the bad-state indicator. The interaction with Segment~3 is marginally significant, indicating a stronger Treatment~2 effect in that chat-available segment.
-
-% Table 4b: Tobit regression with Treatment 2 x Segment interactions
+% Table: Tobit regression with Treatment 2 x Segment interactions
 \begin{table}[H]
   \centering
   \caption{Tobit regression: number of sellers per group-round, Treatment~2~$\times$~Segment interactions}
@@ -498,7 +488,7 @@ Table~\ref{tab:ro_logit_two_column} reports rank-ordered logit regressions of se
 
 
 \subsubsection{Group-round-level regression analysis}
-Table \ref{tab:tobit_n_sellers} reports results from a Tobit regression specification with number of sellers in a group-round as the output variable. Equation \ref{eq:tobit} is the regression specification with $n\_sellers^*_{gr}$ is the censored number of sellers at 0 and 4.
+Table \ref{tab:tobit_n_sellers_interactions} reports results from a Tobit regression specification with number of sellers in a group-round as the output variable. Equation \ref{eq:tobit} is the regression specification with $n\_sellers^*_{gr}$ is the censored number of sellers at 0 and 4.
   \begin{equation}                                                                                                                                                              
   \begin{split}                                                                               
       n\_sellers^*_{gr} = \beta_0 &+ \beta_1 \cdot \text{BadState}_r + \beta_2 \cdot \text{Treatment2}_g \\                                                                           
@@ -540,7 +530,7 @@ In the sellers only sample, conscientiousness and anxiety both experience around
 
 \subsubsection{Decomposing learning and communication effects}
 
-Although Table \ref{tab:tobit_n_sellers} presents the effect of each segment on the expected number of sellers in a market, there are two possible channels from which this downward effect on selling originates. Participants could learn more about the experiment as it progresses (even in the absence of communication), or there could be some effect from communication. A limitation of our within-subjects design is that communication always follows the no-communication segments, so any non-communicative learning effects would bias our estimate of a communication effect. We estimate the following regression,
+Although Table \ref{tab:tobit_n_sellers_interactions} presents the effect of each segment on the expected number of sellers in a market, there are two possible channels from which this downward effect on selling originates. Participants could learn more about the experiment as it progresses (even in the absence of communication), or there could be some effect from communication. A limitation of our within-subjects design is that communication always follows the no-communication segments, so any non-communicative learning effects would bias our estimate of a communication effect. We estimate the following regression,
 \begin{equation}
   \begin{split}
 n\_sellers_{gr} = \beta_1 \cdot \text{BadState}_r &+ \lambda \cdot s_g + \tau \cdot \mathbf{1}[s_g \geq 3] + \delta \cdot \text{Treatment2}_g \times \mathbf{1}[s_g \geq 3] \\+
@@ -593,31 +583,6 @@ Figure \ref{fig:did_segment_effects} displays the learning trend and communicati
   \label{fig:did_segment_effects}
 \end{figure}
 
-\subsubsection{Player-period-level regression analysis}
-
-We estimate Cox proportional hazards survival models treating the within-round period as the survival time axis and selling as the failure event. Table~\ref{tab:cox_normal_vs_reactive} reports hazard ratios from two Cox models with cluster-robust standard errors, clustered at the session $\times$ segment $\times$ group level (96 clusters). Column~(1) (\emph{Normal}) uses the full emotions+traits sample with any sale as the event ($N=659$); period-average emotion covariates, cascade dummies, and cumulative-by-previous-period interactions are all included. Column~(2) (\emph{Reactive}) addresses the concern that period-level emotions are contemporaneous with the click: we restrict the risk set to the $N=1{,}082$ person-periods that immediately follow a group-mate's sale, so every row in the fit is mechanically at risk of a cascade-triggered (``reactive'') sale. Within this restricted panel there are 101 sales, which we model as the event; for sellers we replace the period-wide emotion average with the average over the 500 milliseconds immediately preceding the sell click. Cascade and cumulative-by-previous-period interaction terms are omitted from Column~(2) to keep the specification parallel with how a reactive sale is conceptualized: every row in the restricted risk set already follows at least one group-mate's sale by construction. Both specifications include the eight discrete emotions (fear, anger, contempt, disgust, joy, sadness, surprise, engagement), a composite valence measure, signal, round, segment, treatment, age, and gender.
-
-  \begin{equation}                                                                                                                                                                    
-  \begin{split}                                                                                                                                                                       
-      \lambda_{it}(t) = \lambda_0(t) \exp\bigl(                                                                                                                                       
-      & \beta_1 D_{1,it} + \beta_2 D_{2,it} + \beta_3 D_{3,it}                                  
-     + \boldsymbol{\gamma}^{\prime} \mathbf{Cascade}_{it} + \beta_s \, \text{Signal}_{it} \\
-      & + \boldsymbol{\beta}_{\text{emo}}^{\prime} \mathbf{Emotion}_{it} + \boldsymbol{\beta}_{\text{trait}}^{\prime} \mathbf{Trait}_i  + \boldsymbol{\beta}_{\text{ctrl}}^{\prime} \mathbf{Controls}_{it} + u_i \bigr)
-  \end{split}
-  \label{eq:coxph}
-  \end{equation}
-where  $t$ is the period within the round and $D_{j,it}$ is a dummy for $j$ prior group sales. $\mathbf{Cascade}_{it}$ are the interaction terms for prior and immediately previous group sales, $\mathbf{Emotion}_{it}$ are the measurements of emotions, $\mathbf{Trait}_{i}$ are the time-invariant personality traits, and $\mathbf{Controls}_{it}$ are the round, segments, treatment, age and gender. $u_i$ is the player random intercept.  Notice that a coefficient of less than 1 indicates a decreased probability of selling, while a coefficient greater than 1 indicates an increased probability of selling.
-
-In the full seller sample, we include coefficients for the number of previous sellers and how many of those sellers were in the immediately prior period ($t-1$). While 1 prior sale is not significant, both 2 and 3 prior sales are significant, and decrease the probability of selling. Since prior sales are perfectly collinear with the market price of the asset, the number of overall prior sales pushes the value of selling down. However, when looking at the case where there are two prior sales, with one of them being in the immediately prior period, or two prior sales with both of them being in the immediately prior period, the probability of selling significantly increases, more so with the latter scenario. This strongly suggests a cascade effect, where participants panic or like to mirror the actions of their fellow group members. This result may make sense in a setting where signals private, but in our case, the signal is public, and the prior sales provide no additional information about the state of the market. Even more interestingly, increasing number of prior sales would actually decrease the opportunity cost of a participant holding their asset to the terminal period. Therefore, our cascade result contradicts the expected behavior, in relation to prior group sales, of an individual investor in the outlined model framework.
-
-In terms of emotions and personality traits, results at the individual-period level are mostly consistent with the group-round level results. Joy significantly increases the probability of an individual selling when looking at just the full sample. However, no other emotions are significant in either sample at this level of observation. Conscientiousness and anxiety remain significant positive predictors of selling in the full sample while risk tolerance is a negative predictor of selling probability. However, when looking at just participants who were the first sellers in their group, conscientiousness is the only personality trait that remains significant. This remains in line with the relevant parts of hypotheses 3 and 4. 
-
-This level of observation allows us to also view the effect of signal and round on selling probability. These results indicate that an increase in signal causes a significant and large decrease in selling probability. This provides evidence that the participants both understood what the signal meant, and act in accordance with the model as it relates to signal. If this effect had not been a significant decrease, it would cast doubt onto the subjects' understanding. We also observe a significant decrease in selling probability as the round number increases. This indicates that participants are less likely to sell later in a segment, suggesting that they may be learning the patterns of their group mates, or started by ``playing it safe'' and adjusted upward as they tried to earn the higher liquidation value.
-
-We also observe significant decreases in selling probability in segment 3 and 4, but not in segment 2, relative to segment 1. Recall that communication is permitted in segments 3 and 4. This provides evidence that communication causes a decrease in selling probability. This provides support for hypothesis 2. However, we do not observe any significant effect from the average liquidation vs random liquidation. This does not support hypothesis 1. 
-
-
-\input{cox_survival_normal_vs_reactive}
 
 % Holdout liquidation regression (standalone)
 
@@ -787,7 +752,7 @@ This paper provides multiple avenues of future exploration. First, understanding
 
 \section*{Appendix G. Valence-Only Emotion Specifications}
 
-Table~\ref{tab:ro_logit_selling_position_valence_only} replicates the rank-ordered logit analysis from Table~\ref{tab:ro_logit_selling_position} using only Valence as the emotion variable, omitting the eight discrete emotions. Table~\ref{tab:cox_survival_regression_valence_only} does the same for the Cox survival regression from Table~\ref{tab:cox_normal_vs_reactive}.
+Table~\ref{tab:ro_logit_selling_position_valence_only} replicates the rank-ordered logit analysis from Table~\ref{tab:ro_logit_selling_position} using only Valence as the emotion variable, omitting the eight discrete emotions. Table~\ref{tab:cox_survival_regression_valence_only} does the same for the Cox survival regression from Table~\ref{tab:cox_selling_four_column}.
 
 \input{ro_logit_selling_position_valence_only}
 
@@ -797,7 +762,7 @@ Table~\ref{tab:ro_logit_selling_position_valence_only} replicates the rank-order
 
 \section*{Appendix H. No-Valence Emotion Specifications}
 
-Table~\ref{tab:ro_logit_selling_position_no_valence} replicates the rank-ordered logit analysis from Table~\ref{tab:ro_logit_selling_position} using only the eight discrete emotions, omitting Valence. Table~\ref{tab:cox_survival_regression_no_valence} does the same for the Cox survival regression from Table~\ref{tab:cox_normal_vs_reactive}.
+Table~\ref{tab:ro_logit_selling_position_no_valence} replicates the rank-ordered logit analysis from Table~\ref{tab:ro_logit_selling_position} using only the eight discrete emotions, omitting Valence. Table~\ref{tab:cox_survival_regression_no_valence} does the same for the Cox survival regression from Table~\ref{tab:cox_selling_four_column}.
 
 \input{ro_logit_selling_position_no_valence}
 
