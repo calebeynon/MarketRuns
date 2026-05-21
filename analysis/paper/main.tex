@@ -432,6 +432,16 @@ Table~\ref{tab:tobit_n_sellers} reports a Tobit regression of the number of sell
   \input{tobit_n_sellers}
 \end{table}
 
+Table~\ref{tab:tobit_n_sellers_interactions} extends this specification with Treatment~2~$\times$~Segment interaction terms, allowing the treatment effect on the number of sellers to vary across segments. Model~(1) controls for round, treatment, and segment; Model~(2) adds the bad-state indicator. The interaction with Segment~3 is marginally significant, indicating a stronger Treatment~2 effect in that chat-available segment.
+
+% Table 4b: Tobit regression with Treatment 2 x Segment interactions
+\begin{table}[H]
+  \centering
+  \caption{Tobit regression: number of sellers per group-round, Treatment~2~$\times$~Segment interactions}
+  \label{tab:tobit_n_sellers_interactions}
+  \input{tobit_n_sellers_interactions}
+\end{table}
+
 \subsubsection{First Sellers}
 
 Table~\ref{tab:ols_first_sale_behavior} reports pooled OLS regressions characterizing each group-round's first sale. Models~(1)--(2) use the seller's belief at the time of first sale as the outcome; Models~(3)--(4) use the period of the first sale. The even-numbered models add the bad-state indicator to the treatment, segment, and round controls.
