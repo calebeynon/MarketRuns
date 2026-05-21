@@ -4,7 +4,7 @@ type: paper
 tags: [paper, results, hypotheses, tables, market-runs]
 summary: "Hypotheses, main results, table inventory, and section structure of the working paper (Eynon & Jindapon)"
 status: active
-last_verified: "2026-05-20"
+last_verified: "2026-05-21"
 ---
 
 ## Citation
@@ -48,24 +48,29 @@ The §5.2 Selling Behavior subsection presents four tables, numbered 4–7 in th
 
 ## Table Inventory
 
-LaTeX inputs are bare filenames; sources live in `analysis/output/tables/<name>.tex`.
+LaTeX inputs are bare filenames; sources live in `analysis/output/tables/<name>.tex`. Numbering follows the physical `\input` float order in `analysis/paper/main.tex` (LaTeX numbers floats by position). Numbers below match the §5.2 section above (Tables 4–7).
 
 | # | Label | Contents | Source script | Type |
 |---|-------|----------|---------------|------|
 | 1 | `randomized_params` | Pre-randomized experimental parameters by segment | `analysis/analysis/randomized_params_table.py` | Descriptive |
 | 2 | `summary_demographics_traits` | Subject demographics + trait means by treatment | `analysis/analysis/summary_statistics.R` | Summary |
-| 3 | `trait_correlations` | 8-trait pairwise correlations | `analysis/analysis/trait_correlations.R` | Correlation |
-| 4 | `emotion_correlations` | 9 facial-emotion period-level correlations | `analysis/analysis/emotion_correlations.R` | Correlation |
-| 5 | `summary_seller_counts` | Group-round seller counts/timing/prices by treatment×chat | `analysis/analysis/summary_statistics.R` | Summary |
-| 6 | `tobit_n_sellers` | Tobit on # sellers/group-round; covariates: BadState, Treatment2, segment dummies, Round | `analysis/analysis/tobit_n_sellers.R` | Tobit (0,4) |
-| 7 | `ro_logit_selling_position` | Rank-ordered logit / Cox-style hazard, stratified by session-segment-group-round | `analysis/analysis/ro_logit_selling_position.R` | RO logit |
+| 3 | `summary_seller_counts` | Group-round seller counts/timing/prices by treatment×chat | `analysis/analysis/summary_statistics.R` | Summary |
+| 4 | `tobit_n_sellers` | Tobit on # sellers/group-round; M1 base (treatment, segment, round), M2 adds BadState; SE clustered at `global_group_id` | `analysis/analysis/tobit_n_sellers.R` | Tobit (0,4) |
+| 5 | `ols_first_sale_behavior` | Pooled OLS of first-sale behavior (signal at first sale, first-sale period), ±BadState; group-clustered SE | `analysis/analysis/ols_first_sale_behavior.R` | OLS clustered |
+| 6 | `cox_selling_four_column` | 4-col Cox by risk set (first / reactive-second / all sellers / all participants); hazard ratios | `analysis/analysis/cox_selling_four_column.R` + `cox_selling_four_column_helpers.R` | coxph/coxme |
+| 7 | `ro_logit_two_column` | Rank-ordered logit of selling position, 2 cols (sellers-only, all-participants) | `analysis/analysis/ro_logit_two_column.R` | RO logit |
 | 8 | `did_learning_communication` | DiD decomposing learning vs. communication | `analysis/analysis/did_learning_communication.R` | DiD with FE |
-| 9 | `cox_survival_regression` | Mixed-effects Cox PH; cascades, emotions, traits, controls | `analysis/analysis/cox_survival_regression.R` | coxme |
+| 9 | `cox_survival_normal_vs_reactive` | Player-period Cox (§5.2), Normal vs. Reactive pre-sell emotion windows | `analysis/analysis/cox_survival_normal_vs_reactive.R` | coxme |
 | 10 | `holdout_liquidation_regression` | Effect of holdout payoff on next-round sale; group×round FE | `analysis/analysis/holdout_liquidation_regression.R` | LPM |
 | 11 | `welfare_regression` | OLS welfare on traits (z=1 only); SE clustered session×segment×group | `analysis/analysis/welfare_regression.R` | OLS clustered |
 | App | `equilibrium_thresholds` | Avg equilibrium π at sale by seller position k and α (10k sims, both treatments) | `analysis/analysis/simulate_equilibrium.py` + `tabulate_equilibrium.py` | Numerical |
+| App | `ro_logit_selling_position` | Rank-ordered logit / Cox-style hazard stratified by session-segment-group-round (appendix `\input` at main.tex ~771; superseded in the body by `ro_logit_two_column`) | `analysis/analysis/ro_logit_selling_position.R` | RO logit |
+| App | `trait_correlations` | 8-trait pairwise correlations (appendix `\input` ~799) | `analysis/analysis/trait_correlations.R` | Correlation |
+| App | `emotion_correlations` | 9 facial-emotion period-level correlations (appendix `\input` ~806) | `analysis/analysis/emotion_correlations.R` | Correlation |
 | App G | `*_valence_only` | Valence-only emotion robustness | `*_valence_only.R` | Robustness |
 | App H | `*_no_valence` | Discrete-emotions-only robustness | `*_no_valence.R` | Robustness |
+
+> **Note:** `cox_survival_regression.R` is sourced as a helper (e.g. by the four-column Cox / robustness builders) and is **not** `\input` as its own paper table — there is no standalone `cox_survival_regression` float in `main.tex`.
 
 ## Section Structure (line numbers in main.tex)
 

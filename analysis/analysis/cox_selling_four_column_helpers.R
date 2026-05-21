@@ -55,6 +55,9 @@ format_cox_coef_cells_4col <- function(var_name, coefs_list) {
     row <- coefs_list[[i]][var == var_name]
     if (nrow(row) == 0) next
     if (is_non_identified(var_name, row$est, row$se)) {
+      message(sprintf(paste0("[n.i.] col %d | %s | HR=%.4g se=%.4g",
+                             " (flagged non-identified / separation)"),
+                      i, var_name, row$est, row$se))
       vals[i] <- NON_IDENTIFIED_MARK
       next
     }
@@ -66,22 +69,20 @@ format_cox_coef_cells_4col <- function(var_name, coefs_list) {
 
 # =====
 # Detect hazard-ratio cells that are non-identified due to (near-)complete
-# separation in sparse cascade-interaction cells. Two signatures: (a) the HR
-# is driven to the 0/Inf boundary (rounds to 0.0000 or is astronomically
-# large, or the log-HR SE is implausibly wide); (b) a 3-prior-sale interaction
-# whose HR blows up above 5 — these terms have only a handful of events and
-# their estimates are separation artifacts, not informative effects. The rule
-# is conservative: legitimate wide estimates (e.g. cascade dummies, the 1- and
-# 2-prior interactions) print normally.
+# separation. The rule is pure identifiability: we trust the estimator's own
+# separation signature rather than any magnitude heuristic. A cell is flagged
+# only when the HR is driven to the 0/Inf boundary (rounds to 0.0000 or is
+# astronomically large) or the log-HR SE is implausibly wide / non-finite ---
+# all hallmarks of (near-)complete separation. WHY: a wide log-HR SE or a
+# boundary HR is the estimator's verdict that the coefficient is unidentified;
+# magnitude alone is not. Dropping the old "interaction HR > 5" branch lets
+# legitimate large-but-identified hazard ratios print normally.
 # =====
 NON_IDENTIFIED_MARK <- "n.i."
 
 is_non_identified <- function(var_name, est, se) {
   log_hr_se <- se / est
-  boundary <- est < 5e-5 | est > 1e4 |
-    !is.finite(log_hr_se) | log_hr_se > 50
-  sparse_interaction <- var_name %in% INTERACTION_VARS & est > 5
-  boundary | sparse_interaction
+  est < 5e-5 | est > 1e4 | !is.finite(log_hr_se) | log_hr_se > 50
 }
 
 # =====

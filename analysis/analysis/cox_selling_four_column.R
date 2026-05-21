@@ -102,6 +102,14 @@ fit_all_sellers_with_traits <- function(df_em) {
   cat("All-sellers player-group-rounds:", length(seller_ids),
       "| sample rows:", nrow(df_sellers),
       "| events:", sum(df_sellers$sold == 1, na.rm = TRUE), "\n")
+  n_events <- sum(df_sellers$sold == 1, na.rm = TRUE)
+  if (length(seller_ids) == 0 || nrow(df_sellers) == 0 || n_events == 0) {
+    stop(paste0("fit_all_sellers_with_traits: empty all-sellers sample ",
+                "(seller_ids=", length(seller_ids), ", rows=",
+                nrow(df_sellers), ", events=", n_events, "). Likely cause: ",
+                "upstream column rename, wrong BASE_PATH, or no sales in ",
+                "the loaded sample."))
+  }
   f <- all_sellers_formula(df_sellers)
   coxme(f, data = df_sellers, init = get_coxph_init(f, df_sellers))
 }
@@ -113,13 +121,33 @@ fit_all_sellers_with_traits <- function(df_em) {
 # =====
 all_sellers_formula <- function(df) {
   cascade <- c("dummy_1_cum", "dummy_2_cum", "dummy_3_cum")
-  candidates <- c(cascade, INTERACTION_VARS)
-  keep <- candidates[sapply(candidates, function(v) uniqueN(df[[v]]) > 1)]
+  keep <- keep_varying_terms(df, c(cascade, INTERACTION_VARS))
   rhs <- paste(c(keep, DISCRETE_EMOTIONS, "valence_mean", COX_TRAITS,
                  "signal", "round", "segment", "treatment",
                  "age", "gender_female", "(1 | player_id)"),
                collapse = " + ")
   as.formula(paste("Surv(period_start, period, sold) ~", rhs))
+}
+
+# =====
+# Validate candidate cascade/interaction columns exist, then keep only those
+# that vary in the restricted sample. A missing column signals an upstream
+# rename; a constant column would abort coxme, so we drop and log it.
+# =====
+keep_varying_terms <- function(df, candidates) {
+  missing <- setdiff(candidates, names(df))
+  if (length(missing) > 0) {
+    stop(sprintf(paste0("all_sellers_formula: missing expected columns: %s",
+                        " (renamed INTERACTION_VARS?)"),
+                 paste(missing, collapse = ", ")))
+  }
+  keep <- candidates[sapply(candidates, function(v) uniqueN(df[[v]]) > 1)]
+  dropped <- setdiff(candidates, keep)
+  if (length(dropped) > 0) {
+    message(sprintf("[all_sellers_formula] dropping %d constant term(s): %s",
+                    length(dropped), paste(dropped, collapse = ", ")))
+  }
+  keep
 }
 
 # =====
