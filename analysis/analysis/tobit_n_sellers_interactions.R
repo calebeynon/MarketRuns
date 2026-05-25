@@ -18,10 +18,10 @@ OUTPUT_PATH <- "analysis/output/tables/tobit_n_sellers_interactions.tex"
 
 # TABLE CONFIGURATION
 VAR_ORDER <- c(
-  "(Intercept)", "bad_state", "treatment2",
+  "(Intercept)", "bad_state", "round_num", "treatment2",
   "segment_num2", "segment_num3", "segment_num4",
   "treatment2:segment_num2", "treatment2:segment_num3",
-  "treatment2:segment_num4", "round_num"
+  "treatment2:segment_num4"
 )
 VAR_LABELS <- c(
   "(Intercept)"             = "Constant",
@@ -74,11 +74,11 @@ report_cell_counts <- function(dt) {
 # Model fitting
 # =====
 fit_models <- function(dt) {
-  cat("\nFitting Model 1 (round + treatment x segment)...\n")
-  m1 <- tobit(n_sellers ~ round_num + treatment * segment_num,
+  cat("\nFitting Model 1 (additive: bad_state + treatment + segment + round)...\n")
+  m1 <- tobit(n_sellers ~ bad_state + treatment + segment_num + round_num,
               left = 0, right = 4, data = dt)
 
-  cat("Fitting Model 2 (+ bad_state)...\n")
+  cat("Fitting Model 2 (+ treatment x segment interactions)...\n")
   m2 <- tobit(n_sellers ~ bad_state + treatment * segment_num + round_num,
               left = 0, right = 4, data = dt)
 
@@ -229,9 +229,12 @@ print_summaries <- function(models, dt) {
     cat("\n", name, ":\n")
     cl_vcov <- vcovCL(models[[name]], cluster = dt$global_group_id)
     print(coeftest(models[[name]], vcov. = cl_vcov))
-    jt <- joint_interaction_test(models[[name]], dt)
-    cat(sprintf("Joint Wald test, T2 x Segment interactions = 0: chi2(%d) = %.3f, p = %.4f\n",
-                jt$df, jt$stat, jt$pval))
+    has_interactions <- any(grepl("^treatment2:segment_num", names(coef(models[[name]]))))
+    if (has_interactions) {
+      jt <- joint_interaction_test(models[[name]], dt)
+      cat(sprintf("Joint Wald test, T2 x Segment interactions = 0: chi2(%d) = %.3f, p = %.4f\n",
+                  jt$df, jt$stat, jt$pval))
+    }
   }
 }
 
