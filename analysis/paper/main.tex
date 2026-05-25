@@ -437,7 +437,23 @@ n\_sellers_{gr} ={}& \min(\max(n\_sellers^{*}_{gr},0),4)
 \label{eq:n_sellers_tobit}
 \end{equation}
 
-Table~\ref{tab:tobit_n_sellers_interactions} reports a Tobit regression of the number of sellers per group-round.
+
+Table~\ref{tab:tobit_n_sellers_interactions} reports the results from the Tobit regression in equation \ref{eq:n_sellers_tobit}.
+In column 1, we find that markets in treatment 2, the average liquidation treatment, have 0.45952 more sellers in expectation than in the random liquation treatment. 
+This indicates that participants are more likely to sell when their liquidation payoffs are pooled as an average instead of randomly assigned. This holds even after controlling for round, segment, and state effects.
+In both models, we find that markets in the bad state have an average of 1 more seller than in markets in the good state. This is expected as 
+bad state markets have more bad signals which pushes investors towards selling. 
+
+Both models indicate that experience decreases the number of sellers in a market. Each additional round within a segment is associated with a 0.07 decrease in sellers. 
+Segment 3 and segment 4 both have significant negative effects on the number of sellers, -1.07 and -1.28, respectively. These segments also introduced communication,
+so experience vs communication effects will be identified and report in section \ref{sub:did_learning_communication}.
+
+In model 2, we include a cross effect between treatment and segment. We find a marginally significant effect on 
+the treatment 2 x segment 3 coefficient. This indicates that the communication intervention does not decrease 
+sellers in markets in the average liquidation treatment. The communication effect is dominated by the markets in the 
+random liquidation treatment. This could be explained by a mutual sense of interdependency being stronger initially
+in the average liquidation treatment, whereas investors in the random liquidation treatment don't understand the selling externality
+until communication is introduced. 
 
 % Table: Tobit regression with Treatment 2 x Segment interactions
 \begin{table}[H]
@@ -544,6 +560,7 @@ In the sellers only sample, conscientiousness and anxiety both experience around
 %\input{ro_logit_selling_position}
 
 \subsubsection{Decomposing learning and communication effects}
+\label{sub:did_learning_communication}
 
 Although Table \ref{tab:tobit_n_sellers_interactions} presents the effect of each segment on the expected number of sellers in a market, there are two possible channels from which this downward effect on selling originates. Participants could learn more about the experiment as it progresses (even in the absence of communication), or there could be some effect from communication. A limitation of our within-subjects design is that communication always follows the no-communication segments, so any non-communicative learning effects would bias our estimate of a communication effect. We estimate the following regression,
 \begin{equation}
