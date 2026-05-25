@@ -424,7 +424,20 @@ As expected, more sales occur in bad state markets than good state markets. We a
 
 
 
-Table~\ref{tab:tobit_n_sellers_interactions} reports a Tobit regression of the number of sellers per group-round, including Treatment~2~$\times$~Segment interaction terms that allow the treatment effect on the number of sellers to vary across segments. Model~(1) regresses the seller count on round, treatment, segment, and the treatment-segment interactions; Model~(2) adds the bad-state indicator. In Model~(2), the Treatment~2~$\times$~Segment~3 interaction is the only one of the three interactions to reach (marginal) significance ($p<0.10$); however, a joint Wald test of all three interactions fails to reject the null that they are zero ($\chi^2_3 = 4.23$, $p = 0.24$).
+We find that markets in treatment 2, the average liquidation treatment, have more sellers. We also find significant effects for the liquidation state and experience.
+
+We estimate the following models:
+
+\begin{equation}
+\begin{split}
+n\_sellers^{*}_{gr} ={}& \underbrace{\beta_0 + \beta_1 \text{BadState}_{r} + \beta_2 \text{Treatment2}_{g} + \delta \text{Round}_{r} + \sum_{s=2}^{4} \gamma_s \mathbf{1}[\text{Segment}=s]}_{\text{Models (1) and (2)}} \\
+&{} + \underbrace{\sum_{s=2}^{4} \zeta_s \text{Treatment2}_{g} \mathbf{1}[\text{Segment}=s]}_{\text{Model (2) only}} + \varepsilon_{gr} \\
+n\_sellers_{gr} ={}& \min(\max(n\_sellers^{*}_{gr},0),4)
+\end{split}
+\label{eq:n_sellers_tobit}
+\end{equation}
+
+Table~\ref{tab:tobit_n_sellers_interactions} reports a Tobit regression of the number of sellers per group-round.
 
 % Table: Tobit regression with Treatment 2 x Segment interactions
 \begin{table}[H]
